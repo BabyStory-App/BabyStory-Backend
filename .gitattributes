@@ -1,1 +1,1 @@
-/Users/jaewone/developer/fastapi/babystory_backend/assets/crnn.h5 filter=lfs diff=lfs merge=lfs -text
+assets/crnn.h5 filter=lfs diff=lfs merge=lfs -text

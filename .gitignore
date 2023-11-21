@@ -142,3 +142,6 @@ cython_debug/
 
 # mac
 .DS_Store
+
+# dataset
+dataset/

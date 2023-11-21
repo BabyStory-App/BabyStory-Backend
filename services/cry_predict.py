@@ -10,6 +10,7 @@ from constants.path import PROJECT_DIR
 
 os.environ['NUMBA_DISABLE_JIT'] = "1"
 
+cry_classes = ['sad', 'hug', 'diaper', 'hungry', 'sleepy', 'awake', 'uncomfortable']
 
 class CryPredictService:
     def __init__(self):
@@ -31,8 +32,7 @@ class CryPredictService:
         return mel_spec_dB_stacked[np.newaxis, ]
 
     async def get_predict_class(self, input_vector):
-        classes = ['sad', 'hug', 'diaper', 'hungry',
-                   'sleepy', 'awake', 'uncomfortable']
+        classes = cry_classes
         predictions = self.model.predict(input_vector)[0]
         predictMap = {}
         for i in range(len(classes)):

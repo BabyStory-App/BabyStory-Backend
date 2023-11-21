@@ -18,12 +18,28 @@ router = APIRouter(
 # http://localhost:8000/baby/predict
 @router.post("/predict")
 async def upload_file(file: UploadFile = None, uid: str = Header(None)):
-    print(f'uid: {uid}')
-    if uid is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-                            detail="uid not provided")
+    return JSONResponse(content={
+        "time": "2023-11-15 14:07:48",
+        "filename": "sample_file.wav",
+        'predictMap': {
+                "diaper": 0.7981116771697998,
+                "hungry": 0.09332592040300369,
+                "awake": 0.06723734736442566,
+                "uncomfortable": 0.01611471176147461,
+                "sad": 0.01292745303362608,
+                "hug": 0.010338930413126945,
+                "sleepy": 0.0019440052565187216
+        },
+        "intensity": 'medium',
+        'audioURL': "20231115-140748",
+    })
+    # print(f'uid: {uid}')
+    # if uid == None:
+    #     raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+    #                         detail="uid not provided")
+    uid = "test_user_id"
 
-    if file is None:
+    if file == None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="File not provided")
 

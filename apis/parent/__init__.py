@@ -3,10 +3,12 @@ from fastapi.responses import JSONResponse, FileResponse
 from starlette.status import HTTP_400_BAD_REQUEST
 from datetime import datetime
 from constants.path import BABY_CRY_DATASET_DIR
+from typing import Union, Optional
 import os
 
-from schemas.parent import ParentCreateInput
+from schemas.parent import ParentCreateInput, ParentType
 from services.parent import ParentService
+from model.parent import Parent
 
 
 router = APIRouter(
@@ -28,7 +30,19 @@ TODO:
 """
 
 
-@router.post("/", response_model=None)
-async def create_new_user(parent):
-    parentService.create_parent(parent)
-    return JSONResponse(status_code=200)
+@router.post("/", response_model=ParentType)
+def create_parent(parent_input: ParentCreateInput):
+    parent = parentService.create_parent(parent_input)
+    if parent is None:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to create parent")
+    return parent
+
+
+@router.get("/", response_model=Optional[ParentType])
+async def get_parent(uid: Union[str, None] = Header(default=None)):
+    if uid is None:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="uid is required")
+
+    return parentService.get_parent(uid)

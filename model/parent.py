@@ -8,8 +8,7 @@ from model.baby import Baby
 
 class Parent(DB_Base):
     __tablename__ = 'parent'
-    id = Column(String(36), primary_key=True, default=uuid.uuid4)
-    uid = Column(String(255), unique=True, nullable=False)
+    uid = Column(String(255), primary_key=True)
     email = Column(String(255), nullable=False, index=True)
     nickname = Column(String(255), nullable=False)
     signInMethod = Column(String(50), default='email')
@@ -21,7 +20,6 @@ class Parent(DB_Base):
     babies = relationship(Baby, backref='parent', passive_deletes=True)
 
 # CREATE TABLE parent (
-#     id VARCHAR(36) NOT NULL DEFAULT (UUID()),
 #     uid VARCHAR(255) UNIQUE NOT NULL,
 #     email VARCHAR(255) NOT NULL,
 #     nickname VARCHAR(255) NOT NULL,
@@ -29,6 +27,6 @@ class Parent(DB_Base):
 #     emailVerified BOOLEAN DEFAULT FALSE,
 #     photoId TEXT,
 #     description TEXT,
-#     PRIMARY KEY (id),
+#     PRIMARY KEY (uid),
 #     INDEX (email)
 # );

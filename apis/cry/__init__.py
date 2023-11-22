@@ -18,21 +18,22 @@ router = APIRouter(
 # http://localhost:8000/baby/predict
 @router.post("/predict")
 async def upload_file(file: UploadFile = None, uid: str = Header(None)):
-    return JSONResponse(content={
-        "time": "2023-11-15 14:07:48",
-        "filename": "sample_file.wav",
-        'predictMap': {
-                "diaper": 0.7981116771697998,
-                "hungry": 0.09332592040300369,
-                "awake": 0.06723734736442566,
-                "uncomfortable": 0.01611471176147461,
-                "sad": 0.01292745303362608,
-                "hug": 0.010338930413126945,
-                "sleepy": 0.0019440052565187216
-        },
-        "intensity": 'medium',
-        'audioURL': "20231115-140748",
-    })
+    # return JSONResponse(content={
+    #     "time": "2023-11-15 14:07:48",
+    #     "filename": "sample_file.wav",
+    #     'predictMap': {
+    #             "hug": 0.860338930413126945,
+    #             "sad": 0.05292745303362608,
+    #             "diaper": 0.0019440052565187216,
+    #             "sleepy": 0.0081116771697998,
+    #             "hungry": 0.00332592040300369,
+    #             "awake": 0.06723734736442566,
+    #             "uncomfortable": 0.01611471176147461,
+    #     },
+    #     "intensity": 'medium',
+    #     'audioURL': "20231115-140748",
+    # })
+
     # print(f'uid: {uid}')
     # if uid == None:
     #     raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
@@ -70,21 +71,6 @@ async def upload_file(file: UploadFile = None, uid: str = Header(None)):
         "intensity": 'medium',
         'audioURL': timestamp,
     })
-# {
-# 	"time": "2023-11-13 13:22:41",
-# 	"filename": "babycry_diaper.wav",
-# 	"predictMap": {
-# 		"diaper": 0.7981116771697998,
-# 		"hungry": 0.09332592040300369,
-# 		"awake": 0.06723734736442566,
-# 		"uncomfortable": 0.01611471176147461,
-# 		"sad": 0.01292745303362608,
-# 		"hug": 0.010338930413126945,
-# 		"sleepy": 0.0019440052565187216
-# 	},
-# 	"intensity": "medium",
-# 	"audioURL": "audio_path"
-# }
 
 
 @router.get("/wav")

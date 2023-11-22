@@ -5,10 +5,6 @@ from uuid import uuid4
 from model.types.common import OptionalBaseUUID
 
 
-class ParentType_id(BaseModel):
-    id: OptionalBaseUUID = uuid4()
-
-
 class ParentType_uid(BaseModel):
     uid: constr(min_length=1)
 
@@ -38,8 +34,7 @@ class ParentType_description(BaseModel):
 
 
 # Parent 모델 정의
-class ParentType(ParentType_id,
-                 ParentType_uid,
+class ParentType(ParentType_uid,
                  ParentType_email,
                  ParentType_nickname,
                  ParentType_signInMethod,
@@ -48,3 +43,8 @@ class ParentType(ParentType_id,
                  ParentType_description):
     class Config:
         orm_mode = True
+
+    def __init__(self, **kwargs):
+        if '_sa_instance_state' in kwargs:
+            kwargs.pop('_sa_instance_state')
+        super().__init__(**kwargs)

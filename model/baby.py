@@ -11,7 +11,7 @@ class Baby(DB_Base):
     __tablename__ = 'baby'
     id = Column(String(36), primary_key=True, default=uuid.uuid4)
     parentId = Column(String(36), ForeignKey(
-        'parent.id', ondelete='SET NULL'))
+        'parent.uid', ondelete='SET NULL'))
     name = Column(String(255), nullable=False, index=True)
     gender = Column(String(50), nullable=False)
     birthDate = Column(DateTime, nullable=False)
@@ -31,5 +31,5 @@ class Baby(DB_Base):
 #     bloodType VARCHAR(50) NOT NULL,
 #     PRIMARY KEY (id),
 #     INDEX (name),
-#     FOREIGN KEY (parentId) REFERENCES parent(id) ON DELETE SET NULL
+#     FOREIGN KEY (parentId) REFERENCES parent(uid) ON DELETE SET NULL
 # );

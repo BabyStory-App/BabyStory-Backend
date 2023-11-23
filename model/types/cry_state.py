@@ -3,8 +3,25 @@ from typing import Optional
 from uuid import uuid4
 from datetime import datetime
 from pydantic.types import Json
+from enum import Enum
 
 from model.types.common import OptionalBaseUUID, OptionalBaseId
+
+
+class CryIntensity(str, Enum):
+    low = 'low'
+    medium = 'medium'
+    high = 'high'
+
+
+class CryType(str, Enum):
+    sad = 'sad'
+    hug = 'hug'
+    diaper = 'diaper'
+    hungry = 'hungry'
+    sleepy = 'sleepy'
+    awake = 'awake'
+    uncomfortable = 'uncomfortable'
 
 
 class CryStateType_id(BaseModel):
@@ -20,7 +37,7 @@ class CryStateType_time(BaseModel):
 
 
 class CryStateType_type(BaseModel):
-    type: constr(min_length=1)
+    type: CryType = CryType.uncomfortable
 
 
 class CryStateType_audioId(BaseModel):
@@ -32,7 +49,7 @@ class CryStateType_predictMap(BaseModel):
 
 
 class CryStateType_intensity(BaseModel):
-    intensity: Optional[constr(min_length=1)] = 'medium'
+    intensity: Optional[CryIntensity] = CryIntensity.medium
 
 
 class CryStateType_duration(BaseModel):

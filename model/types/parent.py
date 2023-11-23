@@ -1,8 +1,14 @@
 from pydantic import BaseModel, EmailStr, constr
 from typing import Optional
 from uuid import uuid4
+from enum import Enum
 
 from model.types.common import OptionalBaseUUID
+
+
+class SignInMethod(str, Enum):
+    email = 'email'
+    google = 'google'
 
 
 class ParentType_uid(BaseModel):
@@ -18,7 +24,7 @@ class ParentType_nickname(BaseModel):
 
 
 class ParentType_signInMethod(BaseModel):
-    signInMethod: Optional[str] = 'email'
+    signInMethod: Optional[SignInMethod] = SignInMethod.email
 
 
 class ParentType_emailVerified(BaseModel):

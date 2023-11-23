@@ -2,8 +2,23 @@ from pydantic import BaseModel, constr
 from typing import Optional
 from uuid import uuid4
 from datetime import datetime
+from enum import Enum
 
 from model.types.common import OptionalBaseUUID
+
+
+class Gender(str, Enum):
+    male = 'male'
+    female = 'female',
+    unknown = 'unknown'
+
+
+class BloodType(str, Enum):
+    a = 'a'
+    b = 'b'
+    o = 'o'
+    ab = 'ab'
+    unknown = 'unknown'
 
 
 class BabyType_id(BaseModel):
@@ -19,7 +34,7 @@ class BabyType_name(BaseModel):
 
 
 class BabyType_gender(BaseModel):
-    gender: constr(min_length=1)
+    gender: Gender = Gender.unknown
 
 
 class BabyType_birthDate(BaseModel):
@@ -27,7 +42,7 @@ class BabyType_birthDate(BaseModel):
 
 
 class BabyType_bloodType(BaseModel):
-    bloodType: constr(min_length=1)
+    bloodType: BloodType = BloodType.unknown
 
 
 class BabyType(BabyType_id,

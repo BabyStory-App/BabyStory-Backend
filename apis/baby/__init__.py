@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from starlette.status import HTTP_400_BAD_REQUEST
 from datetime import datetime
 from constants.path import BABY_CRY_DATASET_DIR
-from typing import Union, Optional
+from typing import Union, Optional, List
 import os
 
 from model.baby import Baby
@@ -27,9 +27,6 @@ babyService = BabyService()
 def create_baby(
         baby_input: BabyCreateInput,
         uid: str = Depends(JWTBearer())):
-    if uid is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="uid is required")
 
     baby = babyService.create_baby(uid, baby_input)
     if type(baby) == str:
@@ -43,13 +40,10 @@ def create_baby(
 def get_baby(
         uid: str = Depends(JWTBearer()),
         baby_id: Union[str, None] = Header(default=None)):
-    if uid is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="uid is required")
+
     if baby_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="baby_id is required")
-
     baby = babyService.get_baby(uid, baby_id)
     if type(baby) == str:
         raise HTTPException(
@@ -58,24 +52,36 @@ def get_baby(
     return baby
 
 
-# @router.put("/", response_model=BabyType)
-# def update_baby(baby_input: BabyUpdateInput, uid: Union[str, None] = Header(default=None)):
-#     if uid is None:
-#         raise HTTPException(
-#             status_code=HTTP_400_BAD_REQUEST, detail="uid is required")
+@router.put("/", response_model=BabyType, dependencies=[Depends(JWTBearer())])
+def update_baby(
+        baby_input: BabyUpdateInput,
+        uid: str = Depends(JWTBearer())):
 
-#     baby = babyService.update_baby(uid, baby_input)
-#     if type(baby) == str:
-#         raise HTTPException(
-#             status_code=HTTP_400_BAD_REQUEST, detail=baby)
+    baby = babyService.update_baby(uid, baby_input)
+    if type(baby) == str:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail=baby)
 
-#     return baby
+    return baby
 
 
-# @router.delete("/")
-# def delete_baby(uid: Union[str, None] = Header(default=None)) -> bool:
-#     if uid is None:
-#         raise HTTPException(
-#             status_code=HTTP_400_BAD_REQUEST, detail="uid is required")
+@router.delete("/", dependencies=[Depends(JWTBearer())])
+def delete_baby(
+        uid: str = Depends(JWTBearer()),
+        baby_id: Union[str, None] = Header(default=None)):
+    if baby_id is None:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="baby_id is required")
+    return babyService.delete_baby(uid, baby_id)
 
-#     return babyService.delete_baby(uid)
+
+@router.get("/all", response_model=List[BabyType], dependencies=[Depends(JWTBearer())])
+def get_babies(
+        uid: str = Depends(JWTBearer())):
+
+    babies = babyService.get_babies(uid)
+    if type(babies) == str:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail=babies)
+
+    return babies

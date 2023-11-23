@@ -45,12 +45,17 @@ class BabyType_bloodType(BaseModel):
     bloodType: BloodType = BloodType.unknown
 
 
+class BabyType_photoId(BaseModel):
+    photoId: Optional[str] = None
+
+
 class BabyType(BabyType_id,
                BabyType_parentId,
                BabyType_name,
                BabyType_gender,
                BabyType_birthDate,
-               BabyType_bloodType):
+               BabyType_bloodType,
+               BabyType_photoId):
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))

@@ -28,6 +28,7 @@ class ParentService:
             return ParentType(**parent.__dict__)
         except Exception as e:
             db.rollback()
+            print(e)
             return "Failed to create parent"
 
     def get_parent(self, uid: str) -> Optional[ParentType]:

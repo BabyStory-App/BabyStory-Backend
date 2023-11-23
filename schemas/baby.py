@@ -3,10 +3,12 @@ from utils.typing import PartialType
 
 
 class BabySetable(
+    BabyType_id,
     BabyType_name,
     BabyType_gender,
     BabyType_birthDate,
     BabyType_bloodType,
+    BabyType_photoId
 ):
     pass
 
@@ -16,6 +18,7 @@ class BabyCreateInput(
     BabyType_gender,
     BabyType_birthDate,
     BabyType_bloodType,
+    BabyType_photoId
 ):
     pass
 

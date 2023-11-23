@@ -16,6 +16,7 @@ class Baby(DB_Base):
     gender = Column(String(50), nullable=False)
     birthDate = Column(DateTime, nullable=False)
     bloodType = Column(String(50), nullable=False)
+    photoId = Column(String(255), nullable=True)
 
     # Relationships
     state_records = relationship(
@@ -29,6 +30,7 @@ class Baby(DB_Base):
 #     gender VARCHAR(50) NOT NULL,
 #     birthDate DATETIME NOT NULL,
 #     bloodType VARCHAR(50) NOT NULL,
+#     photoId VARCHAR(255),
 #     PRIMARY KEY (id),
 #     INDEX (name),
 #     FOREIGN KEY (parentId) REFERENCES parent(uid) ON DELETE SET NULL

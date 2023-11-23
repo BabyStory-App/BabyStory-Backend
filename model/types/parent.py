@@ -41,6 +41,10 @@ class ParentType(ParentType_uid,
                  ParentType_emailVerified,
                  ParentType_photoId,
                  ParentType_description):
+
+    def __hash__(self):
+        return hash((type(self),) + tuple(self.__dict__.values()))
+
     class Config:
         orm_mode = True
 

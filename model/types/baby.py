@@ -36,5 +36,9 @@ class BabyType(BabyType_id,
                BabyType_gender,
                BabyType_birthDate,
                BabyType_bloodType):
+
+    def __hash__(self):
+        return hash((type(self),) + tuple(self.__dict__.values()))
+
     class Config:
         orm_mode = True

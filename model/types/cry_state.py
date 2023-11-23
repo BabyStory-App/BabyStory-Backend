@@ -47,5 +47,9 @@ class CryStateModel(CryStateType_id,
                     CryStateType_predictMap,
                     CryStateType_intensity,
                     CryStateType_duration):
+
+    def __hash__(self):
+        return hash((type(self),) + tuple(self.__dict__.values()))
+
     class Config:
         orm_mode = True

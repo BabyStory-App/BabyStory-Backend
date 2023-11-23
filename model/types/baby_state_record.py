@@ -51,5 +51,9 @@ class BabyStateRecordType(BabyStateRecordType_id,
                           BabyStateRecordType_height,
                           BabyStateRecordType_headCircumference,
                           BabyStateRecordType_photoId):
+
+    def __hash__(self):
+        return hash((type(self),) + tuple(self.__dict__.values()))
+
     class Config:
         orm_mode = True

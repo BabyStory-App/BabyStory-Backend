@@ -11,7 +11,7 @@ class BabyType_id(BaseModel):
 
 
 class BabyType_parentId(BaseModel):
-    parentId: OptionalBaseUUID = uuid4()
+    parentId: constr(min_length=1)
 
 
 class BabyType_name(BaseModel):

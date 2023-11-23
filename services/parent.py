@@ -1,9 +1,9 @@
 from typing import Optional, Union
 
 from model.parent import Parent
+from model.types.parent import ParentType
 from schemas.parent import ParentCreateInput, ParentUpdateInput
 from db import get_db_session
-from schemas.parent import ParentType
 
 
 class ParentService:
@@ -32,11 +32,15 @@ class ParentService:
 
     def get_parent(self, uid: str) -> Optional[ParentType]:
         db = get_db_session()
+        print(f'uid: {uid}')
         try:
             # Get Parent from DB with primary key ui
             parent = db.query(self.model).filter(self.model.uid == uid).first()
+            print(parent)
+            print(uid)
             return ParentType(**parent.__dict__)
         except Exception as e:
+            print(e)
             return None
 
     def update_parent(self, uid: str, parent_input: ParentUpdateInput) -> Union[ParentType, str]:

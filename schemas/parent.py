@@ -1,13 +1,5 @@
 from model.types.parent import *
-from utils.typing import AllOptional
-
-
-class ParentCreateInput(
-    ParentType_uid,
-    ParentType_email,
-    ParentType_nickname,
-):
-    pass
+from utils.typing import PartialType
 
 
 class ParentSetable (
@@ -19,5 +11,13 @@ class ParentSetable (
     pass
 
 
-class ParentUpdateInput(ParentSetable, metaclass=AllOptional):
+class ParentCreateInput(
+    ParentType_uid,
+    ParentType_email,
+    ParentType_nickname,
+):
+    pass
+
+
+class ParentUpdateInput(ParentSetable, metaclass=PartialType):
     pass

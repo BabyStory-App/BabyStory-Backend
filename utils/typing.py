@@ -1,8 +1,11 @@
+from typing import Any, Dict, Tuple, Type
+from pydantic.main import ModelMetaclass
+from pydantic import BaseModel
 from pydantic.main import ModelMetaclass, BaseModel
 from typing import Any, Dict, Optional, Tuple
 
 
-class AllOptional(ModelMetaclass):
+class PartialType(ModelMetaclass):
     def __new__(self, name: str, bases: Tuple[type], namespaces: Dict[str, Any], **kwargs):
         annotations: dict = namespaces.get('__annotations__', {})
 
@@ -22,8 +25,7 @@ class AllOptional(ModelMetaclass):
         return super().__new__(self, name, bases, namespaces, **kwargs)
 
 
-# use exsample
 """
-class TodoUpate(TodoSetable, metaclass=AllOptional):
+class TodoUpate(TodoSetable, metaclass=PartialType):
     pass
 """

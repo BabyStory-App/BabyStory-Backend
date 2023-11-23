@@ -9,8 +9,8 @@ from services.cry_predict import cry_predict
 
 
 router = APIRouter(
-    prefix="/baby",
-    tags=["baby"],
+    prefix="/cry",
+    tags=["cry"],
     responses={404: {"description": "Not found"}},
 )
 

@@ -11,7 +11,6 @@ from model.baby import Baby
 from schemas.baby import BabyCreateInput, BabyUpdateInput
 from model.types.baby import BabyType
 from services.baby import BabyService
-from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
 
 

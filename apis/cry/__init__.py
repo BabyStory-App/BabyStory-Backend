@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException, UploadFile, Header
+from fastapi import APIRouter, HTTPException, UploadFile, Header, Depends
 from fastapi.responses import JSONResponse, FileResponse
 from starlette.status import HTTP_400_BAD_REQUEST
 from datetime import datetime
 from constants.path import BABY_CRY_DATASET_DIR
+from typing import Union, Optional, List
 import os
 
-from services.cry_predict import cry_predict
+from auth.auth_bearer import JWTBearer
+from services.cry import CryService
 
 
 router = APIRouter(
@@ -13,11 +15,14 @@ router = APIRouter(
     tags=["cry"],
     responses={404: {"description": "Not found"}},
 )
+cryService = CryService()
 
 
-# http://localhost:8000/baby/predict
-@router.post("/predict")
-async def upload_file(file: UploadFile = None, uid: str = Header(None)):
+@router.post("/predict", dependencies=[Depends(JWTBearer())])
+async def upload_file(
+        file: UploadFile = None,
+        uid: str = Depends(JWTBearer()),
+        baby_id: Union[str, None] = Header(default=None)):
     # return JSONResponse(content={
     #     "time": "2023-11-15 14:07:48",
     #     "filename": "sample_file.wav",
@@ -34,11 +39,9 @@ async def upload_file(file: UploadFile = None, uid: str = Header(None)):
     #     'audioURL': "20231115-140748",
     # })
 
-    # print(f'uid: {uid}')
-    # if uid == None:
-    #     raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-    #                         detail="uid not provided")
-    uid = "test_user_id"
+    if baby_id == None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="baby id not provided")
 
     if file == None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
@@ -48,36 +51,15 @@ async def upload_file(file: UploadFile = None, uid: str = Header(None)):
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="Only .wav files are accepted")
 
-    print(f"Get file: {file.filename}")
-    content = await file.read()
+    predict_result = await cryService.predict(file, uid)
 
-    curtime = datetime.now()
-    timestamp = curtime.strftime("%Y%m%d-%H%M%S")
-    save_filename = f"{uid}_{timestamp}.wav"
-    file_path = os.path.join(BABY_CRY_DATASET_DIR, save_filename)
-    with open(file_path, 'wb') as f:
-        f.write(content)
-
-    # get predictMap
-    print(f'response state:')
-    predictMap = await cry_predict(content)
-    for key in predictMap:
-        print(f'{key}: {predictMap[key]}')
-
-    return JSONResponse(content={
-        "time": curtime.strftime("%Y-%m-%d %H:%M:%S"),
-        "filename": file.filename,
-        'predictMap': predictMap,
-        "intensity": 'medium',
-        'audioURL': timestamp,
-    })
+    return JSONResponse(content={"babyId": baby_id, **predict_result})
 
 
-@router.get("/wav")
-async def get_file(uid: str = Header(None), audioId: str = Header(None)):
-    if uid is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-                            detail="uid not provided")
+@router.get("/wav", dependencies=[Depends(JWTBearer())])
+async def get_file(
+        uid: str = Depends(JWTBearer()),
+        audioId: str = Header(None)):
 
     if audioId is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
@@ -91,3 +73,24 @@ async def get_file(uid: str = Header(None), audioId: str = Header(None)):
 
     # Return the file
     return FileResponse(file_path)
+
+
+@router.get("/inspect", dependencies=[Depends(JWTBearer())])
+async def inspect(
+        year: Optional[int] = None,
+        month: Optional[int] = None,
+        baby_id: str = Header(None),
+        uid: str = Depends(JWTBearer())):
+
+    if baby_id is None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="baby id not provided")
+
+    if year is None:
+        year = datetime.now().year
+    if month is None:
+        month = datetime.now().month
+
+    inspect_result = await cryService.inspect(baby_id, year, month)
+
+    return JSONResponse(content={"babyId": baby_id, "month": month})

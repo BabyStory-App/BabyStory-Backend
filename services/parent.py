@@ -33,12 +33,8 @@ class ParentService:
 
     def get_parent(self, uid: str) -> Optional[ParentType]:
         db = get_db_session()
-        print(f'uid: {uid}')
         try:
-            # Get Parent from DB with primary key ui
             parent = db.query(self.model).filter(self.model.uid == uid).first()
-            print(parent)
-            print(uid)
             return ParentType(**parent.__dict__)
         except Exception as e:
             print(e)

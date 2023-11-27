@@ -1,14 +1,16 @@
 from fastapi import UploadFile
 from typing import List, Optional, Union
 from datetime import datetime
-from sqlalchemy import func
+from sqlalchemy import func, text
 import os
+import pandas as pd
+import numpy as np
+from sqlalchemy.dialects import mysql
 
 from model.cry_state import CryState
 from constants.path import BABY_CRY_DATASET_DIR
 from model.parent import Parent
-from model.types.baby import BabyType
-from schemas.baby import BabyCreateInput, BabyUpdateInput
+from model.types.cry_state import CryStateType
 from db import get_db_session
 from services.cry_predict import cry_predict
 
@@ -41,17 +43,20 @@ class CryService:
             'audioURL': timestamp,
         }
 
-    async def inspect(self, baby_id: str, year: int, month: int):
+    async def inspect(self, baby_id: str, start_date: datetime, end_date: datetime):
         db = get_db_session()
         try:
-            # get cry_list of baby_id that has been predicted in month
-            cry_list = db.query(self.model).filter(
+            # get data with sql query and filter and transform to pandas dataframe
+            query = db.query(self.model).filter(
                 self.model.babyId == baby_id,
-                func.extract('year', CryState.time) == year,
-                func.extract('month', CryState.time) == month,
-            ).all()
-            print(cry_list)
-            print(type(cry_list[0]))
+                self.model.time >= start_date,
+                self.model.time <= end_date
+            )
+            sql_query = query.statement.compile(
+                dialect=mysql.dialect(), compile_kwargs={"literal_binds": True})
+
+            df = pd.read_sql(sql_query, db.connection())
+            print(df)
 
         except Exception as e:
             print(e)

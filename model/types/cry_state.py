@@ -45,7 +45,7 @@ class CryStateType_audioId(BaseModel):
 
 
 class CryStateType_predictMap(BaseModel):
-    predictMap: Json
+    predictMap: dict[str, float]
 
 
 class CryStateType_intensity(BaseModel):
@@ -56,17 +56,22 @@ class CryStateType_duration(BaseModel):
     duration: Optional[float] = 2.0
 
 
-class CryStateModel(CryStateType_id,
-                    CryStateType_babyId,
-                    CryStateType_time,
-                    CryStateType_type,
-                    CryStateType_audioId,
-                    CryStateType_predictMap,
-                    CryStateType_intensity,
-                    CryStateType_duration):
+class CryStateType(CryStateType_id,
+                   CryStateType_babyId,
+                   CryStateType_time,
+                   CryStateType_type,
+                   CryStateType_audioId,
+                   CryStateType_predictMap,
+                   CryStateType_intensity,
+                   CryStateType_duration):
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
+
+    def __init__(self, **kwargs):
+        if '_sa_instance_state' in kwargs:
+            kwargs.pop('_sa_instance_state')
+        super().__init__(**kwargs)

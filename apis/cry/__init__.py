@@ -77,8 +77,6 @@ async def get_file(
 
 @router.get("/inspect", dependencies=[Depends(JWTBearer())])
 async def inspect(
-        year: Optional[int] = None,
-        month: Optional[int] = None,
         baby_id: str = Header(None),
         uid: str = Depends(JWTBearer())):
 
@@ -86,11 +84,9 @@ async def inspect(
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="baby id not provided")
 
-    if year is None:
-        year = datetime.now().year
-    if month is None:
-        month = datetime.now().month
+    end_date = datetime.now()
+    start_date = end_date.replace(month=end_date.month-1)
 
-    inspect_result = await cryService.inspect(baby_id, year, month)
+    inspect_result = await cryService.inspect(baby_id, start_date, end_date)
 
-    return JSONResponse(content={"babyId": baby_id, "month": month})
+    return JSONResponse(content={"babyId": baby_id})

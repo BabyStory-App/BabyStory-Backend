@@ -20,6 +20,24 @@ class CryService:
     def __init__(self):
         self.model = CryState
 
+    async def get_crys(self, baby_id: str, start_date: datetime, end_date: datetime) -> List[CryStateType]:
+        db = get_db_session()
+        try:
+            crys = db.query(self.model).filter(
+                self.model.babyId == baby_id,
+                self.model.time >= start_date,
+                self.model.time <= end_date
+            ).all()
+            if crys == None:
+                return []
+            
+            return [CryStateType(**cry.__dict__) for cry in crys]
+
+        except Exception as e:
+            print(e)
+            return []
+
+
     async def predict(self, file: UploadFile, uid: str) -> dict:
         content = await file.read()
 

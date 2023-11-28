@@ -8,6 +8,8 @@ import os
 
 from auth.auth_bearer import JWTBearer
 from services.cry import CryService
+from utils import process_str_date
+from model.types.cry_state import CryStateType
 
 
 router = APIRouter(
@@ -17,6 +19,25 @@ router = APIRouter(
 )
 cryService = CryService()
 
+@router.get("/",response_model=List[CryStateType], dependencies=[Depends(JWTBearer())])
+async def get_crys(
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        baby_id: str = Header(None),
+        uid: str = Depends(JWTBearer())):
+
+    if baby_id is None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="baby id not provided")
+    
+    date_obj = process_str_date(start, end)
+    if type(date_obj) == str:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail=date_obj)
+    
+    crys = await cryService.get_crys(baby_id, date_obj[0], date_obj[1])
+
+    return crys
 
 @router.post("/predict", dependencies=[Depends(JWTBearer())])
 async def upload_file(

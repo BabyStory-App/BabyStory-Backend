@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import numpy as np
 from sqlalchemy.dialects import mysql
+import json
 
 from model.cry_state import CryState
 from constants.path import *
@@ -100,6 +101,14 @@ class CryService:
 
     async def inspect(self, baby_id: str, start_date: datetime, end_date: datetime) -> Optional[dict]:
         db = get_db_session()
+        file_name = f"{baby_id}_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}"
+        file_path = os.path.join(CRY_INSPECT_LOG_DIR,f'{file_name}.json')
+        
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                res = json.loads(f.read())
+            return res
+
         try:
             query = db.query(self.model).filter(
                 self.model.babyId == baby_id,
@@ -112,10 +121,8 @@ class CryService:
             df = pd.read_sql(sql_query, db.connection())
             res = await self._inspect(df)
 
-            file_name = f"{baby_id}_{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}"
-            save_log(os.path.join(CRY_INSPECT_LOG_DIR,
-                     f'{file_name}.json'), res)
             res['logId'] = file_name
+            save_log(file_path, res)
             return res
 
         except Exception as e:

@@ -89,4 +89,4 @@ async def inspect(
 
     inspect_result = await cryService.inspect(baby_id, start_date, end_date)
 
-    return JSONResponse(content={"babyId": baby_id})
+    return JSONResponse(content=inspect_result)

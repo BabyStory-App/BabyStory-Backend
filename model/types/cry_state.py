@@ -4,6 +4,7 @@ from uuid import uuid4
 from datetime import datetime
 from pydantic.types import Json
 from enum import Enum
+import json
 
 from model.types.common import OptionalBaseUUID, OptionalBaseId
 
@@ -70,8 +71,17 @@ class CryStateType(CryStateType_id,
 
     class Config:
         orm_mode = True
+        use_enum_values = True
 
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
+
+        if 'predictMap' in kwargs and type(kwargs['predictMap']) == str:
+            dic = json.loads(kwargs['predictMap'])
+            for key in dic:
+                dic[key] = round(float(dic[key]), 3)
+            kwargs['predictMap'] = dic
+        
+        
         super().__init__(**kwargs)

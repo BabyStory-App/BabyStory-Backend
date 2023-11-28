@@ -57,6 +57,7 @@ class BabyStateRecordType(BabyStateRecordType_id,
 
     class Config:
         orm_mode = True
+        use_enum_values = True
 
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:

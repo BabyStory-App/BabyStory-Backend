@@ -39,29 +39,37 @@ class CryService:
             return []
 
 
-    async def predict(self, file: UploadFile, uid: str) -> dict:
+    async def predict(self, file: UploadFile, uid: str, baby_id: str) -> Optional[CryStateType]:
         content = await file.read()
 
         curtime = datetime.now()
         timestamp = curtime.strftime("%Y%m%d-%H%M%S")
-        save_filename = f"{uid}_{timestamp}.wav"
-        file_path = os.path.join(BABY_CRY_DATASET_DIR, save_filename)
+        file_id = f'{baby_id}_{timestamp}'
+        file_path = os.path.join(BABY_CRY_DATASET_DIR, f"{file_id}.wav")
         with open(file_path, 'wb') as f:
             f.write(content)
 
         # get predictMap
-        print(f'response state:')
         predictMap = await cry_predict(content)
-        for key in predictMap:
-            print(f'{key}: {predictMap[key]}')
 
-        return {
-            "time": curtime.strftime("%Y-%m-%d %H:%M:%S"),
-            "filename": file.filename,
-            'predictMap': predictMap,
-            "intensity": 'medium',
-            'audioURL': timestamp,
-        }
+        # save to db
+        db = get_db_session()
+        try:
+            cry = self.model(
+                babyId=baby_id,
+                time=curtime,
+                type=list(predictMap.keys())[0],
+                audioId=file_id,
+                predictMap=json.dumps(predictMap),
+            )
+            db.add(cry)
+            db.commit()
+            db.refresh(cry)
+            return CryStateType(**cry.__dict__)
+        except Exception as e:
+            db.rollback()
+            print(e)
+            return None
 
     async def _inspect(self, df: pd.DataFrame) -> dict:
         # 1. 주로 우는 시간대 분석
@@ -128,3 +136,21 @@ class CryService:
         except Exception as e:
             print(e)
             return None
+        
+    async def update_duration(self, audio_id: str, duration: float) -> Union[CryStateType, str]:
+        db = get_db_session()
+        try:
+            cry = db.query(self.model).filter(CryState.audioId == audio_id).first()
+            if cry == None:
+                return "Cry not found"
+            
+            cry.duration = cry.duration + duration
+
+            db.commit()
+            db.refresh(cry)
+            return CryStateType(**cry.__dict__)
+
+        except Exception as e:
+            db.rollback()
+            print(e)
+            return "Failed to update duration"

@@ -59,9 +59,10 @@ class BabyType(BabyType_id,
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
-
+    
     class Config:
         orm_mode = True
+        use_enum_values = True
 
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:

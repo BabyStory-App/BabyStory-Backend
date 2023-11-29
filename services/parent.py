@@ -35,6 +35,8 @@ class ParentService:
         db = get_db_session()
         try:
             parent = db.query(self.model).filter(self.model.uid == uid).first()
+            if parent == None:
+                return None
             return ParentType(**parent.__dict__)
         except Exception as e:
             print(e)

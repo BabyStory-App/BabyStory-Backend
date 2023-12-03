@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, UploadFile, Header, Depends
 from fastapi.responses import JSONResponse, FileResponse
 from starlette.status import HTTP_400_BAD_REQUEST
-from datetime import datetime
+from datetime import datetime, timedelta
 from constants.path import BABY_CRY_DATASET_DIR
 from typing import Union, Optional, List
 import os
@@ -93,7 +93,7 @@ async def inspect(
                             detail="baby id not provided")
 
     end_date = datetime.now()
-    start_date = end_date.replace(month=end_date.month-1)
+    start_date = end_date - timedelta(days=30)
 
     inspect_result = await cryService.inspect(baby_id, start_date, end_date)
 

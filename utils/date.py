@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Union, Set
 
 
@@ -8,7 +8,7 @@ def process_str_date(start: str = None, end: str = None) -> Union[str, Set[datet
 
     if start == None and end == None:
         end_date = datetime.now()
-        start_date = end_date.replace(day=end_date.day-7)
+        start_date = end_date - timedelta(days=7)
 
     if start != None and end == None:
         end_date = datetime.now()

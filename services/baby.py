@@ -1,35 +1,59 @@
 from typing import List, Optional, Union
+from fastapi import UploadFile
+import shutil
+import os
+from uuid import uuid4
 
 from model.baby import Baby
 from model.parent import Parent
 from model.types.baby import BabyType
 from schemas.baby import BabyCreateInput, BabyUpdateInput
 from db import get_db_session
+from constants.path import PROFILE_IMAGE_DIR
 
 
 class BabyService:
     def __init__(self):
         self.model = Baby
 
-    def create_baby(self, parent_id: str, baby_input: BabyCreateInput) -> Union[BabyType, str]:
+    def create_baby(self, parent_id: str, baby_input: BabyCreateInput, file: UploadFile) -> Union[BabyType, str]:
         db = get_db_session()
         try:
             # check if parent exists
             parent = db.query(Parent).filter(Parent.uid == parent_id).first()
             if parent == None:
                 return "Parent not found"
+            
 
-            baby = self.model(
-                parentId=parent_id,
-                name=baby_input.name,
-                gender=baby_input.gender,
-                birthDate=baby_input.birthDate,
-                bloodType=baby_input.bloodType,
-            )
+            # save profile image if exists
+            file_id = None
+            if file != None:
+                file_id = str(uuid4())
+                file_save_path = os.path.join(PROFILE_IMAGE_DIR, f"{file_id}.jpeg")
+                with open(file_save_path, "wb") as buffer:
+                    shutil.copyfileobj(file.file, buffer)
+
+            baby_data = {
+                'parentId': parent_id,
+                'name': baby_input.name,
+                'gender': baby_input.gender,
+                'birthDate': baby_input.birthDate,
+                'bloodType': baby_input.bloodType,
+            }
+            if file_id:
+                baby_data['photoId'] = file_id
+
+            baby = self.model(**baby_data)
             db.add(baby)
             db.commit()
             db.refresh(baby)
             return BabyType(**baby.__dict__)
+            # babyType = BabyType(**baby.__dict__)
+
+            # # rename file from file_save_path to babyType.id
+            # if file_id:
+            #     os.rename(file_save_path, os.path.join(PROFILE_IMAGE_DIR, f"{babyType.id}.jpeg"))
+            # return babyType
 
         except Exception as e:
             db.rollback()

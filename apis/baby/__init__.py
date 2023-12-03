@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, Header, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, Header, Depends, Form, File
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -13,6 +13,8 @@ from model.types.baby import BabyType
 from services.baby import BabyService
 from auth.auth_bearer import JWTBearer
 
+from pydantic import BaseModel
+
 
 router = APIRouter(
     prefix="/baby",
@@ -21,17 +23,25 @@ router = APIRouter(
 )
 babyService = BabyService()
 
-
-@router.post("/", response_model=BabyType, dependencies=[Depends(JWTBearer())])
+@router.post("/create", dependencies=[Depends(JWTBearer())])
 def create_baby(
-        baby_input: BabyCreateInput,
+        name: str = Form(...),
+        birthDate: str = Form(...),
+        gender: str = Form(...),
+        bloodType: str = Form(...),
+        file: UploadFile = File(...),
         uid: str = Depends(JWTBearer())):
-
-    baby = babyService.create_baby(uid, baby_input)
+    inputBaby = BabyCreateInput(
+        name=name,
+        birthDate=datetime.strptime(birthDate, "%Y-%m-%dT%H:%M:%S.%f"),
+        gender=gender,
+        bloodType=bloodType
+    )
+    baby = babyService.create_baby(uid, inputBaby, file)
+    print(baby)
     if type(baby) == str:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail=baby)
-
     return baby
 
 
@@ -77,10 +87,8 @@ def delete_baby(
 @router.get("/all", response_model=List[BabyType], dependencies=[Depends(JWTBearer())])
 def get_babies(
         uid: str = Depends(JWTBearer())):
-
     babies = babyService.get_babies(uid)
     if type(babies) == str:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail=babies)
-
     return babies

@@ -8,7 +8,6 @@ class BabySetable(
     BabyType_gender,
     BabyType_birthDate,
     BabyType_bloodType,
-    BabyType_photoId
 ):
     pass
 
@@ -18,7 +17,6 @@ class BabyCreateInput(
     BabyType_gender,
     BabyType_birthDate,
     BabyType_bloodType,
-    BabyType_photoId
 ):
     pass
 

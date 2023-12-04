@@ -67,17 +67,17 @@ async def upload_file(
 
 @router.get("/inspect", dependencies=[Depends(JWTBearer())])
 async def inspect(
-        baby_id: str = Header(None),
+        babyId: str = Header(None),
         uid: str = Depends(JWTBearer())):
 
-    if baby_id is None:
+    if babyId is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="baby id not provided")
 
     end_date = datetime.now()
     start_date = end_date - timedelta(days=30)
 
-    inspect_result = await cryService.inspect(baby_id, start_date, end_date)
+    inspect_result = await cryService.inspect(babyId, start_date, end_date)
 
     return JSONResponse(content=inspect_result)
 

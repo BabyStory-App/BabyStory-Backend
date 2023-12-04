@@ -7,6 +7,8 @@ from constants.path import *
 from typing import Union, Optional
 import os
 
+from auth.auth_bearer import JWTBearer
+
 router = APIRouter(
     prefix="/raws",
     tags=["raws"],
@@ -21,3 +23,21 @@ async def read_file(file_id: str):
         return FileResponse(file_path)
     else:
         return FileResponse(os.path.join(ASSET_DIR, 'default_profile_image.jpeg'))
+    
+
+@router.get("/cry/{audioId}")
+async def get_file(audioId: str):
+
+    if audioId is None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="audioId not provided")
+
+    # file_path = os.path.join(BABY_CRY_DATASET_DIR, f'{uid}_{audioId}.wav')
+    file_path = "/Users/jaewone/developer/fastapi/babystory_backend/dataset/baby_cry/test_user_id_20231115-143834.wav"
+
+    # Check if the file exists
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    # Return the file
+    return FileResponse(file_path)

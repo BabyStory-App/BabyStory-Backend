@@ -19,23 +19,24 @@ router = APIRouter(
 )
 cryService = CryService()
 
-@router.get("/",response_model=List[CryStateType], dependencies=[Depends(JWTBearer())])
+@router.get("/all",response_model=List[CryStateType], dependencies=[Depends(JWTBearer())])
 async def get_crys(
-        start: Optional[str] = None,
-        end: Optional[str] = None,
-        baby_id: str = Header(None),
+        start: Optional[str] = Header(None),
+        end: Optional[str] = Header(None),
+        babyId: Optional[str] = Header(None),
         uid: str = Depends(JWTBearer())):
-
-    if baby_id is None:
+    
+    if babyId is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="baby id not provided")
     
     date_obj = process_str_date(start, end)
     if type(date_obj) == str:
+        print(f'ERROR: {date_obj}')
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail=date_obj)
     
-    crys = await cryService.get_crys(baby_id, date_obj[0], date_obj[1])
+    crys = await cryService.get_crys(babyId, date_obj[0], date_obj[1])
 
     return crys
 
@@ -62,25 +63,6 @@ async def upload_file(
                             detail="Failed to predict")
 
     return predict_result
-
-
-@router.get("/wav", dependencies=[Depends(JWTBearer())])
-async def get_file(
-        uid: str = Depends(JWTBearer()),
-        audioId: str = Header(None)):
-
-    if audioId is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-                            detail="audioId not provided")
-
-    file_path = os.path.join(BABY_CRY_DATASET_DIR, f'{uid}_{audioId}.wav')
-
-    # Check if the file exists
-    if not os.path.isfile(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
-
-    # Return the file
-    return FileResponse(file_path)
 
 
 @router.get("/inspect", dependencies=[Depends(JWTBearer())])

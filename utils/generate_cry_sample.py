@@ -62,6 +62,6 @@ if __name__ == '__main__':
     file_path = 'cry_state_sample_data.txt'
     start_date = datetime(2023, 9, 12)
     end_date = datetime(2023, 12, 4)
-    baby_id = "0204eb99-35de-4a30-b6fc-9590a176985c"
+    baby_id = "96d5726a-560b-43a8-a90c-4715bf1b2d08"
     save_cry_state_sample_data_to_file(
         start_date, end_date, baby_id, file_path)

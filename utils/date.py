@@ -18,13 +18,13 @@ def process_str_date(start: str = None, end: str = None) -> Union[str, Set[datet
 
     if start_date == None:
         try:
-            start_date = datetime.strptime(start, '%Y-%m-%d')
+            start_date =  datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%f')
         except Exception as e:
-            return "date format is not correct"
+            return "start date format is not correct"
     if end_date == None:
         try:
-            end_date = datetime.strptime(end, '%Y-%m-%d')
+            end_date =  datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%f')
         except Exception as e:
-            return "date format is not correct"
+            return "end date format is not correct"
 
     return start_date, end_date

@@ -11,6 +11,7 @@ import json
 from model.cry_state import CryState
 from constants.path import *
 from model.parent import Parent
+from model.baby import Baby
 from model.types.cry_state import CryStateType
 from db import get_db_session
 from services.cry_predict import cry_predict
@@ -39,12 +40,12 @@ class CryService:
             return []
 
 
-    async def predict(self, file: UploadFile, uid: str, baby_id: str) -> Optional[CryStateType]:
+    async def predict(self, file: UploadFile, uid: str) -> Optional[CryStateType]:
         content = await file.read()
 
         curtime = datetime.now()
         timestamp = curtime.strftime("%Y%m%d-%H%M%S")
-        file_id = f'{baby_id}_{timestamp}'
+        file_id = f'{uid}_{timestamp}'
         file_path = os.path.join(BABY_CRY_DATASET_DIR, f"{file_id}.wav")
         with open(file_path, 'wb') as f:
             f.write(content)
@@ -54,6 +55,17 @@ class CryService:
 
         # save to db
         db = get_db_session()
+        baby_id = None
+        try:
+            baby = db.query(Baby).filter(Baby.parentId == uid).first()
+            if baby == None:
+                return "Failed to get babies"
+            baby_id = baby.id
+        except Exception as e:
+            return "Failed to get babies"
+        if baby_id == None:
+            return "Failed to get babies"
+        
         try:
             cry = self.model(
                 babyId=baby_id,
@@ -62,9 +74,9 @@ class CryService:
                 audioId=file_id,
                 predictMap=json.dumps(predictMap),
             )
-            db.add(cry)
-            db.commit()
-            db.refresh(cry)
+            # db.add(cry)
+            # db.commit()
+            # db.refresh(cry)
             return CryStateType(**cry.__dict__)
         except Exception as e:
             db.rollback()

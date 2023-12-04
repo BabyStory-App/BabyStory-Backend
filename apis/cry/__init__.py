@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, Header, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, Header, Depends, Form
 from fastapi.responses import JSONResponse, FileResponse
 from starlette.status import HTTP_400_BAD_REQUEST
 from datetime import datetime, timedelta
@@ -42,10 +42,12 @@ async def get_crys(
 
 @router.post("/predict", dependencies=[Depends(JWTBearer())])
 async def upload_file(
-        file: UploadFile = None,
+        file: Optional[UploadFile] = None,
         uid: str = Depends(JWTBearer()),
-        baby_id: Union[str, None] = Header(default=None)):
-    if baby_id == None:
+        # babyId: Optional[str] = Form(...)
+        ):
+
+    if uid == None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="baby id not provided")
 
@@ -57,7 +59,7 @@ async def upload_file(
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="Only .wav files are accepted")
 
-    predict_result = await cryService.predict(file, uid, baby_id)
+    predict_result = await cryService.predict(file, uid)
     if predict_result == None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="Failed to predict")

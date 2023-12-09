@@ -32,13 +32,12 @@ class CryService:
             ).all()
             if crys == None:
                 return []
-            
+
             return [CryStateType(**cry.__dict__) for cry in crys]
 
         except Exception as e:
             print(e)
             return []
-
 
     async def predict(self, file: UploadFile, uid: str) -> Optional[CryStateType]:
         content = await file.read()
@@ -65,7 +64,7 @@ class CryService:
             return "Failed to get babies"
         if baby_id == None:
             return "Failed to get babies"
-        
+
         try:
             cry = self.model(
                 babyId=baby_id,
@@ -122,8 +121,8 @@ class CryService:
     async def inspect(self, baby_id: str, start_date: datetime, end_date: datetime) -> Optional[dict]:
         db = get_db_session()
         file_name = f"{baby_id}_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}"
-        file_path = os.path.join(CRY_INSPECT_LOG_DIR,f'{file_name}.json')
-        
+        file_path = os.path.join(CRY_INSPECT_LOG_DIR, f'{file_name}.json')
+
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
                 res = json.loads(f.read())
@@ -148,14 +147,15 @@ class CryService:
         except Exception as e:
             print(e)
             return None
-        
+
     async def update_duration(self, audio_id: str, duration: float) -> Union[CryStateType, str]:
         db = get_db_session()
         try:
-            cry = db.query(self.model).filter(CryState.audioId == audio_id).first()
+            cry = db.query(self.model).filter(
+                CryState.audioId == audio_id).first()
             if cry == None:
                 return "Cry not found"
-            
+
             cry.duration = cry.duration + duration
 
             db.commit()

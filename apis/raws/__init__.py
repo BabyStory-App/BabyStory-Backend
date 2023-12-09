@@ -15,15 +15,15 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.get("/profile/{file_id}")
 async def read_file(file_id: str):
     file_path = os.path.join(PROFILE_IMAGE_DIR, f'{file_id}.jpeg')
-    print('searching file: ', file_path)
     if os.path.isfile(file_path):
         return FileResponse(file_path)
     else:
         return FileResponse(os.path.join(ASSET_DIR, 'default_profile_image.jpeg'))
-    
+
 
 @router.get("/cry/{audioId}")
 async def get_file(audioId: str):

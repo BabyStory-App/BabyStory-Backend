@@ -23,13 +23,13 @@ class BabyService:
             parent = db.query(Parent).filter(Parent.uid == parent_id).first()
             if parent == None:
                 return "Parent not found"
-            
 
             # save profile image if exists
             file_id = None
             if file != None:
                 file_id = str(uuid4())
-                file_save_path = os.path.join(PROFILE_IMAGE_DIR, f"{file_id}.jpeg")
+                file_save_path = os.path.join(
+                    PROFILE_IMAGE_DIR, f"{file_id}.jpeg")
                 with open(file_save_path, "wb") as buffer:
                     shutil.copyfileobj(file.file, buffer)
 
@@ -134,9 +134,6 @@ class BabyService:
             parent = db.query(Parent).filter(Parent.uid == parent_id).first()
             if parent == None:
                 return "Parent not found"
-
-            print(f'parent_id: {parent_id}')
-            print(f'baby_id: {baby_id}')
 
             # check if baby exists
             baby = db.query(self.model).filter(

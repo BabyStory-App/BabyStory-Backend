@@ -23,6 +23,7 @@ router = APIRouter(
 )
 babyService = BabyService()
 
+
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 def create_baby(
         name: str = Form(...),
@@ -38,7 +39,6 @@ def create_baby(
         bloodType=bloodType
     )
     baby = babyService.create_baby(uid, inputBaby, file)
-    print(baby)
     if type(baby) == str:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail=baby)

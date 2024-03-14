@@ -1,7 +1,7 @@
 from typing import Any, Dict, Tuple, Type
-from pydantic.main import ModelMetaclass
 from pydantic import BaseModel
-from pydantic.main import ModelMetaclass, BaseModel
+from pydantic.main import BaseModel
+from pydantic._internal._model_construction import ModelMetaclass
 from typing import Any, Dict, Optional, Tuple
 
 

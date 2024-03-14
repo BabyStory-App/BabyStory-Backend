@@ -60,8 +60,8 @@ def save_cry_state_sample_data_to_file(start_date, end_date, baby_id, file_path)
 # Example usage
 if __name__ == '__main__':
     file_path = 'cry_state_sample_data.txt'
-    start_date = datetime(2023, 9, 12)
-    end_date = datetime(2023, 12, 4)
-    baby_id = "96d5726a-560b-43a8-a90c-4715bf1b2d08"
+    start_date = datetime(2024, 2, 1)
+    end_date = datetime(2024, 3, 14)
+    baby_id = "321735c0-9151-4db0-88a2-735024d71f9a"
     save_cry_state_sample_data_to_file(
         start_date, end_date, baby_id, file_path)

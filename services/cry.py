@@ -127,7 +127,6 @@ class CryService:
             with open(file_path, 'r') as f:
                 res = json.loads(f.read())
             return res
-
         try:
             query = db.query(self.model).filter(
                 self.model.babyId == baby_id,
@@ -145,6 +144,7 @@ class CryService:
             return res
 
         except Exception as e:
+            print("ERROR")
             print(e)
             return None
 

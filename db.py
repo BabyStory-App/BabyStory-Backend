@@ -6,8 +6,8 @@ from core.env import env
 
 
 def create_db_sessionLocal():
+    # autopep8: off
     DB_URL = f'mysql+pymysql://{env.get("MYSQL_USER")}:{env.get("MYSQL_PASSWORD")}@{env.get("MYSQL_HOST")}:{env.get("MYSQL_PORT")}/{env.get("MYSQL_DATABASE")}'
-
     engine = create_engine(DB_URL, pool_size=20, max_overflow=20)
     return sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

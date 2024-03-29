@@ -8,9 +8,11 @@ from typing import Dict
 
 from constants.path import PROJECT_DIR
 
-os.environ['NUMBA_DISABLE_JIT'] = "1"
+# os.environ['NUMBA_DISABLE_JIT'] = "1"
 
-cry_classes = ['sad', 'hug', 'diaper', 'hungry', 'sleepy', 'awake', 'uncomfortable']
+cry_classes = ['sad', 'hug', 'diaper', 'hungry',
+               'sleepy', 'awake', 'uncomfortable']
+
 
 class CryPredictService:
     def __init__(self):

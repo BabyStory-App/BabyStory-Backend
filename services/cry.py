@@ -7,6 +7,8 @@ import pandas as pd
 import numpy as np
 from sqlalchemy.dialects import mysql
 import json
+import random
+import sys
 
 from model.cry_state import CryState
 from constants.path import *
@@ -73,10 +75,13 @@ class CryService:
                 audioId=file_id,
                 predictMap=json.dumps(predictMap),
             )
+            cry_dict = cry.__dict__
+            cry_dict['id'] = random.randint(1, sys.maxsize-1)
+
             # db.add(cry)
             # db.commit()
             # db.refresh(cry)
-            return CryStateType(**cry.__dict__)
+            return CryStateType(**cry_dict)
         except Exception as e:
             db.rollback()
             print(e)

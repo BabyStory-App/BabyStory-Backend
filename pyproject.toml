@@ -23,6 +23,7 @@ pymysql = "^1.1.0"
 python-multipart = "^0.0.9"
 email-validator = "^2.1.1"
 pyjwt = "^2.8.0"
+tensorflow-metal = "^1.1.0"
 
 
 [build-system]

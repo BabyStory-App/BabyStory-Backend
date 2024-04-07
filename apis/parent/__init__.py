@@ -42,6 +42,14 @@ def get_parent(uid: Union[str, None] = Header(default=None)):
     })
 
 
+@router.get("/friends")
+def get_friends(emails: Optional[str] = None):
+    # 이메일 리스트를 받아서 해당하는 친구들을 반환
+    # 친구의 정보를 가져오는 것이기에 민감한 정보들은 제외하고 가져온다.
+    email_list = emails.split(',') if emails is not None else []
+    pass
+
+
 @router.put("/", dependencies=[Depends(JWTBearer())])
 def update_parent():
     pass

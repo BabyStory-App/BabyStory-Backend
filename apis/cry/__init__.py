@@ -8,8 +8,6 @@ import os
 
 from auth.auth_bearer import JWTBearer
 from services.cry import CryService
-from utils import process_str_date
-from model.types.cry_state import CryStateType
 
 
 router = APIRouter(
@@ -20,26 +18,9 @@ router = APIRouter(
 cryService = CryService()
 
 
-@router.get("/all", response_model=List[CryStateType], dependencies=[Depends(JWTBearer())])
-async def get_crys(
-        start: Optional[str] = Header(None),
-        end: Optional[str] = Header(None),
-        babyId: Optional[str] = Header(None),
-        uid: str = Depends(JWTBearer())):
-
-    if babyId is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-                            detail="baby id not provided")
-
-    date_obj = process_str_date(start, end)
-    if type(date_obj) == str:
-        print(f'ERROR: {date_obj}')
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-                            detail=date_obj)
-
-    crys = await cryService.get_crys(babyId, date_obj[0], date_obj[1])
-
-    return crys
+@router.get("/all", dependencies=[Depends(JWTBearer())])
+async def get_crys():
+    pass
 
 
 @router.post("/predict", dependencies=[Depends(JWTBearer())])

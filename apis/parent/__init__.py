@@ -7,7 +7,6 @@ from constants.path import BABY_CRY_DATASET_DIR
 from typing import Union, Optional
 import os
 
-from schemas.parent import ParentCreateInput, ParentType, ParentUpdateInput
 from services.parent import ParentService
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
@@ -22,18 +21,11 @@ parentService = ParentService()
 
 
 @router.post("/")
-def create_parent(parent_input: ParentCreateInput):
-    parent = parentService.create_parent(parent_input)
-    if type(parent) == str:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=parent)
-    return JSONResponse(status_code=201, content={
-        'parent': jsonable_encoder(parent),
-        'x-jwt': signJWT(parent.uid)
-    })
+def create_parent():
+    pass
 
 
-@router.get("/", response_model=Optional[ParentType])
+@router.get("/")
 def get_parent(uid: Union[str, None] = Header(default=None)):
     if uid is None:
         raise HTTPException(
@@ -51,13 +43,8 @@ def get_parent(uid: Union[str, None] = Header(default=None)):
 
 
 @router.put("/", dependencies=[Depends(JWTBearer())])
-def update_parent(parent_input: ParentUpdateInput, uid: str = Depends(JWTBearer())):
-    parent = parentService.update_parent(uid, parent_input)
-    if type(parent) == str:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=parent)
-
-    return parent
+def update_parent():
+    pass
 
 
 @router.delete("/", dependencies=[Depends(JWTBearer())])

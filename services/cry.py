@@ -10,82 +10,86 @@ import json
 import random
 import sys
 
-from model.cry_state import CryState
 from constants.path import *
-from model.parent import Parent
-from model.baby import Baby
-from model.types.cry_state import CryStateType
 from db import get_db_session
 from services.cry_predict import cry_predict
 from utils import save_log
 
 
+class 임시모델:
+    pass
+
+
 class CryService:
     def __init__(self):
-        self.model = CryState
+        self.model = 임시모델
 
-    async def get_crys(self, baby_id: str, start_date: datetime, end_date: datetime) -> List[CryStateType]:
-        db = get_db_session()
-        try:
-            crys = db.query(self.model).filter(
-                self.model.babyId == baby_id,
-                self.model.time >= start_date,
-                self.model.time <= end_date
-            ).all()
-            if crys == None:
-                return []
+    async def get_crys(self, baby_id: str, start_date: datetime, end_date: datetime):
+        pass
+    # async def get_crys(self, baby_id: str, start_date: datetime, end_date: datetime) -> List[CryStateType]:
+    #     db = get_db_session()
+    #     try:
+    #         crys = db.query(self.model).filter(
+    #             self.model.babyId == baby_id,
+    #             self.model.time >= start_date,
+    #             self.model.time <= end_date
+    #         ).all()
+    #         if crys == None:
+    #             return []
 
-            return [CryStateType(**cry.__dict__) for cry in crys]
+    #         return [CryStateType(**cry.__dict__) for cry in crys]
 
-        except Exception as e:
-            print(e)
-            return []
+    #     except Exception as e:
+    #         print(e)
+    #         return []
 
-    async def predict(self, file: UploadFile, uid: str) -> Optional[CryStateType]:
-        content = await file.read()
+    async def predict(self, file: UploadFile, uid: str):
+        pass
+    # async def predict(self, file: UploadFile, uid: str) -> Optional[CryStateType]:
+    #     content = await file.read()
 
-        curtime = datetime.now()
-        timestamp = curtime.strftime("%Y%m%d-%H%M%S")
-        file_id = f'{uid}_{timestamp}'
-        file_path = os.path.join(BABY_CRY_DATASET_DIR, f"{file_id}.wav")
-        with open(file_path, 'wb') as f:
-            f.write(content)
+    #     curtime = datetime.now()
+    #     timestamp = curtime.strftime("%Y%m%d-%H%M%S")
+    #     file_id = f'{uid}_{timestamp}'
+    #     file_path = os.path.join(BABY_CRY_DATASET_DIR, f"{file_id}.wav")
+    #     with open(file_path, 'wb') as f:
+    #         f.write(content)
 
-        # get predictMap
-        predictMap = await cry_predict(content)
+    #     # get predictMap
+    #     predictMap = await cry_predict(content)
 
-        # save to db
-        db = get_db_session()
-        baby_id = None
-        try:
-            baby = db.query(Baby).filter(Baby.parentId == uid).first()
-            if baby == None:
-                return "Failed to get babies"
-            baby_id = baby.id
-        except Exception as e:
-            return "Failed to get babies"
-        if baby_id == None:
-            return "Failed to get babies"
+    #     # save to db
+    #     db = get_db_session()
+    #     baby_id = None
+    #     try:
+    #         baby = db.query(Baby).filter(Baby.parentId == uid).first()
+    #         if baby == None:
+    #             return "Failed to get babies"
+    #         baby_id = baby.id
+    #     except Exception as e:
+    #         return "Failed to get babies"
+    #     if baby_id == None:
+    #         return "Failed to get babies"
 
-        try:
-            cry = self.model(
-                babyId=baby_id,
-                time=curtime,
-                type=list(predictMap.keys())[0],
-                audioId=file_id,
-                predictMap=json.dumps(predictMap),
-            )
-            cry_dict = cry.__dict__
-            cry_dict['id'] = random.randint(1, sys.maxsize-1)
+    #     try:
+    #         cry = self.model(
+    #             babyId=baby_id,
+    #             time=curtime,
+    #             type=list(predictMap.keys())[0],
+    #             audioId=file_id,
+    #             predictMap=json.dumps(predictMap),
+    #         )
+    #         cry_dict = cry.__dict__
+    #         cry_dict['id'] = random.randint(1, sys.maxsize-1)
 
-            # db.add(cry)
-            # db.commit()
-            # db.refresh(cry)
-            return CryStateType(**cry_dict)
-        except Exception as e:
-            db.rollback()
-            print(e)
-            return None
+    #         # db.add(cry)
+    #         # db.commit()
+    #         # db.refresh(cry)
+    #         return CryStateType(**cry_dict)
+    #     except Exception as e:
+    #         db.rollback()
+    #         print(e)
+    #         return None
 
     async def just_predict(self, file: UploadFile):
         content = await file.read()
@@ -158,21 +162,23 @@ class CryService:
             print(e)
             return None
 
-    async def update_duration(self, audio_id: str, duration: float) -> Union[CryStateType, str]:
-        db = get_db_session()
-        try:
-            cry = db.query(self.model).filter(
-                CryState.audioId == audio_id).first()
-            if cry == None:
-                return "Cry not found"
+    async def update_duration(self, audio_id: str, duration: float):
+        pass
+    # async def update_duration(self, audio_id: str, duration: float) -> Union[CryStateType, str]:
+    #     db = get_db_session()
+    #     try:
+    #         cry = db.query(self.model).filter(
+    #             CryState.audioId == audio_id).first()
+    #         if cry == None:
+    #             return "Cry not found"
 
-            cry.duration = cry.duration + duration
+    #         cry.duration = cry.duration + duration
 
-            db.commit()
-            db.refresh(cry)
-            return CryStateType(**cry.__dict__)
+    #         db.commit()
+    #         db.refresh(cry)
+    #         return CryStateType(**cry.__dict__)
 
-        except Exception as e:
-            db.rollback()
-            print(e)
-            return "Failed to update duration"
+    #     except Exception as e:
+    #         db.rollback()
+    #         print(e)
+    #         return "Failed to update duration"

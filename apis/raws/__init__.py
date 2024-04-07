@@ -32,8 +32,7 @@ async def get_file(audioId: str):
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="audioId not provided")
 
-    # file_path = os.path.join(BABY_CRY_DATASET_DIR, f'{uid}_{audioId}.wav')
-    file_path = "/Users/jaewone/developer/fastapi/babystory_backend/dataset/baby_cry/test_user_id_20231115-143834.wav"
+    file_path = os.path.join(BABY_CRY_DATASET_DIR, f'{uid}_{audioId}.wav')
 
     # Check if the file exists
     if not os.path.isfile(file_path):

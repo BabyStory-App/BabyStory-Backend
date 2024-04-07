@@ -87,6 +87,11 @@ class CryService:
             print(e)
             return None
 
+    async def just_predict(self, file: UploadFile):
+        content = await file.read()
+        predictMap = await cry_predict(content)
+        return predictMap
+
     async def _inspect(self, df: pd.DataFrame) -> dict:
         # 1. 주로 우는 시간대 분석
         cry_freq_hour = df['time'].dt.hour.value_counts().sort_index()

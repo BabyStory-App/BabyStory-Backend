@@ -69,6 +69,30 @@ async def upload_file(
     return predict_result
 
 
+@router.post("/predict_test")
+async def upload_file(file: Optional[UploadFile] = None):
+    try:
+        if file == None:
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                                detail="File not provided")
+
+        if not file.filename.endswith(".wav"):
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                                detail="Only .wav files are accepted")
+
+        predict_result = await cryService.just_predict(file)
+
+        if predict_result == None:
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                                detail="Failed to predict")
+
+        return predict_result
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="Failed to predict")
+
+
 @router.get("/inspect", dependencies=[Depends(JWTBearer())])
 async def inspect(
         babyId: str = Header(None),

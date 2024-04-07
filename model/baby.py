@@ -2,6 +2,7 @@
 
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
+from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 from db import DB_Base
@@ -36,7 +37,7 @@ class Baby(BaseModel):
     gender: str
     birthDate: datetime
     bloodType: str
-    photoId: str
+    photoId: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))

@@ -7,6 +7,7 @@ from uuid import uuid4
 from db import get_db_session
 from constants.path import PROFILE_IMAGE_DIR
 from model.baby import *
+from model.pbconnect import *
 from schemas.baby import *
 
 
@@ -33,19 +34,19 @@ class BabyService:
         except Exception as e:
             db.rollback()
             raise e
-        
-
-    def get_baby(self):
-        pass
 
     def get_babies(self):
         pass
 
     # 아기 정보 수정
-    def update_baby(self, baby_id: str, update_baby_input: update_baby_input) -> Optional[BabyTable]:
+    def update_baby(self, parent_id: str, update_baby_input: update_baby_input) -> Optional[BabyTable]:
         db = get_db_session()
+        
         try:
-            baby = db.query(BabyTable).filter(BabyTable.baby_id == baby_id).first()
+            has = db.query(PBConnectTable).filter(PBConnectTable.parent_id == parent_id).filter(PBConnectTable.baby_id == update_baby_input.baby_id).first()
+            if has is None:
+                raise Exception("Invalid parent_id or baby_id")
+            baby = db.query(BabyTable).filter(BabyTable.baby_id == update_baby_input.baby_id).first()
             if baby is None:
                 return None
             setattr(baby, 'name', update_baby_input.name)

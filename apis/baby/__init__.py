@@ -39,24 +39,15 @@ process
 async def create_baby(create_baby_request: create_baby_input):
     baby = babyService.create_baby(create_baby_input)
 
-    return JSONResponse(status_code=200, content={
-        'baby': jsonable_encoder(baby),
-        'x-jwt': signJWT(baby.baby_id)
-    })
-
-
-@router.get("/", dependencies=[Depends(JWTBearer())])
-def get_baby():
-    pass
-
-
 # 아기 정보 수정
 @router.put("/", dependencies=[Depends(JWTBearer())])
 def update_baby(update_baby_input: update_baby_input,
-                baby_id:str = Depends(JWTBearer())) -> update_baby_output:
-    if update_baby_input.baby_id != baby_id:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid baby_id")
-    baby = babyService.update_baby(baby_id, update_baby_input)
+                parent_id:str = Depends(JWTBearer())) -> update_baby_output:
+    
+    if not parent_id:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
+
+    baby = babyService.update_baby(parent_id, update_baby_input)
     if baby is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid baby_id")
     return{
@@ -81,4 +72,4 @@ def delete_baby(delete_baby_input: delete_baby_input,
 
 @router.get("/all", dependencies=[Depends(JWTBearer())])
 def get_babies():
-    pass
+    

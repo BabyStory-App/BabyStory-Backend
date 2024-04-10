@@ -50,10 +50,5 @@ babystory 백엔드 레포지토리입니다.
 
 - utils: 유틸리티 함수(프로젝트에 종속되지 않는 함수)
 
-temp123
-temp123
-temp123
-temp123
-temp123
-temp123
-temp123
+mainmainmainmainmainmainmainmainmainmainmainmain
+mainmainmainmainmainmainmainmainmainmain

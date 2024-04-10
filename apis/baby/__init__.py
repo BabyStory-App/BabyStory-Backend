@@ -20,62 +20,52 @@ router = APIRouter(
 )
 babyService = BabyService()
 
-"""
-input: 
-    - JWT token -> parent_id
-    - baby: (name, gender, birthDate, bloodType, imageFile)
-output:
-    - sucess_code: int
-    - baby: Baby
-process
-    1. JWT -> 부모가 존재하는지 확인
-    2. baby 생성
-    3. 데이터베이스에 추가.
-    4. 아기 반환
-"""
 
 # 아기 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
-async def create_baby(create_baby_request: create_baby_input):
-    baby = babyService.create_baby(create_baby_input)
+async def create_baby(create_baby_request: create_baby_input,
+                      parent_id: str = Depends(JWTBearer())) -> create_baby_output:
+    if parent_id == None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="Invalid parent_id")
+
+    baby = babyService.create_baby(parent_id, create_baby_request)
 
     return JSONResponse(status_code=200, content={
-        'baby': jsonable_encoder(baby),
-        'x-jwt': signJWT(baby.baby_id)
+        'baby': baby
     })
-
-
-@router.get("/", dependencies=[Depends(JWTBearer())])
-def get_baby():
-    pass
 
 
 # 아기 정보 수정
 @router.put("/", dependencies=[Depends(JWTBearer())])
 def update_baby(update_baby_input: update_baby_input,
-                baby_id:str = Depends(JWTBearer())) -> update_baby_output:
+                parent_id: str = Depends(JWTBearer())) -> update_baby_output:
     if update_baby_input.baby_id != baby_id:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid baby_id")
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="Invalid baby_id")
     baby = babyService.update_baby(baby_id, update_baby_input)
     if baby is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid baby_id")
-    return{
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="Invalid baby_id")
+    return {
         "success": True if baby else False,
         "baby_id": baby
     }
 
 # 아기 삭제
+
+
 @router.delete("/", dependencies=[Depends(JWTBearer())])
 def delete_baby(delete_baby_input: delete_baby_input,
-                baby_id:str = Depends(JWTBearer())) -> delete_baby_output:
-    if delete_baby_input.baby_id != baby_id:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid baby_id")
-    baby = babyService.delete_baby(baby_id)
-    if baby is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid baby_id")
-    return{
-        "success": True if baby else False,
-        "baby_id": baby
+                parent_id: str = Depends(JWTBearer())) -> delete_baby_output:
+    if parent_id == None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="Invalid parent_id")
+
+    success = babyService.delete_baby(parent_id, delete_baby_input.baby_id)
+
+    return {
+        "success": 200 if success else 403,
     }
 
 

@@ -34,7 +34,6 @@ from model.baby import BabyTable
 # );
 
 
-
 class Parent(BaseModel):
     parent_id: str
     password: str
@@ -64,15 +63,15 @@ class ParentTable(DB_Base):
     parent_id = Column(String(255), primary_key=True, nullable=False)
     password = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False)
-    name = Column(String(50), nullable=True)
-    nickname = Column(String(255), nullable=False ,unique=True)
-    signInMethod = Column(String(50), nullable=True)
-    emailVerified = Column(String(255), nullable=True)
+    name = Column(String(50), nullable=False)
+    nickname = Column(String(255), nullable=False, unique=True)
+    signInMethod = Column(String(50), nullable=False)
+    emailVerified = Column(String(255), nullable=False, default=False)
     photoId = Column(String(255), nullable=True)
     description = Column(String(255), nullable=True)
 
     # Relationship to Baby
-    #babies = relationship(BabyTable, backref='parents', passive_deletes=True)
+    # babies = relationship(BabyTable, backref='parents', passive_deletes=True)
 
 # CREATE TABLE parent (
 #     uid VARCHAR(255) UNIQUE NOT NULL,

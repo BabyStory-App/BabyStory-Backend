@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from typing import List, Optional,Dict
+from typing import List, Optional, Dict
 from model.parent import Parent
+
 
 class CreateParentInput(BaseModel):
     parent_id: str
@@ -9,18 +10,19 @@ class CreateParentInput(BaseModel):
     name: str
     nickname: str
     signInMethod: str
-    emailVerified: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
+
 
 class CreateParentOutput(BaseModel):
-    parent : Parent
+    parent: Parent
 
 
 class GetParentByEmailOutput(BaseModel):
-    parent : Optional[Parent]
+    parent: Optional[Parent]
 
 
+# Optional 필요함.
 class UpdateParentInput(BaseModel):
     password: str
     email: str
@@ -30,9 +32,7 @@ class UpdateParentInput(BaseModel):
     emailVerified: str
     photoId: str
     description: str
-    
-class DeleteParentInput(BaseModel):
-    id:int
+
 
 class GetFriendsByEmailOuput(BaseModel):
     parents: Dict[str, Optional[Parent]]

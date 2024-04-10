@@ -1,6 +1,6 @@
 # 아기 테이블
 
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Text
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
@@ -39,9 +39,6 @@ class Baby(BaseModel):
     bloodType: str
     photoId: Optional[str]
 
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
-
     class Config:
         orm_mode = True
         use_enum_values = True
@@ -59,7 +56,7 @@ class BabyTable(DB_Base):
     gender = Column(String(50), nullable=False)
     birthDate = Column(DateTime, nullable=False)
     bloodType = Column(String(3), nullable=False)
-    photoId = Column(String(255), nullable=True)
+    photoId = Column(Text, nullable=True)
 
     # Relationships
     state_records = relationship(

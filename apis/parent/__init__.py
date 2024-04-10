@@ -10,6 +10,7 @@ import os
 from services.parent import ParentService
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
+from schema.parent import *
 
 
 router = APIRouter(
@@ -21,8 +22,21 @@ parentService = ParentService()
 
 
 @router.post("/")
-def create_parent():
-    pass
+def create_parent(parent_input: CreateParentInput):
+    if not parent_input.parent_id or not parent_input.password or not parent_input.email or not parent_input.nickname:
+                raise HTTPException(
+                    status_code=HTTP_400_BAD_REQUEST, detail="parent_id, password, email, and nickname are required fields.")
+
+    parent = parentService.createParent(parent_input)
+
+    if parent is None:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
+
+    return JSONResponse(status_code=201, content={
+        'parent': jsonable_encoder(parent),
+        'x-jwt': signJWT(parent.parent_id)
+    })
 
 
 @router.get("/")
@@ -31,30 +45,50 @@ def get_parent(uid: Union[str, None] = Header(default=None)):
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="uid is required")
 
-    parent = parentService.get_parent(uid)
+    parent = parentService.getParentByEmail(uid)
     if parent is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
 
     return JSONResponse(status_code=200, content={
         'parent': jsonable_encoder(parent),
-        'x-jwt': signJWT(parent.uid)
+        'x-jwt': signJWT(parent.parent_id)
     })
+
+
+@router.put("/", dependencies=[Depends(JWTBearer())])
+def update_parent(puid:str,parent_input: UpdateParentInput, uid: str=Depends(JWTBearer())) -> bool:
+    if puid!=uid:
+         raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="correct id require")
+    return parentService.updateParent(uid, parent_input)
+
+
+@router.delete("/", dependencies=[Depends(JWTBearer())])
+def delete_parent(puid: str,uid: str = Depends(JWTBearer())) -> bool:
+    if puid!=uid:
+         raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="correct id require")
+    return parentService.deleteParent(uid)
 
 
 @router.get("/friends")
 def get_friends(emails: Optional[str] = None):
-    # 이메일 리스트를 받아서 해당하는 친구들을 반환
-    # 친구의 정보를 가져오는 것이기에 민감한 정보들은 제외하고 가져온다.
+
     email_list = emails.split(',') if emails is not None else []
-    pass
+
+    friends_dict = parentService.getFriends(email_list)
+
+    return friends_dict
+    
+
+# @router.get("/all")
+# def get_parent():
+#     parent = parentService.getParentAll()
+    
+#     return parent
+    
 
 
-@router.put("/", dependencies=[Depends(JWTBearer())])
-def update_parent():
-    pass
 
-
-@router.delete("/", dependencies=[Depends(JWTBearer())])
-def delete_parent(uid: str = Depends(JWTBearer())) -> bool:
-    return parentService.delete_parent(uid)
+    

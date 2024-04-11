@@ -12,7 +12,6 @@ class create_baby_input(BaseModel):
     bloodType: str
     photoId: Optional[str]
 
-# dfsfdshgljs
 class create_baby_output(BaseModel):
     success: int
     baby: Optional[Baby]

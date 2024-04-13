@@ -77,9 +77,9 @@ class BabyService:
 
         except Exception as e:
             print(e)
-            # raise HTTPException(
-            #     status_code=400, detail="Failed to get baby")
-            raise (e)
+            raise HTTPException(
+                status_code=400, detail="Failed to get baby")
+            
 
     # 아기 정보 가져오기 (확인용 임시 코드)
     def getBabies(self):

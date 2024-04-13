@@ -1,13 +1,11 @@
-# 부모 테이블
-
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-import uuid
+from typing import Optional
 
-from model.baby import BabyTable
 
+# 부모 테이블
 # +---------------+--------------+------+-----+---------+-------+
 # | Field         | Type         | Null | Key | Default | Extra |
 # +---------------+--------------+------+-----+---------+-------+
@@ -21,17 +19,18 @@ from model.baby import BabyTable
 # | photoId       | varchar(255) | YES  |     | NULL    |       |
 # | description   | varchar(255) | YES  |     | NULL    |       |
 # +---------------+--------------+------+-----+---------+-------+
-# CREATE TABLE parent (
+# CREATE TABLE parent(
 #     parent_id VARCHAR(255) PRIMARY KEY NOT NULL,
-#     password VARCHAR(255),
-#     email VARCHAR(255) NOT NULL,
-#     name VARCHAR(50),
+#     password VARCHAR(255) NOT NULL,
+#     email VARCHAR(255) UNIQUE NOT NULL,
+#     name VARCHAR(50) NOT NULL,
 #     nickname VARCHAR(255) NOT NULL,
-#     signInMethod VARCHAR(50),
-#     emailVerified VARCHAR(255),
+#     signInMethod VARCHAR(50) NOT NULL,
+#     emailVerified VARCHAR(255) NOT NULL,
 #     photoId VARCHAR(255),
 #     description VARCHAR(255)
 # );
+
 
 
 class Parent(BaseModel):
@@ -42,8 +41,8 @@ class Parent(BaseModel):
     nickname: str
     signInMethod: str
     emailVerified: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -62,11 +61,11 @@ class ParentTable(DB_Base):
     __tablename__ = 'parent'
     parent_id = Column(String(255), primary_key=True, nullable=False)
     password = Column(String(255), nullable=False)
-    email = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False, unique=True)
     name = Column(String(50), nullable=False)
-    nickname = Column(String(255), nullable=False, unique=True)
+    nickname = Column(String(255), nullable=False)
     signInMethod = Column(String(50), nullable=False)
-    emailVerified = Column(String(255), nullable=False, default=False)
+    emailVerified = Column(String(255), nullable=False)
     photoId = Column(String(255), nullable=True)
     description = Column(String(255), nullable=True)
 

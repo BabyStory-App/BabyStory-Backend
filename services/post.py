@@ -48,7 +48,7 @@ class PostService:
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id, 
-                PostTable.delete_time == NULL).all()
+                PostTable.delete_time == None).all()
 
             if post is None:
                 return None
@@ -68,7 +68,7 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
                 PostTable.post_id == post_id, 
-                PostTable.delete_time == NULL).first()
+                PostTable.delete_time == None).first()
 
             if post is None:
                 return None
@@ -88,7 +88,7 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
                 PostTable.post_id == updatePostInput.post_id, 
-                PostTable.delete_time == NULL).first()
+                PostTable.delete_time == None).first()
             
             if post is None:
                 return None

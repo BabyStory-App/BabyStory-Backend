@@ -35,3 +35,16 @@ class UpdatePostOutput(BaseModel):
     success: int
     post: Optional[Post]
     
+# 게시물 삭제
+class DeletePostInput(BaseModel):
+    post_id: str
+    post: str
+    photos: Optional[str]
+    post_time: datetime
+    modify_time: Optional[datetime]
+    delete_time: datetime = datetime.now()
+    hash: Optional[str]
+
+class DeletePostOutput(BaseModel):
+    success: int
+    post: Optional[Post]

@@ -45,6 +45,7 @@ class PostService:
     # 모든 게시물 가져오기
     def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
         db = get_db_session()
+        
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id, 
@@ -64,6 +65,7 @@ class PostService:
     # 하나의 게시물 가져오기
     def getPost(self, post_id: str, parent_id: str) -> Post:
         db = get_db_session()
+
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
@@ -81,7 +83,9 @@ class PostService:
                 status_code=400, detail="Failed to get post")
         
     # 게시물 수정
-    def updatePost(self, updatePostInput: UpdatePostInput, parent_id: str) -> Optional[Post]:
+    def updatePost(self, 
+                   updatePostInput: UpdatePostInput, 
+                   parent_id: str) -> Optional[Post]:
         db = get_db_session()
 
         try:
@@ -106,3 +110,32 @@ class PostService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to update post")
+        
+    # 게시물 삭제
+    def deletePost(self, 
+                   deletePostInput: DeletePostInput, 
+                   parent_id: str) -> bool:
+        db = get_db_session()
+
+        try:
+            post = db.query(PostTable).filter(
+                PostTable.parent_id == parent_id,
+                PostTable.post_id == deletePostInput.post_id, 
+                PostTable.delete_time == None).first()
+            
+            if post is None:
+                return False
+
+            post.delete_time = deletePostInput.delete_time
+
+            db.add(post)
+            db.commit()
+            db.refresh(post)
+
+            return True
+        
+        except Exception as e:
+            db.rollback()
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to delete post")

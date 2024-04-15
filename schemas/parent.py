@@ -1,6 +1,8 @@
 from pydantic import BaseModel
-from typing import List, Optional,Dict
+from typing import Optional, Dict
+
 from model.parent import Parent
+
 
 class CreateParentInput(BaseModel):
     parent_id: str
@@ -10,15 +12,18 @@ class CreateParentInput(BaseModel):
     nickname: str
     signInMethod: str
     emailVerified: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
+
 
 class CreateParentOutput(BaseModel):
-    parent : Parent
+    parent: Optional[Parent]
+    x_jwt: str
 
 
 class GetParentByEmailOutput(BaseModel):
-    parent : Optional[Parent]
+    parent: Optional[Parent]
+    x_jwt: str
 
 
 class UpdateParentInput(BaseModel):
@@ -28,11 +33,18 @@ class UpdateParentInput(BaseModel):
     nickname: str
     signInMethod: str
     emailVerified: str
-    photoId: str
-    description: str
-    
-class DeleteParentInput(BaseModel):
-    id:int
+    photoId: Optional[str]
+    description: Optional[str]
+
+class UpdateParentOutput(BaseModel):
+    success: int
+    parent: Optional[Parent]
+
+class DeleteParentOutput(BaseModel):
+    success: int
+
+class CreatePBConnectOutput(BaseModel):
+    success: int
 
 class GetFriendsByEmailOuput(BaseModel):
     parents: Dict[str, Optional[Parent]]

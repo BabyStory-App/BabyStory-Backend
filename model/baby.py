@@ -1,6 +1,4 @@
-# 아기 테이블
-
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Text
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
@@ -8,8 +6,9 @@ from datetime import datetime
 from db import DB_Base
 import uuid
 
-from model.baby_state_record import BabyStateRecord
-from model.cry_state import CryState
+# 아기 테이블
+#from model.baby_state_record import BabyStateRecord
+#from model.cry_state import CryState
 
 
 # +-----------+--------------+------+-----+---------+-------+
@@ -26,8 +25,8 @@ from model.cry_state import CryState
 #     baby_id VARCHAR(255) NOT NULL PRIMARY KEY,
 #     name VARCHAR(255) NOT NULL,
 #     gender VARCHAR(50) NOT NULL,
-#     birthDate DATETIME,
-#     bloodType CHAR(3),
+#     birthDate DATETIME NOT NULL,
+#     bloodType CHAR(3) NOT NULL,
 #     photoId VARCHAR(255)
 # );
 
@@ -38,9 +37,6 @@ class Baby(BaseModel):
     birthDate: datetime
     bloodType: str
     photoId: Optional[str]
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -59,12 +55,13 @@ class BabyTable(DB_Base):
     gender = Column(String(50), nullable=False)
     birthDate = Column(DateTime, nullable=False)
     bloodType = Column(String(3), nullable=False)
-    photoId = Column(String(255), nullable=True)
+    photoId = Column(Text, nullable=True)
+
 
     # Relationships
-    state_records = relationship(
-        BabyStateRecord, backref='baby', passive_deletes=True)
-    cry_states = relationship(CryState, backref='baby', passive_deletes=True)
+    # state_records = relationship(
+    #     BabyStateRecord, backref='baby', passive_deletes=True)
+    # cry_states = relationship(CryState, backref='baby', passive_deletes=True)
 
 # CREATE TABLE baby (
 #     id VARCHAR(36) NOT NULL DEFAULT (UUID()),

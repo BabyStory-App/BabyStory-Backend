@@ -14,19 +14,19 @@ class PostService:
     def createPost(self,
                    createPostInput: CreatePostInput) -> Post:
         db = get_db_session()
-
+        print("a-------------------")
         try:
             post = PostTable(
                 post_id=createPostInput.post_id,
                 post=createPostInput.post,
                 photos=createPostInput.photos if createPostInput.photos else None,
                 post_time=createPostInput.post_time,
-                modify_time=createPostInput.modify_time if createPostInput.modify_time else None,
-                delete_time=createPostInput.delete_time if createPostInput.delete_time else None,
-                heart=createPostInput.heart if createPostInput.heart else None,
-                share=createPostInput.share if createPostInput.share else None,
-                script=createPostInput.script if createPostInput.script else None,
-                comment=createPostInput.comment if createPostInput.comment else None,
+                modify_time=None,
+                delete_time=None,
+                heart=None,
+                share=None,
+                script=None,
+                comment=None,
                 hash=createPostInput.hash if createPostInput.hash else None
             )
 

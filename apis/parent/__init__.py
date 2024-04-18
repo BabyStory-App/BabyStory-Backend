@@ -132,8 +132,8 @@ def create_pbconnect(baby_id: str,parent_id: str = Depends(JWTBearer())) -> Crea
     }
 
 
-# @router.get("/all")
-# def get_parent():
-#     parent = parentService.getParentAll()
+@router.get("/all")
+def get_parent():
+    parent = parentService.getParentAll()
 
-#     return parent
+    return parent

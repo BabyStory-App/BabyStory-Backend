@@ -36,8 +36,10 @@ class ParentService:
         except Exception as e:
             db.rollback()
             print(e)
-            raise HTTPException(
-                status_code=400, detail="Failed to create parent")
+
+            raise Exception(e)
+            # raise HTTPException(
+            #     status_code=400, detail="Failed to create parent")
 
     # 부모 정보 조회
     def getParentByEmail(self, parent_id: str) -> Optional[Parent]:

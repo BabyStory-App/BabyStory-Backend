@@ -4,8 +4,10 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
+from typing import Optional
 
-from model.parent import Parent
+from model.parent import ParentTable
+from model.chatbubble import ChatbubbleTable
 
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
@@ -18,23 +20,18 @@ from model.parent import Parent
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE chat (
 #     room_id INT PRIMARY KEY auto_increment NOT NULL,
-#     name VARCHAR(100),
-#     pid VARCHAR(255),
-#     parent_id VARCHAR(255) NOT NULL,
-#     end_chat VARCHAR(255)
+#     parent_id VARCHAR(255) NOT NULL FOREIGN KEY REFERENCES parent(parent_id),
+#     end_chat INT FOREIGN KEY REFERENCES chatbubble(chat_id),
+#     name VARCHAR(100) NOT NULL,
+#     pid VARCHAR(255)
 # );
-# -- 외래 키 제약 조건 삭제
-# ALTER TABLE pcconnect DROP FOREIGN KEY pcconnect_ibfk_3;
-
-# -- room_id 속성 변경
-# ALTER TABLE chat MODIFY COLUMN room_id INT AUTO_INCREMENT;
 
 class Chat(BaseModel):
     room_id: int
-    name: str
-    pid: str
     parent_id: str
-    end_chat: str
+    end_chat: Optional[str]
+    name: str
+    pid: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -52,9 +49,10 @@ class ChatTable(DB_Base):
     __tablename__ = 'chat'
 
     room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
+    end_chat = Column(Integer, ForeignKey('chat.chat_id'))
     name = Column(String(100))
     pid = Column(String(255))
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
-    end_chat = Column(String(255))
-
-    parent = relationship(Parent, back_populates='chat', passive_deletes=True)
+    
+    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)
+    chat = relationship(ChatbubbleTable, back_populates='chat', passive_deletes=True)

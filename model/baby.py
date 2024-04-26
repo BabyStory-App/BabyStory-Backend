@@ -23,19 +23,21 @@ import uuid
 # +-----------+--------------+------+-----+---------+-------+
 # CREATE TABLE baby (
 #     baby_id VARCHAR(255) NOT NULL PRIMARY KEY,
-#     name VARCHAR(255) NOT NULL,
-#     gender VARCHAR(50) NOT NULL,
-#     birthDate DATETIME NOT NULL,
-#     bloodType CHAR(3) NOT NULL,
+#     obn VARCHAR(255) NOT NULL,
+#     name VARCHAR(255),
+#     gender VARCHAR(4),
+#     birthDate DATETIME,
+#     bloodType CHAR(3),
 #     photoId VARCHAR(255)
 # );
 
 class Baby(BaseModel):
     baby_id: str
-    name: str
-    gender: str
-    birthDate: datetime
-    bloodType: str
+    obn: str
+    name: Optional[str]
+    gender: Optional[str]
+    birthDate: Optional[datetime]
+    bloodType: Optional[str]
     photoId: Optional[str]
 
     class Config:
@@ -50,12 +52,13 @@ class Baby(BaseModel):
 
 class BabyTable(DB_Base):
     __tablename__ = 'baby'
-    baby_id = Column(String(255), primary_key=True, default=uuid.uuid4)
-    name = Column(String(255), nullable=False, index=True)
-    gender = Column(String(50), nullable=False)
-    birthDate = Column(DateTime, nullable=False)
-    bloodType = Column(String(3), nullable=False)
-    photoId = Column(Text, nullable=True)
+    baby_id = Column(String(255), primary_key=True, nullable=False, default=uuid.uuid4)
+    obn = Column(String(255), nullable=False)
+    name = Column(String(255), index=True)
+    gender = Column(String(4))
+    birthDate = Column(DateTime)
+    bloodType = Column(String(3))
+    photoId = Column(String(255))
 
 
     # Relationships

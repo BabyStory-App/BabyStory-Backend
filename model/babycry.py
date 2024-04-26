@@ -1,13 +1,13 @@
 # 울음 기록 테이블
 
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
+from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime, JSON
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 import uuid
 
-from model.baby import Baby
+from model.baby import BabyTable
 
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
@@ -30,7 +30,6 @@ from model.baby import Baby
 #     predictMap JSON,
 #     intensity VARCHAR(50),
 #     duration FLOAT,
-
 #     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
 # );
 
@@ -64,8 +63,8 @@ class BabycryTable(DB_Base):
     time = Column(DateTime)
     type = Column(String(50))
     audioid = Column(String(1))
-    predictMap = Column(String(255))
+    predictMap = Column(JSON)
     intensity = Column(String(50))
     duration = Column(Float)
 
-    baby = relationship(Baby, back_populates='babycry', passive_deletes=True)
+    baby = relationship(BabyTable, back_populates='babycry', passive_deletes=True)

@@ -5,10 +5,10 @@ from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-import uuid
+from typing import Optional
 
-from model.deal import Deal
-from model.parent import Parent
+from model.deal import DealTable
+from model.parent import ParentTable
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
@@ -18,16 +18,16 @@ from model.parent import Parent
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE dheart (
 #     dheart_id INT PRIMARY KEY auto_increment NOT NULL,
-#     deal_id INT NOT NULL,
 #     parent_id VARCHAR(255) NOT NULL,
+#     deal_id INT NOT NULL,
 #     FOREIGN KEY (deal_id) REFERENCES deal(deal_id),
 #     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
 
 class Dheart(BaseModel):
     dheart_id: int
-    deal_id: int
     parent_id: str
+    deal_id: int
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -45,8 +45,8 @@ class DheartTable(DB_Base):
     __tablename__ = 'dheart'
 
     dheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    deal_id = Column(Integer, ForeignKey('deal.deal_id'))
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    deal_id = Column(Integer, ForeignKey('deal.deal_id'), nullable=False)
 
-    deal = relationship(Deal, back_populates='dheart', passive_deletes=True)
-    parent = relationship(Parent, back_populates='dheart', passive_deletes=True)
+    parent = relationship(ParentTable, back_populates='dheart', passive_deletes=True)
+    deal = relationship(DealTable, back_populates='dheart', passive_deletes=True)

@@ -14,6 +14,7 @@ class ParentService:
     # 부모 생성
     def createParent(self, createParentInput: CreateParentInput) :
         db = get_db_session()
+        print(createParentInput)
         try:
             parent = ParentTable(
                 parent_id=createParentInput.parent_id,

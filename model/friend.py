@@ -1,10 +1,10 @@
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
+from sqlalchemy import Column,String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 import uuid
 
-from model.parent import Parent
+from model.parent import ParentTable
 
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
@@ -42,8 +42,8 @@ class FriendTable(DB_Base):
     __tablename__ = 'friend'
 
     friend_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id1 = Column(String(255), ForeignKey('parent.parent_id'))
-    parent_id2 = Column(String(255), ForeignKey('parent.parent_id'))
+    parent_id1 = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    parent_id2 = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
 
-    parent1 = relationship('Parent', foreign_keys=[parent_id1])
-    parent2 = relationship('Parent', foreign_keys=[parent_id2])
+    parent1 = relationship(ParentTable, back_populates='friend', passive_deletes=True)
+    parent2 = relationship(ParentTable, back_populates='friend', passive_deletes=True)

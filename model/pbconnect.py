@@ -1,14 +1,12 @@
-# 유저와 아이를 연결하는 테이블
-
 from sqlalchemy import Column,String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-import uuid
 
-from model.parent import Parent
-from model.baby import Baby
+from model.parent import ParentTable
+from model.baby import BabyTable
 
+# 유저와 아이를 연결하는 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
@@ -16,7 +14,7 @@ from model.baby import Baby
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
 # | baby_id   | varchar(255) | NO   | MUL | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
-# CREATE TABLE pbconnect (
+# CREATE TABLE pbconnect(
 #     pbc_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 #     parent_id VARCHAR(255) NOT NULL,
 #     baby_id VARCHAR(255) NOT NULL,
@@ -25,7 +23,7 @@ from model.baby import Baby
 # );
 
 
-class PBconnect(BaseModel):
+class PBConnect(BaseModel):
     pbc_id: int
     parent_id: str
     baby_id: str
@@ -46,8 +44,8 @@ class PBConnectTable(DB_Base):
     __tablename__ = 'pbconnect'
 
     pbc_id = Column(Integer, primary_key=True, nullable=False,autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.id'))
-    baby_id = Column(String(255), ForeignKey('baby.id'))
-
-    parent = relationship(Parent, backref='pbconnect', passive_deletes=True)
-    baby = relationship(Baby, backref='pbconnect', passive_deletes=True)
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
+    
+    parent = relationship(ParentTable, backref='pbconnect', passive_deletes=True)
+    baby = relationship(BabyTable, backref='pbconnect', passive_deletes=True)

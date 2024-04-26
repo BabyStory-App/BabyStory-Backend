@@ -5,9 +5,9 @@ from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-import uuid
+from typing import Optional
 
-from model.pregnancy import Pregnancy
+from model.pregnancy import PregnancyTable
 
 # +-------------+--------------+------+-----+---------+----------------+
 # | Field       | Type         | Null | Key | Default | Extra          |
@@ -43,11 +43,11 @@ class Phospital(BaseModel):
     hday: datetime
     parent_kg: float
     bpressure: float
-    special: str
-    baby_kg: float
-    baby_heart: int
-    ultrasound: str
-    uvideo: str
+    special: Optional[str]
+    baby_kg: Optional[float]
+    baby_heart: Optional[int]
+    ultrasound: Optional[str]
+    uvideo: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -65,7 +65,7 @@ class PhospitalTable(DB_Base):
     __tablename__ = 'phospital'
 
     hospital_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    pregn_id = Column(Integer, ForeignKey('pregnancy.pregn_id'))
+    pregn_id = Column(Integer, ForeignKey('pregnancy.pregn_id'), nullable=False)
     hday = Column(DateTime, nullable=False)
     parent_kg = Column(Float, nullable=False)
     bpressure = Column(Float, nullable=False)
@@ -75,4 +75,4 @@ class PhospitalTable(DB_Base):
     ultrasound = Column(String(255))
     uvideo = Column(String(255))
 
-    pregnancy = relationship(Pregnancy, backref='phospital', passive_deletes=True)
+    pregnancy = relationship(PregnancyTable, backref='phospital', passive_deletes=True)

@@ -1,84 +1,144 @@
-from typing import List, Optional, Union
-from fastapi import UploadFile
-import shutil
-import os
-from uuid import uuid4
+from fastapi import HTTPException
+from typing import Optional, List
+from sqlalchemy.orm import joinedload
+
+from model.baby import Baby
+from model.pbconnect import *
+
+from schemas.baby import *
 
 from db import get_db_session
-from constants.path import PROFILE_IMAGE_DIR
-from model.baby import *
-from model.pbconnect import *
-from schemas.baby import *
 
 
 class BabyService:
-    def __init__(self):
-        self.baby_model = BabyTable
 
     # 아기 생성
-    def create_baby(self, parent_id: str,
-                    create_baby_input: create_baby_input) -> BabyTable:
+    def createBaby(self, 
+                    createBabyInput: CreateBabyInput) ->Baby:
         db = get_db_session()
         try:
             baby = BabyTable(
-                baby_id=create_baby_input.baby_id,
-                name=create_baby_input.name,
-                gender=create_baby_input.gender,
-                birthDate=create_baby_input.birthDate,
-                bloodType=create_baby_input.bloodType,
-                photoId=create_baby_input.photoId if create_baby_input.photoId else None
+                baby_id=createBabyInput.baby_id,
+                obn=createBabyInput.obn,
+                name=createBabyInput.name,
+                gender=createBabyInput.gender,
+                birthDate=createBabyInput.birthDate,
+                bloodType=createBabyInput.bloodType,
+                photoId=createBabyInput.photoId if createBabyInput.photoId else None
             )
+
             db.add(baby)
             db.commit()
             db.refresh(baby)
 
-            # 아기-부모 관계 테이블에 추가
-
             return baby
+        
         except Exception as e:
             db.rollback()
             print(e)
-            raise Exception("Failed to create baby")
-
-    def get_babies(self):
-        pass
-
-    # 아기 정보 수정
-    def update_baby(self, parent_id: str, update_baby_input: update_baby_input) -> Optional[BabyTable]:
+            #raise Exception("Failed to create baby")
+            raise Exception(e)
+        
+    # 아기-부모 관계 생성
+    def createPbconnect(self, parent_id: str, baby_id: str) -> Optional[PBConnect]:
         db = get_db_session()
-
         try:
-            baby = db.query(BabyTable).filter(
-                BabyTable.baby_id == baby_id).first()
+            pbconnect = PBConnectTable(
+                parent_id=parent_id,
+                baby_id=baby_id
+            )
+
+            db.add(pbconnect)
+            db.commit()
+            db.refresh(pbconnect)
+
+            return pbconnect
+
+        except Exception as e:
+            db.rollback()
+            print(e)
+            raise Exception("Failed to create pbconnect")
+
+    # 아기 정보 가져오기
+    def getBaby(self, parent_id: str) -> List[Baby]:
+        db = get_db_session()
+        try:
+            # 부모 아이디로 아기-부모 연결 정보 가져오기
+            has = db.query(PBConnectTable).filter(PBConnectTable.parent_id == parent_id).all()
+
+            # 부모 아이디에 연결된 모든 아기의 아이디를 가져옴
+            baby_ids = [i.baby_id for i in has]
+
+            # has에 해당하는 아기정보와 일치하는 아기정보를 가져옴
+            baby = db.query(BabyTable).filter(BabyTable.baby_id.in_(baby_ids)).all()
+            
             if baby is None:
                 return None
 
-            for key in ['name', 'gender', 'birthDate', 'bloodType', 'photoId']:
-                setattr(baby, key, update_baby_input[key])
-            # setattr(baby, 'name', update_baby_input['name'])
-            # setattr(baby, 'gender', update_baby_input['gender'])
-            # setattr(baby, 'birthDate', update_baby_input['birthDate'])
-            # setattr(baby, 'bloodType', update_baby_input['bloodType'])
-            # setattr(baby, 'photoId', update_baby_input['photoId'])
+            return baby
+
+        except Exception as e:
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to get baby")
+            
+
+    # 아기 정보 가져오기 (확인용 임시 코드)
+    def getBabies(self):
+        db = get_db_session()
+        babies = db.query(BabyTable).all()
+        return babies
+
+    # 아기 정보 수정
+    def updateBaby(self, updateBabyInput: UpdateBabyInput, parent_id: str) -> Optional[Baby]:
+        db = get_db_session()
+
+        try:
+            # 다른 사람의 아기를 수정하는 것을 방지하기 위해 부모의 아기인지 확인해야함
+            pbconnect = db.query(PBConnectTable).filter(
+                PBConnectTable.parent_id == parent_id,
+                PBConnectTable.baby_id == updateBabyInput.baby_id).first()
+            if pbconnect is None:
+                return None
+            
+            baby = db.query(BabyTable).filter(
+                BabyTable.baby_id == updateBabyInput.baby_id).first()
+            if baby is None:
+                return None
+            
+            # 아기 정보 수정
+            for key in ['obn', 'name', 'gender', 'birthDate', 'bloodType', 'photoId']:
+                setattr(baby, key, getattr(updateBabyInput, key))
 
             db.add(baby)
             db.commit()
             db.refresh(baby)
 
             return baby
+        
         except Exception as e:
             db.rollback()
-            raise e
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to update baby")
 
     # 아기 삭제
-    def delete_baby(self, parent_id: str,
-                    baby_id: str) -> Optional[Baby]:
+    def deleteBaby(self, baby_id: str,
+                    parent_id: str) -> bool:
         db = get_db_session()
         try:
+            # 다른 사람의 아기를 삭제하는 것을 방지하기 위해 부모의 아기인지 확인해야함
+            pbconnect = db.query(PBConnectTable).filter(
+                PBConnectTable.parent_id == parent_id,
+                PBConnectTable.baby_id == baby_id).first()
+            if pbconnect is None:
+                return False
+
+            # 아기 삭제
             baby = db.query(BabyTable).filter(
                 BabyTable.baby_id == baby_id).first()
             if baby == None:
-                return None
+                return False
 
             db.delete(baby)
             db.commit()
@@ -87,4 +147,6 @@ class BabyService:
 
         except Exception as e:
             db.rollback()
-            return False
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to delete baby")

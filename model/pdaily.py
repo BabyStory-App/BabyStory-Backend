@@ -1,20 +1,20 @@
 # 육아일기 테이블
 
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
+from sqlalchemy import Column,String, ForeignKey, Integer, TEXT, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-import uuid
+from typing import Optional
 
-from model.parenting import Parenting
+from model.parenting import ParentingTable
 # +--------------+--------------+------+-----+---------+----------------+
 # | Field        | Type         | Null | Key | Default | Extra          |
 # +--------------+--------------+------+-----+---------+----------------+
 # | daily_id     | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parenting_id | int(11)      | NO   | MUL | NULL    |                |
 # | daily        | datetime     | NO   |     | NULL    |                |
-# | title        | varchar(50)  | YES  |     | NULL    |                |
+# | title        | varchar(50)  | NO   |     | NULL    |                |
 # | picture      | varchar(255) | YES  |     | NULL    |                |
 # | post         | text         | YES  |     | NULL    |                |
 # +--------------+--------------+------+-----+---------+----------------+
@@ -22,7 +22,7 @@ from model.parenting import Parenting
 #     daily_id INT PRIMARY KEY auto_increment NOT NULL,
 #     parenting_id INT NOT NULL,
 #     daily DATETIME NOT NULL,
-#     title VARCHAR(50),
+#     title VARCHAR(50) NOT NULL,
 #     picture VARCHAR(255),
 #     post TEXT,
 #     FOREIGN KEY (parenting_id) REFERENCES parenting(parenting_id)
@@ -33,8 +33,8 @@ class Pdaily(BaseModel):
     parenting_id: int
     daily: datetime
     title: str
-    picture: str
-    post: str
+    picture: Optional[str]
+    post: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -52,10 +52,10 @@ class PdailyTable(DB_Base):
     __tablename__ = 'pdaily'
 
     daily_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parenting_id = Column(Integer, ForeignKey('parenting.parenting_id'))
+    parenting_id = Column(Integer, ForeignKey('parenting.parenting_id'), nullable=False)
     daily = Column(DateTime, nullable=False)
-    title = Column(String(50))
+    title = Column(String(50), nullable=False)
     picture = Column(String(255))
-    post = Column(String(255))
+    post = Column(TEXT)
     
-    parenting = relationship(Parenting, back_populates='pdaily', passive_deletes=True)
+    parenting = relationship(ParentingTable, back_populates='pdaily', passive_deletes=True)

@@ -6,30 +6,26 @@ from pydantic import BaseModel
 from db import DB_Base
 import uuid
 
-from model.ppconnect import PPConnect
-from model.parent import Parent
+from model.parent import ParentTable
+from model.chat import ChatTable
 
-# +-----------+--------------+------+-----+---------+-------+
-# | Field     | Type         | Null | Key | Default | Extra |
-# +-----------+--------------+------+-----+---------+-------+
-# | pcc_id    | int(11)      | NO   | PRI | NULL    |       |
-# | ppc_id    | int(11)      | NO   | MUL | NULL    |       |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |       |
-# | room_id   | int(11)      | NO   | MUL | NULL    |       |
-# +-----------+--------------+------+-----+---------+-------+
+# +-----------+--------------+------+-----+---------+----------------+
+# | Field     | Type         | Null | Key | Default | Extra          |
+# +-----------+--------------+------+-----+---------+----------------+
+# | pcc_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
+# | room_id   | int(11)      | NO   | MUL | NULL    |                |
+# +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE pcconnect (
-#     pcc_id INT PRIMARY KEY NOT NULL,
-#     ppc_id INT NOT NULL,
+#     pcc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 #     parent_id VARCHAR(255) NOT NULL,
 #     room_id INT NOT NULL,
-#     FOREIGN KEY (ppc_id) REFERENCES ppconnect(ppc_id),
 #     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
 #     FOREIGN KEY (room_id) REFERENCES chat(room_id)
 # );
 
 class PCConnect(BaseModel):
     pcc_id: int
-    ppc_id: int
     parent_id: str
     room_id: int
 
@@ -49,10 +45,8 @@ class PCConnectTable(DB_Base):
     __tablename__ = 'pcconnect'
 
     pcc_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    ppc_id = Column(Integer, ForeignKey('ppconnect.ppc_id'))
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
-    room_id = Column(Integer, ForeignKey('chat.room_id'))
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    room_id = Column(Integer, ForeignKey('chat.room_id'), nullable=False)
 
-    ppc = relationship(PPConnect, backref='pcconnect', passive_deletes=True)
-    parent = relationship(Parent, backref='pcconnect', passive_deletes=True)
-    # 채팅방 정보 추가
+    parent = relationship(ParentTable, backref='pcconnect', passive_deletes=True)
+    chat = relationship(ChatTable, backref='pcconnect', passive_deletes=True)

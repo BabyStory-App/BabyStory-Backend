@@ -1,13 +1,13 @@
 # 게시물 테이블
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-import uuid
+from typing import Optional
 
-from model.parent import Parent
+from model.parent import ParentTable
 
 # +-------------+------------------+------+-----+---------+----------------+
 # | Field       | Type             | Null | Key | Default | Extra          |
@@ -46,15 +46,15 @@ class Post(BaseModel):
     post_id: int
     parent_id: str
     post: str
-    photos: str
+    photos: Optional[str]
     post_time: datetime
-    modify_time: datetime
-    delete_time: datetime
-    heart: int
-    share: int
-    script: int
-    comment: int
-    hash: str
+    modify_time: Optional[datetime]
+    delete_time: Optional[datetime]
+    heart: Optional[int]
+    share: Optional[int]
+    script: Optional[int]
+    comment: Optional[int]
+    hash: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -72,9 +72,9 @@ class PostTable(DB_Base):
     __tablename__ = 'post'
 
     post_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
-    post = Column(String(255), nullable=False)
-    photos = Column(String(255))
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    post = Column(TEXT, nullable=False)
+    photos = Column(TEXT)
     post_time = Column(DateTime, nullable=False)
     modify_time = Column(DateTime)
     delete_time = Column(DateTime)
@@ -84,4 +84,4 @@ class PostTable(DB_Base):
     comment = Column(Integer)
     hash = Column(String(100))
 
-    parent = relationship(Parent, backref='post', passive_deletes=True)
+    parent = relationship(ParentTable, backref='post', passive_deletes=True)

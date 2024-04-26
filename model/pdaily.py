@@ -34,7 +34,7 @@ class Pdaily(BaseModel):
     daily: datetime
     title: str
     picture: Optional[str]
-    post: Optional[TEXT]
+    post: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))

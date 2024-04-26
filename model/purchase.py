@@ -35,7 +35,7 @@ class Purchase(BaseModel):
     purchase_id: int
     parent_id: str
     title: int
-    post: Optional[TEXT]
+    post: Optional[str]
     img: str
     time: datetime
     link: str

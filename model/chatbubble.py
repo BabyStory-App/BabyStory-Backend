@@ -40,7 +40,7 @@ class Chatbubble(BaseModel):
     room_id: int
     time: DateTime
     chat_type: str
-    content: TEXT
+    content: str
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))

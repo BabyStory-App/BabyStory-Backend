@@ -37,7 +37,7 @@ class Deal(BaseModel):
     deal_id: int
     parent_id: str
     title: str
-    post: Optional[TEXT]
+    post: Optional[str]
     img: str
     price: int
     time: datetime

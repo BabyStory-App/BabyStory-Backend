@@ -31,8 +31,6 @@ from typing import Optional
 #     description VARCHAR(255)
 # );
 
-
-
 class Parent(BaseModel):
     parent_id: str
     password: str
@@ -40,7 +38,7 @@ class Parent(BaseModel):
     name: str
     nickname: str
     signInMethod: str
-    emailVerified: Boolean
+    emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
 

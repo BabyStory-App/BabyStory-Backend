@@ -45,8 +45,8 @@ from model.parent import ParentTable
 class Post(BaseModel):
     post_id: int
     parent_id: str
-    post: TEXT
-    photos: Optional[TEXT]
+    post: str
+    photos: Optional[str]
     post_time: datetime
     modify_time: Optional[datetime]
     delete_time: Optional[datetime]

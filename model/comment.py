@@ -40,7 +40,7 @@ class Comment(BaseModel):
     parent_id: str
     post_id: int
     reply_id: int
-    comment: TEXT
+    comment: str
     time: datetime
     cheart: Optional[int]
 

@@ -13,8 +13,8 @@ from model.parent import ParentTable
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
 # | cheart_id  | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | comment_id | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | comment_id | int(11)      | NO   | MUL | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
 # CREATE TABLE cheart (
 #     cheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,

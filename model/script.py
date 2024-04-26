@@ -8,13 +8,13 @@ from db import DB_Base
 from model.post import PostTable
 from model.parent import ParentTable
 
-# +-----------+--------------+------+-----+---------+-------+
-# | Field     | Type         | Null | Key | Default | Extra |
-# +-----------+--------------+------+-----+---------+-------+
-# | script_id | int(11)      | NO   | PRI | NULL    |       |
-# | post_id   | int(11)      | NO   | MUL | NULL    |       |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |       |
-# +-----------+--------------+------+-----+---------+-------+
+# +-----------+--------------+------+-----+---------+----------------+
+# | Field     | Type         | Null | Key | Default | Extra          |
+# +-----------+--------------+------+-----+---------+----------------+
+# | script_id | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
+# | post_id   | int(11)      | NO   | MUL | NULL    |                |
+# +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE script (
 #     script_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 #     parent_id VARCHAR(255) NOT NULL,

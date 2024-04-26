@@ -1,3 +1,5 @@
+# 산모수첩
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
@@ -14,6 +16,8 @@ from model.baby import BabyTable
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
 # | baby_id   | varchar(255) | NO   | MUL | NULL    |                |
 # | dname     | varchar(50)  | YES  |     | NULL    |                |
+# | img       | varchar(255) | YES  |     | NULL    |                |
+# | time      | datetime     | NO   |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE pregnancy (
 #     pregn_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,

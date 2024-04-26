@@ -13,17 +13,18 @@ from model.chatbubble import ChatbubbleTable
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
 # | room_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | name      | varchar(100) | YES  |     | NULL    |                |
-# | pid       | varchar(255) | YES  |     | NULL    |                |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | end_chat  | varchar(255) | YES  |     | NULL    |                |
+# | end_chat  | int(11)      | NO   | MUL | NULL    |                |
+# | name      | varchar(100) | NO   |     | NULL    |                |
+# | pid       | varchar(255) | YES  |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE chat (
-#     room_id INT PRIMARY KEY auto_increment NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL FOREIGN KEY REFERENCES parent(parent_id),
-#     end_chat INT NOT NULL FOREIGN KEY REFERENCES chatbubble(chat_id),
+#     room_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+#     parent_id VARCHAR(255) NOT NULL,
+#     end_chat INT NOT NULL,
 #     name VARCHAR(100) NOT NULL,
-#     pid VARCHAR(255)
+#     pid VARCHAR(255),
+#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
 
 class Chat(BaseModel):

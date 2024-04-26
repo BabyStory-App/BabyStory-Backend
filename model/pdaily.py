@@ -14,7 +14,7 @@ from model.parenting import ParentingTable
 # | daily_id     | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parenting_id | int(11)      | NO   | MUL | NULL    |                |
 # | daily        | datetime     | NO   |     | NULL    |                |
-# | title        | varchar(50)  | YES  |     | NULL    |                |
+# | title        | varchar(50)  | NO   |     | NULL    |                |
 # | picture      | varchar(255) | YES  |     | NULL    |                |
 # | post         | text         | YES  |     | NULL    |                |
 # +--------------+--------------+------+-----+---------+----------------+

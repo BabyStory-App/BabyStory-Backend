@@ -21,10 +21,9 @@ from model.parent import ParentTable
 #     parent_id VARCHAR(255) NOT NULL,
 #     ask_id VARCHAR(100) NOT NULL,
 #     res_id VARCHAR(100) NOT NULL,
-#     haddr VARCHAR(255)
+#     haddr VARCHAR(255),
+#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
-# ALTER TABLE aidoctor
-#     ADD CONSTRAINT fk_parent_id FOREIGN KEY (parent_id) REFERENCES parent(parent_id);
 
 class AIDoctor(BaseModel):
     id: int

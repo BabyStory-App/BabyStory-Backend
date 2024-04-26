@@ -15,7 +15,9 @@ from model.baby import BabyTable
 # | parenting_id | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id    | varchar(255) | NO   | MUL | NULL    |                |
 # | baby_id      | varchar(255) | NO   | MUL | NULL    |                |
-# | ptitle       | varchar(50)  | YES  |     | NULL    |                |
+# | ptitle       | varchar(50)  | NO   |     | NULL    |                |
+# | img          | varchar(255) | YES  |     | NULL    |                |
+# | time         | datetime     | NO   |     | NULL    |                |
 # +--------------+--------------+------+-----+---------+----------------+
 # CREATE TABLE parenting (
 #     parenting_id INT PRIMARY KEY auto_increment NOT NULL,

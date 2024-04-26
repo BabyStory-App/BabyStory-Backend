@@ -14,7 +14,7 @@ from model.parent import ParentTable
 # +-------------+--------------+------+-----+---------+----------------+
 # | purchase_id | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id   | varchar(255) | NO   | MUL | NULL    |                |
-# | title       | int(11)      | NO   |     | NULL    |                |
+# | title       | varchar(20)  | NO   |     | NULL    |                |
 # | post        | text         | YES  |     | NULL    |                |
 # | img         | varchar(255) | NO   |     | NULL    |                |
 # | time        | datetime     | NO   |     | NULL    |                |

@@ -15,8 +15,9 @@ import uuid
 # | Field     | Type         | Null | Key | Default | Extra |
 # +-----------+--------------+------+-----+---------+-------+
 # | baby_id   | varchar(255) | NO   | PRI | NULL    |       |
-# | name      | varchar(255) | NO   |     | NULL    |       |
-# | gender    | varchar(50)  | NO   |     | NULL    |       |
+# | obn       | varchar(255) | NO   |     | NULL    |       |
+# | name      | varchar(255) | YES  |     | NULL    |       |
+# | gender    | varchar(4)   | YES  |     | NULL    |       |
 # | birthDate | datetime     | YES  |     | NULL    |       |
 # | bloodType | char(3)      | YES  |     | NULL    |       |
 # | photoId   | varchar(255) | YES  |     | NULL    |       |

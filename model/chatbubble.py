@@ -12,11 +12,11 @@ from model.parent import ParentTable
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
 # | chat_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | room_id   | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | time      | datetime     | YES  |     | NULL    |                |
-# | chat_type | varchar(255) | YES  |     | NULL    |                |
-# | content   | text         | YES  |     | NULL    |                |
+# | room_id   | int(11)      | NO   | MUL | NULL    |                |
+# | time      | datetime     | NO   |     | NULL    |                |
+# | chat_type | varchar(255) | NO   |     | NULL    |                |
+# | content   | text         | NO   |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE chatbubble (
 #     chat_id INT PRIMARY KEY auto_increment NOT NULL,
@@ -28,6 +28,11 @@ from model.parent import ParentTable
 #     FOREIGN KEY (room_id) REFERENCES chat(room_id),
 #     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
+
+# 마지막 채팅 채팅말풍선이랑 연결
+# ALTER TABLE chat
+# ADD CONSTRAINT fk_end_chat
+# FOREIGN KEY (end_chat) REFERENCES chatbubble(chat_id);
 
 class Chatbubble(BaseModel):
     chat_id: int

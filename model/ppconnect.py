@@ -8,13 +8,13 @@ import uuid
 
 from model.parent import ParentTable
 
-# +------------+--------------+------+-----+---------+-------+
-# | Field      | Type         | Null | Key | Default | Extra |
-# +------------+--------------+------+-----+---------+-------+
-# | ppc_id     | int(11)      | NO   | PRI | NULL    |       |
-# | parent_id1 | varchar(255) | NO   | MUL | NULL    |       |
-# | parent_id2 | varchar(255) | NO   | MUL | NULL    |       |
-# +------------+--------------+------+-----+---------+-------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | ppc_id     | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id1 | varchar(255) | NO   | MUL | NULL    |                |
+# | parent_id2 | varchar(255) | NO   | MUL | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 # CREATE TABLE ppconnect (
 #     ppc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 #     parent_id1 VARCHAR(255) NOT NULL,

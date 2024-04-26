@@ -10,12 +10,12 @@ from typing import Optional
 # | Field         | Type         | Null | Key | Default | Extra |
 # +---------------+--------------+------+-----+---------+-------+
 # | parent_id     | varchar(255) | NO   | PRI | NULL    |       |
-# | password      | varchar(255) | YES  |     | NULL    |       |
-# | email         | varchar(255) | NO   |     | NULL    |       |
-# | name          | varchar(50)  | YES  |     | NULL    |       |
+# | password      | varchar(255) | NO   |     | NULL    |       |
+# | email         | varchar(255) | NO   | UNI | NULL    |       |
+# | name          | varchar(50)  | NO   |     | NULL    |       |
 # | nickname      | varchar(255) | NO   |     | NULL    |       |
-# | signInMethod  | varchar(50)  | YES  |     | NULL    |       |
-# | emailVerified | bool         | YES  |     | NULL    |       |
+# | signInMethod  | varchar(50)  | NO   |     | NULL    |       |
+# | emailVerified | tinyint(1)   | NO   |     | NULL    |       |
 # | photoId       | varchar(255) | YES  |     | NULL    |       |
 # | description   | varchar(255) | YES  |     | NULL    |       |
 # +---------------+--------------+------+-----+---------+-------+

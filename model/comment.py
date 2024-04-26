@@ -15,13 +15,12 @@ from model.comment import CommentTable
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
 # | comment_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | post_id    | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
-# | type       | tinyint(1)   | NO   |     | NULL    |                |
+# | post_id    | int(11)      | NO   | MUL | NULL    |                |
+# | reply_id   | int(11)      | YES  | MUL | NULL    |                |
 # | comment    | text         | NO   |     | NULL    |                |
-# | cphoto     | varchar(255) | YES  |     | NULL    |                |
 # | time       | datetime     | NO   |     | NULL    |                |
-# | cheart     | int(11)      | YES  |     | NULL    |                |
+# | cheart     | int(11)      | YES  |     | 0       |                |
 # +------------+--------------+------+-----+---------+----------------+
 # CREATE TABLE comment(
 #     comment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -33,7 +32,7 @@ from model.comment import CommentTable
 #     cheart INT DEFAULT 0,
 #     FOREIGN KEY (post_id) REFERENCES post(post_id),
 #     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-#     FOREIGN KEY (reply_id) REFERENCES comments(comment_id)
+#     FOREIGN KEY (reply_id) REFERENCES comment(comment_id)
 # );
 
 class Comment(BaseModel):

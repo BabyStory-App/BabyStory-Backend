@@ -12,8 +12,8 @@ from model.parent import ParentTable
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
 # | pheart_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | post_id   | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
+# | post_id   | int(11)      | NO   | MUL | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE pheart (
 #     pheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,

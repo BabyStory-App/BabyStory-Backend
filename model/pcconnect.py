@@ -9,13 +9,13 @@ import uuid
 from model.parent import ParentTable
 from model.chat import ChatTable
 
-# +-----------+--------------+------+-----+---------+-------+
-# | Field     | Type         | Null | Key | Default | Extra |
-# +-----------+--------------+------+-----+---------+-------+
-# | pcc_id    | int(11)      | NO   | PRI | NULL    |       |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |       |
-# | room_id   | int(11)      | NO   | MUL | NULL    |       |
-# +-----------+--------------+------+-----+---------+-------+
+# +-----------+--------------+------+-----+---------+----------------+
+# | Field     | Type         | Null | Key | Default | Extra          |
+# +-----------+--------------+------+-----+---------+----------------+
+# | pcc_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
+# | room_id   | int(11)      | NO   | MUL | NULL    |                |
+# +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE pcconnect (
 #     pcc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 #     parent_id VARCHAR(255) NOT NULL,

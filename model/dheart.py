@@ -13,8 +13,8 @@ from model.parent import ParentTable
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
 # | dheart_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | deal_id   | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
+# | deal_id   | int(11)      | NO   | MUL | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE dheart (
 #     dheart_id INT PRIMARY KEY auto_increment NOT NULL,

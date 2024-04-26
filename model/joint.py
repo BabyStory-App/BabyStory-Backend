@@ -13,8 +13,8 @@ from model.parent import ParentTable
 # | Field       | Type         | Null | Key | Default | Extra          |
 # +-------------+--------------+------+-----+---------+----------------+
 # | joint_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | purchase_id | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id   | varchar(255) | NO   | MUL | NULL    |                |
+# | purchase_id | int(11)      | NO   | MUL | NULL    |                |
 # +-------------+--------------+------+-----+---------+----------------+
 # CREATE TABLE joint (
 #     joint_id INT PRIMARY KEY auto_increment NOT NULL,

@@ -39,8 +39,8 @@ class PostService:
         except Exception as e:
             db.rollback()
             print(e)
-            raise Exception(e)
-            # raise Exception("Failed to create post")
+            #raise Exception(e)
+            raise Exception("Failed to create post")
         
 
     # 모든 게시물 가져오기
@@ -64,7 +64,7 @@ class PostService:
         
 
     # 하나의 게시물 가져오기
-    def getPost(self, post_id: str, parent_id: str) -> Post:
+    def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
         db = get_db_session()
 
         try:
@@ -96,7 +96,6 @@ class PostService:
                 PostTable.delete_time == None).first()
             
             if post is None:
-                print("post is None")
                 return None
             
             for key in ['post', 'photos', 'modify_time', 'hash']:
@@ -116,7 +115,7 @@ class PostService:
     # 게시물 삭제
     def deletePost(self, 
                    deletePostInput: DeletePostInput, 
-                   parent_id: str) -> Post:
+                   parent_id: str) -> Optional[Post]:
         db = get_db_session()
 
         try:
@@ -126,7 +125,7 @@ class PostService:
                 PostTable.delete_time == None).first()
             
             if post is None:
-                return False
+                return None
             
             setattr(post, 'delete_time', deletePostInput.delete_time)
             

@@ -33,4 +33,4 @@ class DeletePostInput(BaseModel):
 
 class DeletePostOutput(BaseModel):
     success: int
-    post: Post
+    post: Optional[Post]

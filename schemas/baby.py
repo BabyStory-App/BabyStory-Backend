@@ -7,6 +7,7 @@ from model.baby import *
 # 아기 생성
 class CreateBabyInput(BaseModel):
     baby_id: str
+    obn: str
     name: str
     gender: str
     birthDate: datetime
@@ -22,6 +23,7 @@ class CreateBabyOutput(BaseModel):
 
 class UpdateBabyInput(BaseModel):
     baby_id: str
+    obn: str
     name: str
     gender: str
     birthDate: datetime

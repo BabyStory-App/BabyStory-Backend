@@ -11,13 +11,14 @@ from db import get_db_session
 class PostService:
 
     # 게시물 생성
-    def createPost(self,
+    def createPost(self, parent_id: str,
                    createPostInput: CreatePostInput) -> Post:
         db = get_db_session()
-        print("a-------------------")
         try:
+            print("\na--------------------\n")
+            print(createPostInput)
             post = PostTable(
-                post_id=createPostInput.post_id,
+                parent_id=parent_id,
                 post=createPostInput.post,
                 photos=createPostInput.photos if createPostInput.photos else None,
                 post_time=createPostInput.post_time,
@@ -39,7 +40,8 @@ class PostService:
         except Exception as e:
             db.rollback()
             print(e)
-            raise Exception("Failed to create post")
+            raise Exception(e)
+            # raise Exception("Failed to create post")
         
 
     # 모든 게시물 가져오기
@@ -91,10 +93,11 @@ class PostService:
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
-                PostTable.post_id == updatePostInput.post_id, 
+                PostTable.post_id == updatePostInput.post_id,
                 PostTable.delete_time == None).first()
             
             if post is None:
+                print("post is None")
                 return None
             
             for key in ['post', 'photos', 'modify_time', 'hash']:
@@ -114,28 +117,30 @@ class PostService:
     # 게시물 삭제
     def deletePost(self, 
                    deletePostInput: DeletePostInput, 
-                   parent_id: str) -> bool:
+                   parent_id: str) -> Post:
         db = get_db_session()
 
         try:
+            
             post = db.query(PostTable).filter(
-                PostTable.parent_id == parent_id,
                 PostTable.post_id == deletePostInput.post_id, 
+                PostTable.parent_id == parent_id,
                 PostTable.delete_time == None).first()
             
             if post is None:
                 return False
-
-            post.delete_time = deletePostInput.delete_time
-
+            
+            setattr(post, 'delete_time', deletePostInput.delete_time)
+            
             db.add(post)
             db.commit()
             db.refresh(post)
-
-            return True
+            
+            return post
         
         except Exception as e:
             db.rollback()
             print(e)
-            raise HTTPException(
-                status_code=400, detail="Failed to delete post")
+            # raise HTTPException(
+            #     status_code=400, detail="Failed to delete post")
+            raise Exception(e)

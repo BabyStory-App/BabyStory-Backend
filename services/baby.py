@@ -19,6 +19,7 @@ class BabyService:
         try:
             baby = BabyTable(
                 baby_id=createBabyInput.baby_id,
+                obn=createBabyInput.obn,
                 name=createBabyInput.name,
                 gender=createBabyInput.gender,
                 birthDate=createBabyInput.birthDate,
@@ -35,7 +36,8 @@ class BabyService:
         except Exception as e:
             db.rollback()
             print(e)
-            raise Exception("Failed to create baby")
+            #raise Exception("Failed to create baby")
+            raise Exception(e)
         
     # 아기-부모 관계 생성
     def createPbconnect(self, parent_id: str, baby_id: str) -> Optional[PBConnect]:
@@ -105,7 +107,7 @@ class BabyService:
                 return None
             
             # 아기 정보 수정
-            for key in ['name', 'gender', 'birthDate', 'bloodType', 'photoId']:
+            for key in ['obn', 'name', 'gender', 'birthDate', 'bloodType', 'photoId']:
                 setattr(baby, key, getattr(updateBabyInput, key))
 
             db.add(baby)

@@ -11,7 +11,7 @@ class CreateParentInput(BaseModel):
     name: str
     nickname: str
     signInMethod: str
-    emailVerified: str
+    emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
 
@@ -32,7 +32,7 @@ class UpdateParentInput(BaseModel):
     name: str
     nickname: str
     signInMethod: str
-    emailVerified: str
+    emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
 

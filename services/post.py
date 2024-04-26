@@ -15,7 +15,6 @@ class PostService:
                    createPostInput: CreatePostInput) -> Post:
         db = get_db_session()
         try:
-            print("\na--------------------\n")
             print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
@@ -121,7 +120,6 @@ class PostService:
         db = get_db_session()
 
         try:
-            
             post = db.query(PostTable).filter(
                 PostTable.post_id == deletePostInput.post_id, 
                 PostTable.parent_id == parent_id,
@@ -141,6 +139,5 @@ class PostService:
         except Exception as e:
             db.rollback()
             print(e)
-            # raise HTTPException(
-            #     status_code=400, detail="Failed to delete post")
-            raise Exception(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to delete post")

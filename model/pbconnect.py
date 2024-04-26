@@ -44,9 +44,8 @@ class PBConnectTable(DB_Base):
     __tablename__ = 'pbconnect'
 
     pbc_id = Column(Integer, primary_key=True, nullable=False,autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
-    baby_id = Column(String(255), ForeignKey('baby.baby_id'))
-
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
     
     parent = relationship(ParentTable, backref='pbconnect', passive_deletes=True)
     baby = relationship(BabyTable, backref='pbconnect', passive_deletes=True)

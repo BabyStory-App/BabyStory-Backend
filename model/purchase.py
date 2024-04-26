@@ -1,13 +1,13 @@
 # 공동구매 게시물 테이블
 
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
+from sqlalchemy import Column,String, ForeignKey, Integer, TEXT, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-import uuid
+from typing import Optional
 
-from model.parent import Parent
+from model.parent import ParentTable
 
 # +-------------+--------------+------+-----+---------+----------------+
 # | Field       | Type         | Null | Key | Default | Extra          |
@@ -23,7 +23,7 @@ from model.parent import Parent
 # CREATE TABLE purchase (
 #     purchase_id INT PRIMARY KEY auto_increment NOT NULL,
 #     parent_id VARCHAR(255) NOT NULL,
-#     title INT NOT NULL,
+#     title VARCHAR(20) NOT NULL,
 #     post TEXT,
 #     img VARCHAR(255) NOT NULL,
 #     time DATETIME NOT NULL,
@@ -35,7 +35,7 @@ class Purchase(BaseModel):
     purchase_id: int
     parent_id: str
     title: int
-    post: str
+    post: Optional[TEXT]
     img: str
     time: datetime
     link: str
@@ -56,11 +56,11 @@ class PurchaseTable(DB_Base):
     __tablename__ = 'purchase'
 
     purchase_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(Integer, nullable=False)
-    post = Column(String(255))
+    post = Column(TEXT)
     img = Column(String(255), nullable=False)
     time = Column(DateTime, nullable=False)
     link = Column(String(255), nullable=False)
 
-    parent = relationship(Parent, back_populates='purchase', passive_deletes=True)
+    parent = relationship(ParentTable, back_populates='purchase', passive_deletes=True)

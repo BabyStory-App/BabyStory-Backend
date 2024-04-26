@@ -1,6 +1,6 @@
 # 중고거래 테이블
 
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
+from sqlalchemy import Column,String, ForeignKey, Integer, DateTime, TEXT
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -35,7 +35,7 @@ class Deal(BaseModel):
     deal_id: int
     parent_id: str
     title: str
-    post: Optional[str]
+    post: Optional[TEXT]
     img: str
     price: int
     time: datetime
@@ -57,9 +57,9 @@ class DealTable(DB_Base):
     __tablename__ = 'deal'
 
     deal_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
-    post = Column(String(255))
+    post = Column(TEXT)
     img = Column(String(255), nullable=False)
     price = Column(Integer, nullable=False)
     time = Column(DateTime, nullable=False)

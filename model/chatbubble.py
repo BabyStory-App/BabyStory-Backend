@@ -1,6 +1,6 @@
 # 실시간 채팅 말풍선 테이블
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -35,7 +35,7 @@ class Chatbubble(BaseModel):
     room_id: int
     time: DateTime
     chat_type: str
-    content: str
+    content: TEXT
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -57,7 +57,7 @@ class ChatbubbleTable(DB_Base):
     room_id = Column(Integer, ForeignKey('chat.room_id'), nullable=False)
     time = Column(DateTime, nullable=False)
     chat_type = Column(String(255), nullable=False)
-    content = Column(String(255), nullable=False)
+    content = Column(TEXT, nullable=False)
 
     chat = relationship(ChatTable, back_populates='chatbubble', passive_deletes=True)
     parent = relationship(ParentTable, back_populates='chatbubble', passive_deletes=True)

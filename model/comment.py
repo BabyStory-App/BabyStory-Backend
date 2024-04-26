@@ -1,6 +1,6 @@
 # 게시물 댓글 테이블
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -41,7 +41,7 @@ class Comment(BaseModel):
     parent_id: str
     post_id: int
     reply_id: int
-    comment: str
+    comment: TEXT
     time: datetime
     cheart: Optional[int]
 
@@ -64,7 +64,7 @@ class CommentTable(DB_Base):
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
     reply_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=True)
-    comment = Column(String(255), nullable=False)
+    comment = Column(TEXT, nullable=False)
     time = Column(DateTime, nullable=False)
     cheart = Column(Integer)
 

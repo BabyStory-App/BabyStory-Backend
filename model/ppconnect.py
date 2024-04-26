@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from db import DB_Base
 import uuid
 
-from model.parent import Parent
+from model.parent import ParentTable
 
 # +------------+--------------+------+-----+---------+-------+
 # | Field      | Type         | Null | Key | Default | Extra |
@@ -16,7 +16,7 @@ from model.parent import Parent
 # | parent_id2 | varchar(255) | NO   | MUL | NULL    |       |
 # +------------+--------------+------+-----+---------+-------+
 # CREATE TABLE ppconnect (
-#     ppc_id INT PRIMARY KEY NOT NULL,
+#     ppc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 #     parent_id1 VARCHAR(255) NOT NULL,
 #     parent_id2 VARCHAR(255) NOT NULL,
 #     FOREIGN KEY (parent_id1) REFERENCES parent(parent_id),
@@ -42,11 +42,11 @@ class PPConnect(BaseModel):
 
 class PPConnectTable(DB_Base):
     __tablename__ = 'ppconnect'
-    ppc_id = Column(String(36), primary_key=True, default=uuid.uuid4)
+    ppc_id = Column(String(36), primary_key=True, nullable=False, autoincrement=True)
     parent_id1 = Column(String(255), ForeignKey(
-        'parent.parent_id', ondelete='SET NULL'))
+        'parent.parent_id', ondelete='SET NULL'), nullable=False)
     parent_id2 = Column(String(255), ForeignKey(
-        'parent.parent_id', ondelete='SET NULL'))
+        'parent.parent_id', ondelete='SET NULL'), nullable=False)
     
-    parent1 = relationship(Parent, backref='ppconnect', passive_deletes=True)
-    parent2 = relationship(Parent, backref='ppconnect', passive_deletes=True)
+    parent1 = relationship(ParentTable, backref='ppconnect', passive_deletes=True)
+    parent2 = relationship(ParentTable, backref='ppconnect', passive_deletes=True)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Boolean
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -15,7 +15,7 @@ from typing import Optional
 # | name          | varchar(50)  | YES  |     | NULL    |       |
 # | nickname      | varchar(255) | NO   |     | NULL    |       |
 # | signInMethod  | varchar(50)  | YES  |     | NULL    |       |
-# | emailVerified | tinyint(1)   | YES  |     | NULL    |       |
+# | emailVerified | bool         | YES  |     | NULL    |       |
 # | photoId       | varchar(255) | YES  |     | NULL    |       |
 # | description   | varchar(255) | YES  |     | NULL    |       |
 # +---------------+--------------+------+-----+---------+-------+
@@ -26,7 +26,7 @@ from typing import Optional
 #     name VARCHAR(50) NOT NULL,
 #     nickname VARCHAR(255) NOT NULL,
 #     signInMethod VARCHAR(50) NOT NULL,
-#     emailVerified VARCHAR(255) NOT NULL,
+#     emailVerified boolean NOT NULL,
 #     photoId VARCHAR(255),
 #     description VARCHAR(255)
 # );
@@ -40,7 +40,7 @@ class Parent(BaseModel):
     name: str
     nickname: str
     signInMethod: str
-    emailVerified: str
+    emailVerified: Boolean
     photoId: Optional[str]
     description: Optional[str]
 
@@ -65,12 +65,9 @@ class ParentTable(DB_Base):
     name = Column(String(50), nullable=False)
     nickname = Column(String(255), nullable=False)
     signInMethod = Column(String(50), nullable=False)
-    emailVerified = Column(String(255), nullable=False)
-    photoId = Column(String(255), nullable=True)
-    description = Column(String(255), nullable=True)
-
-    # Relationship to Baby
-    # babies = relationship(BabyTable, backref='parents', passive_deletes=True)
+    emailVerified = Column(Boolean, nullable=False)
+    photoId = Column(String(255))
+    description = Column(String(255))
 
 # CREATE TABLE parent (
 #     uid VARCHAR(255) UNIQUE NOT NULL,

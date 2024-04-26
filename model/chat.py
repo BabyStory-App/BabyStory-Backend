@@ -21,7 +21,7 @@ from model.chatbubble import ChatbubbleTable
 # CREATE TABLE chat (
 #     room_id INT PRIMARY KEY auto_increment NOT NULL,
 #     parent_id VARCHAR(255) NOT NULL FOREIGN KEY REFERENCES parent(parent_id),
-#     end_chat INT FOREIGN KEY REFERENCES chatbubble(chat_id),
+#     end_chat INT NOT NULL FOREIGN KEY REFERENCES chatbubble(chat_id),
 #     name VARCHAR(100) NOT NULL,
 #     pid VARCHAR(255)
 # );
@@ -29,7 +29,7 @@ from model.chatbubble import ChatbubbleTable
 class Chat(BaseModel):
     room_id: int
     parent_id: str
-    end_chat: Optional[str]
+    end_chat: str
     name: str
     pid: Optional[str]
 
@@ -49,9 +49,9 @@ class ChatTable(DB_Base):
     __tablename__ = 'chat'
 
     room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'))
-    end_chat = Column(Integer, ForeignKey('chat.chat_id'))
-    name = Column(String(100))
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    end_chat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
+    name = Column(String(100), nullable=False)
     pid = Column(String(255))
     
     parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

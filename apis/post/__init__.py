@@ -53,7 +53,7 @@ def get_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
 
 # 하나의 게시물 가져오기
 @router.get("/{post_id}", dependencies=[Depends(JWTBearer())])
-def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Post:
+def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Post]:
 
     # 부모 아이디가 없으면 에러
     if parent_id == None:

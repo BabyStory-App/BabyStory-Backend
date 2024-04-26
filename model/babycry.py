@@ -12,7 +12,7 @@ from model.baby import BabyTable
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
-# | id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | babycry_id | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | baby_id    | varchar(255) | NO   | MUL | NULL    |                |
 # | time       | datetime     | YES  |     | NULL    |                |
 # | type       | varchar(50)  | YES  |     | NULL    |                |
@@ -22,7 +22,7 @@ from model.baby import BabyTable
 # | duration   | float        | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
 # CREATE TABLE babycry (
-#     id INT PRIMARY KEY auto_increment NOT NULL,
+#     babycry_id INT PRIMARY KEY auto_increment NOT NULL,
 #     baby_id VARCHAR(255) NOT NULL,
 #     time DATETIME,
 #     type VARCHAR(50),
@@ -34,7 +34,7 @@ from model.baby import BabyTable
 # );
 
 class Babycry(BaseModel):
-    id: int
+    babycry_id: int
     baby_id: str
     time: datetime
     type: str
@@ -58,7 +58,7 @@ class Babycry(BaseModel):
 class BabycryTable(DB_Base):
     __tablename__ = 'babycry'
 
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    babycry_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'))
     time = Column(DateTime)
     type = Column(String(50))

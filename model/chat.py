@@ -27,6 +27,11 @@ from model.chatbubble import ChatbubbleTable
 #     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
 
+# 마지막 채팅 채팅말풍선이랑 연결
+# ALTER TABLE chat
+# ADD CONSTRAINT fk_end_chat
+# FOREIGN KEY (end_chat) REFERENCES chatbubble(chat_id);
+
 class Chat(BaseModel):
     room_id: int
     parent_id: str

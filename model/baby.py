@@ -29,6 +29,8 @@ import uuid
 #     gender tinyint(3),
 #     birthDate DATETIME,
 #     bloodType CHAR(3),
+#     cm FLOAT,
+#     kg FLOAT,
 #     photoId VARCHAR(255)
 # );
 

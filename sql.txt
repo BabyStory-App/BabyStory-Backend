@@ -260,3 +260,12 @@ CREATE TABLE phospital (
     FOREIGN KEY (pregn_id) REFERENCES pregnancy(pregn_id)
 );
 
+CREATE TABLE alert (
+    alert_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    target VARCHAR(255),
+    message TEXT NOT NULL,
+    click CHAR(4),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (target) REFERENCES parent(parent_id)
+);

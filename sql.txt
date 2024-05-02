@@ -24,6 +24,15 @@ CREATE TABLE baby(
     photoId VARCHAR(255)
 );
 
+CREATE TABLE graph (
+    graph_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL,
+    cm FLOAT,
+    kg FLOAT,
+    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
+);
+
 CREATE TABLE babycry (
     babycry_id INT PRIMARY KEY auto_increment NOT NULL,
     baby_id VARCHAR(255) NOT NULL,
@@ -89,7 +98,7 @@ FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 CREATE TABLE post(
     post_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    title VARCHAR(100) NOT NULL,
+    title VARCHAR(144) NOT NULL,
     post CHAR(20) NOT NULL,
     photo TEXT,
     post_time DATETIME NOT NULL,

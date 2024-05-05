@@ -9,7 +9,9 @@ CREATE TABLE parent(
     signInMethod VARCHAR(50) NOT NULL,
     emailVerified boolean NOT NULL,
     photoId VARCHAR(255),
-    description VARCHAR(255)
+    description VARCHAR(255),
+    maddr VARCHAR(50),
+    saddr VARCHAR(255)
 );
 
 CREATE TABLE baby(

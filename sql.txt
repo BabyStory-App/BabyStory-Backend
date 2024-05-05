@@ -10,8 +10,8 @@ CREATE TABLE parent(
     emailVerified boolean NOT NULL,
     photoId VARCHAR(255),
     description VARCHAR(255),
-    maddr VARCHAR(50),
-    saddr VARCHAR(255)
+    mainaddr VARCHAR(50),
+    subaddr VARCHAR(255)
 );
 
 CREATE TABLE baby(

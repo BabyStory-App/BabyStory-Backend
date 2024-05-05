@@ -30,6 +30,7 @@ from model.parent import ParentTable
 #     parent_id VARCHAR(255) NOT NULL,
 #     post TEXT NOT NULL,
 #     photos TEXT,
+#     title VARCHAR(255),
 #     post_time DATETIME NOT NULL,
 #     modify_time DATETIME,
 #     delete_time DATETIME,
@@ -38,6 +39,7 @@ from model.parent import ParentTable
 #     script INT UNSIGNED,
 #     comment INT UNSIGNED,
 #     hash VARCHAR(100),
+#     view INT UNSIGNED,
 #     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
 

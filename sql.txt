@@ -24,7 +24,7 @@ CREATE TABLE baby(
     photoId VARCHAR(255)
 );
 
-CREATE TABLE graph (
+CREATE TABLE babystate (
     graph_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     baby_id VARCHAR(255) NOT NULL,
     date DATETIME NOT NULL,

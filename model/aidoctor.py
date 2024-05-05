@@ -1,6 +1,7 @@
 # AI 의사 테이블
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from typing import Optional
+from datetime import datetime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -12,28 +13,28 @@ from model.parent import ParentTable
 # +-----------+--------------+------+-----+---------+----------------+
 # | id        | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | ask_id    | varchar(100) | NO   |     | NULL    |                |
-# | res_id    | varchar(100) | NO   |     | NULL    |                |
-# | haddr     | varchar(255) | YES  |     | NULL    |                |
+# | date      | datetime     | NO   |     | NULL    |                |
+# | ask       | text         | NO   |     | NULL    |                |
+# | res       | text         | NO   |     | NULL    |                |
+# | haddr     | text         | YES  |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 # CREATE TABLE aidoctor (
-#     id INT PRIMARY KEY auto_increment NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     ask_id VARCHAR(100) NOT NULL,
-#     res_id VARCHAR(100) NOT NULL,
-#     haddr VARCHAR(255),
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+# id INT PRIMARY KEY auto_increment NOT NULL,
+# parent_id VARCHAR(255) NOT NULL,
+# date DATETIME NOT NULL,
+# ask text NOT NULL,
+# res text NOT NULL,
+# haddr text,
+# FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 # );
 
 class AIDoctor(BaseModel):
     id: int
     parent_id: str
+    date: datetime
     ask_id: str
     res_id: str
     haddr: Optional[str]
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -49,6 +50,7 @@ class AIDoctorTable(DB_Base):
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    date = Column(DateTime, nullable=False)
     ask_id = Column(String(100), nullable=False)
     res_id = Column(String(100), nullable=False)
     haddr = Column(String(255))

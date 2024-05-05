@@ -26,9 +26,11 @@ import uuid
 #     baby_id VARCHAR(255) NOT NULL PRIMARY KEY,
 #     obn VARCHAR(255) NOT NULL,
 #     name VARCHAR(255),
-#     gender VARCHAR(4),
+#     gender tinyint(3),
 #     birthDate DATETIME,
 #     bloodType CHAR(3),
+#     cm FLOAT,
+#     kg FLOAT,
 #     photoId VARCHAR(255)
 # );
 

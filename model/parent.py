@@ -18,18 +18,10 @@ from typing import Optional
 # | emailVerified | tinyint(1)   | NO   |     | NULL    |       |
 # | photoId       | varchar(255) | YES  |     | NULL    |       |
 # | description   | varchar(255) | YES  |     | NULL    |       |
+# | mainaddr      | varchar(50)  | YES  |     | NULL    |       |
+# | subaddr       | varchar(255) | YES  |     | NULL    |       |
 # +---------------+--------------+------+-----+---------+-------+
-# CREATE TABLE parent(
-#     parent_id VARCHAR(255) PRIMARY KEY NOT NULL,
-#     password VARCHAR(255) NOT NULL,
-#     email VARCHAR(255) UNIQUE NOT NULL,
-#     name VARCHAR(50) NOT NULL,
-#     nickname VARCHAR(255) NOT NULL,
-#     signInMethod VARCHAR(50) NOT NULL,
-#     emailVerified boolean NOT NULL,
-#     photoId VARCHAR(255),
-#     description VARCHAR(255)
-# );
+
 
 class Parent(BaseModel):
     parent_id: str
@@ -41,9 +33,6 @@ class Parent(BaseModel):
     emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -64,8 +53,8 @@ class ParentTable(DB_Base):
     nickname = Column(String(255), nullable=False)
     signInMethod = Column(String(50), nullable=False)
     emailVerified = Column(Boolean, nullable=False)
-    photoId = Column(String(255))
-    description = Column(String(255))
+    photoId = Column(String(255), nullable=True)
+    description = Column(String(255), nullable=True)
 
 # CREATE TABLE parent (
 #     uid VARCHAR(255) UNIQUE NOT NULL,

@@ -1,14 +1,13 @@
-# 육아일기 테이블
-
 from sqlalchemy import Column,String, ForeignKey, Integer, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
-
 from model.parent import ParentTable
 from model.baby import BabyTable
 
+
+# 육아일기 테이블
 # +--------------+--------------+------+-----+---------+----------------+
 # | Field        | Type         | Null | Key | Default | Extra          |
 # +--------------+--------------+------+-----+---------+----------------+
@@ -19,16 +18,7 @@ from model.baby import BabyTable
 # | img          | varchar(255) | YES  |     | NULL    |                |
 # | time         | datetime     | NO   |     | NULL    |                |
 # +--------------+--------------+------+-----+---------+----------------+
-# CREATE TABLE parenting (
-#     parenting_id INT PRIMARY KEY auto_increment NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     baby_id VARCHAR(255) NOT NULL,
-#     ptitle VARCHAR(50) NOT NULL,
-#     img VARCHAR(255),
-#     time DATETIME NOT NULL,
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-#     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
-# );
+
 
 class Parenting(BaseModel):
     parenting_id: int
@@ -37,9 +27,6 @@ class Parenting(BaseModel):
     ptitle: str
     img: Optional[str]
     time: DateTime
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -57,7 +44,7 @@ class ParentingTable(DB_Base):
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
     ptitle = Column(String(50), nullable=False)
-    img = Column(String(255))
+    img = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=False)
 
     parent = relationship(ParentTable, back_populates='parenting', passive_deletes=True)

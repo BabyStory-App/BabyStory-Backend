@@ -139,6 +139,14 @@ CREATE TABLE script(
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
+CREATE TABLE view(
+    view_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    parent_id VARCHAR(255) NOT NULL,
+    post_id INT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
 CREATE TABLE comment(
     comment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
@@ -182,10 +190,10 @@ CREATE TABLE dheart (
 
 CREATE TABLE friend (
     friend_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    parent_id1 VARCHAR(255) NOT NULL,
-    parent_id2 VARCHAR(255) NOT NULL,
-    FOREIGN KEY (parent_id1) REFERENCES parent(parent_id),
-    FOREIGN KEY (parent_id2) REFERENCES parent(parent_id)
+    parent_id VARCHAR(255) NOT NULL,
+    friend VARCHAR(255) NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (friend) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE purchase (

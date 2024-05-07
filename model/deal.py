@@ -1,14 +1,13 @@
-# 중고거래 테이블
-
 from sqlalchemy import Column,String, ForeignKey, Integer, DateTime, TEXT
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 from typing import Optional
-
 from model.parent import ParentTable
 
+
+# 중고거래 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
@@ -21,17 +20,7 @@ from model.parent import ParentTable
 # | time      | datetime     | NO   |     | NULL    |                |
 # | dheart    | int(11)      | YES  |     | 0       |                |
 # +-----------+--------------+------+-----+---------+----------------+
-# CREATE TABLE deal (
-#     deal_id INT PRIMARY KEY auto_increment NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     title VARCHAR(20) NOT NULL,
-#     post TEXT,
-#     img VARCHAR(255) NOT NULL,
-#     price INT NOT NULL,
-#     time DATETIME NOT NULL,
-#     dheart int DEFAULT 0,
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
-# );
+
 
 class Deal(BaseModel):
     deal_id: int
@@ -42,9 +31,6 @@ class Deal(BaseModel):
     price: int
     time: datetime
     dheart: int
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -61,10 +47,10 @@ class DealTable(DB_Base):
     deal_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
-    post = Column(TEXT)
+    post = Column(TEXT, nullable=True)
     img = Column(String(255), nullable=False)
     price = Column(Integer, nullable=False)
     time = Column(DateTime, nullable=False)
-    dheart = Column(Integer)
+    dheart = Column(Integer, nullable=True)
 
     parent = relationship(ParentTable, back_populates='deal', passive_deletes=True)

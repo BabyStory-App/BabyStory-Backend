@@ -1,0 +1,272 @@
+create database babystory;
+
+CREATE TABLE parent(
+    parent_id VARCHAR(255) PRIMARY KEY NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    nickname VARCHAR(255) NOT NULL,
+    signInMethod VARCHAR(50) NOT NULL,
+    emailVerified boolean NOT NULL,
+    photoId VARCHAR(255),
+    description VARCHAR(255),
+    mainaddr VARCHAR(50),
+    subaddr VARCHAR(255)
+);
+
+CREATE TABLE baby(
+    baby_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    obn VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    gender tinyint(3),
+    birthDate DATETIME,
+    bloodType CHAR(3),
+    cm FLOAT,
+    kg FLOAT,
+    photoId VARCHAR(255)
+);
+
+CREATE TABLE babystate (
+    graph_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL,
+    cm FLOAT,
+    kg FLOAT,
+    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
+);
+
+CREATE TABLE babycry (
+    babycry_id INT PRIMARY KEY auto_increment NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    time DATETIME,
+    type VARCHAR(50),
+    audioid CHAR,
+    predictMap JSON,
+    intensity VARCHAR(50),
+    duration FLOAT,
+    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
+);
+
+CREATE TABLE pbconnect(
+    pbc_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
+);
+
+CREATE TABLE chat(
+    room_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    end_chat INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    pid VARCHAR(255),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE chatbubble(
+    chat_id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    room_id INT NOT NULL,
+    time DATETIME NOT NULL,
+    chat_type VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    FOREIGN KEY (room_id) REFERENCES chat(room_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+ALTER TABLE chat
+ADD CONSTRAINT fk_end_chat
+FOREIGN KEY (end_chat) REFERENCES chatbubble(chat_id);
+
+CREATE TABLE pcconnect(
+    pcc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    parent_id VARCHAR(255) NOT NULL,
+    room_id INT NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (room_id) REFERENCES chat(room_id)
+);
+
+CREATE TABLE aidoctor(
+id INT PRIMARY KEY auto_increment NOT NULL,
+parent_id VARCHAR(255) NOT NULL,
+date DATETIME NOT NULL,
+ask text NOT NULL,
+res text NOT NULL,
+haddr text,
+FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE post(
+    post_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    title VARCHAR(144) NOT NULL,
+    photo TEXT,
+    post_time DATETIME NOT NULL,
+    modify_time DATETIME,
+    delete_time DATETIME,
+    heart INT UNSIGNED,
+    share INT UNSIGNED,
+    script INT UNSIGNED,
+    comment INT UNSIGNED,
+    hash VARCHAR(100),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE pheart(
+    pheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    post_id INT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE share(
+    share_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    post_id INT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE script(
+    script_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    parent_id VARCHAR(255) NOT NULL,
+    post_id INT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE comment(
+    comment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    post_id INT NOT NULL,
+    reply_id INT DEFAULT NULL,
+    comment TEXT NOT NULL,
+    time DATETIME NOT NULL,
+    cheart INT DEFAULT 0,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (reply_id) REFERENCES comment(comment_id)
+);
+
+CREATE TABLE cheart (
+    cheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    comment_id INT NOT NULL,
+    FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE deal (
+    deal_id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    title VARCHAR(20) NOT NULL,
+    post TEXT,
+    img VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    time DATETIME NOT NULL,
+    dheart int DEFAULT 0,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE dheart (
+    dheart_id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    deal_id INT NOT NULL,
+    FOREIGN KEY (deal_id) REFERENCES deal(deal_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE friend (
+    friend_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    parent_id1 VARCHAR(255) NOT NULL,
+    parent_id2 VARCHAR(255) NOT NULL,
+    FOREIGN KEY (parent_id1) REFERENCES parent(parent_id),
+    FOREIGN KEY (parent_id2) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE purchase (
+    purchase_id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    title VARCHAR(20) NOT NULL,
+    post TEXT,
+    img VARCHAR(255) NOT NULL,
+    time DATETIME NOT NULL,
+    link VARCHAR(255) NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE joint (
+    joint_id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    purchase_id INT NOT NULL,
+    FOREIGN KEY (purchase_id) REFERENCES purchase(purchase_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE parenting (
+    parenting_id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    ptitle VARCHAR(50) NOT NULL,
+    img VARCHAR(255),
+    time DATETIME NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
+);
+
+CREATE TABLE pdaily (
+    daily_id INT PRIMARY KEY auto_increment NOT NULL,
+    parenting_id INT NOT NULL,
+    daily DATETIME NOT NULL,
+    title VARCHAR(50) NOT NULL,
+    picture VARCHAR(255),
+    post TEXT,
+    FOREIGN KEY (parenting_id) REFERENCES parenting(parenting_id)
+);
+
+CREATE TABLE pregnancy (
+    pregn_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
+    dname VARCHAR(50),
+    img VARCHAR(255),
+    time DATETIME NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
+);
+
+CREATE TABLE pregndaily (
+    daily_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    pregn_id INT NOT NULL,
+    daily DATETIME NOT NULL,
+    title VARCHAR(50) NOT NULL,
+    picture VARCHAR(255),
+    post TEXT,
+    FOREIGN KEY (pregn_id) REFERENCES pregnancy(pregn_id)
+);
+
+CREATE TABLE phospital (
+    hospital_id INT PRIMARY KEY auto_increment NOT NULL,
+    pregn_id INT NOT NULL,
+    hday DATETIME NOT NULL,
+    parent_kg FLOAT NOT NULL,
+    bpressure FLOAT NOT NULL,
+    special VARCHAR(50),
+    baby_kg FLOAT,
+    baby_heart INT,
+    ultrasound VARCHAR(255),
+    uvideo VARCHAR(255),
+    FOREIGN KEY (pregn_id) REFERENCES pregnancy(pregn_id)
+);
+
+CREATE TABLE alert (
+    alert_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    target VARCHAR(255),
+    message TEXT NOT NULL,
+    click CHAR(4),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (target) REFERENCES parent(parent_id)
+);

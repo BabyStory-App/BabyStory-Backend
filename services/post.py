@@ -18,6 +18,7 @@ class PostService:
             print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
+                title=createPostInput.title,
                 post=createPostInput.post,
                 photos=createPostInput.photos if createPostInput.photos else None,
                 post_time=createPostInput.post_time,
@@ -98,7 +99,7 @@ class PostService:
             if post is None:
                 return None
             
-            for key in ['post', 'photos', 'modify_time', 'hash']:
+            for key in ['title', 'post', 'photos', 'modify_time', 'hash']:
                 setattr(post, key, getattr(updatePostInput, key))
 
             db.add(post)

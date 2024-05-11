@@ -6,6 +6,7 @@ from model.post import *
 
 # 게시물 생성
 class CreatePostInput(BaseModel):
+    title: str
     post: str
     photos: Optional[str]
     post_time: datetime = datetime.now()
@@ -17,6 +18,7 @@ class CreatePostOutput(BaseModel):
 # 게시물 수정
 class UpdatePostInput(BaseModel):
     post_id: int
+    title: str
     post: str
     photos: Optional[str]
     modify_time: datetime = datetime.now()

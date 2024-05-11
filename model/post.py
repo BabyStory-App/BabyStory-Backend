@@ -1,21 +1,20 @@
-# 게시물 테이블
-
 from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 from typing import Optional
-
 from model.parent import ParentTable
 
+
+# 게시물 테이블
 # +-------------+------------------+------+-----+---------+----------------+
 # | Field       | Type             | Null | Key | Default | Extra          |
 # +-------------+------------------+------+-----+---------+----------------+
 # | post_id     | int(11)          | NO   | PRI | NULL    | auto_increment |
 # | parent_id   | varchar(255)     | NO   | MUL | NULL    |                |
-# | post        | text             | NO   |     | NULL    |                |
-# | photos      | text             | YES  |     | NULL    |                |
+# | title       | varchar(144)     | NO   |     | NULL    |                |
+# | photo       | text             | YES  |     | NULL    |                |
 # | post_time   | datetime         | NO   |     | NULL    |                |
 # | modify_time | datetime         | YES  |     | NULL    |                |
 # | delete_time | datetime         | YES  |     | NULL    |                |
@@ -25,30 +24,13 @@ from model.parent import ParentTable
 # | comment     | int(10) unsigned | YES  |     | NULL    |                |
 # | hash        | varchar(100)     | YES  |     | NULL    |                |
 # +-------------+------------------+------+-----+---------+----------------+
-# CREATE TABLE post (
-#     post_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     post TEXT NOT NULL,
-#     photos TEXT,
-#     title VARCHAR(255),
-#     post_time DATETIME NOT NULL,
-#     modify_time DATETIME,
-#     delete_time DATETIME,
-#     heart INT UNSIGNED,
-#     share INT UNSIGNED,
-#     script INT UNSIGNED,
-#     comment INT UNSIGNED,
-#     hash VARCHAR(100),
-#     view INT UNSIGNED,
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
-# );
 
 
 class Post(BaseModel):
     post_id: int
     parent_id: str
-    post: str
-    photos: Optional[str]
+    title: str
+    photo: Optional[str]
     post_time: datetime
     modify_time: Optional[datetime]
     delete_time: Optional[datetime]
@@ -57,9 +39,6 @@ class Post(BaseModel):
     script: Optional[int]
     comment: Optional[int]
     hash: Optional[str]
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -75,15 +54,15 @@ class PostTable(DB_Base):
 
     post_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    post = Column(TEXT, nullable=False)
-    photos = Column(TEXT)
+    title = Column(String(144), nullable=False)
+    photo = Column(TEXT, nullable=True)
     post_time = Column(DateTime, nullable=False)
-    modify_time = Column(DateTime)
-    delete_time = Column(DateTime)
-    heart = Column(Integer)
-    share = Column(Integer)
-    script = Column(Integer)
-    comment = Column(Integer)
-    hash = Column(String(100))
+    modify_time = Column(DateTime, nullable=True)
+    delete_time = Column(DateTime, nullable=True)
+    heart = Column(Integer, nullable=True)
+    share = Column(Integer, nullable=True)
+    script = Column(Integer, nullable=True)
+    comment = Column(Integer, nullable=True)
+    hash = Column(String(100), nullable=True)
 
     parent = relationship(ParentTable, backref='post', passive_deletes=True)

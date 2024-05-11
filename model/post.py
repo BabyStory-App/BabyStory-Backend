@@ -13,6 +13,7 @@ from model.parent import ParentTable
 # +-------------+------------------+------+-----+---------+----------------+
 # | post_id     | int(11)          | NO   | PRI | NULL    | auto_increment |
 # | parent_id   | varchar(255)     | NO   | MUL | NULL    |                |
+# | public      | tinyint(4)       | NO   |     | NULL    |                |
 # | title       | varchar(144)     | NO   |     | NULL    |                |
 # | photo       | text             | YES  |     | NULL    |                |
 # | post_time   | datetime         | NO   |     | NULL    |                |
@@ -21,6 +22,7 @@ from model.parent import ParentTable
 # | heart       | int(10) unsigned | YES  |     | NULL    |                |
 # | share       | int(10) unsigned | YES  |     | NULL    |                |
 # | script      | int(10) unsigned | YES  |     | NULL    |                |
+# | view        | int(10) unsigned | YES  |     | NULL    |                |
 # | comment     | int(10) unsigned | YES  |     | NULL    |                |
 # | hash        | varchar(100)     | YES  |     | NULL    |                |
 # +-------------+------------------+------+-----+---------+----------------+
@@ -37,6 +39,7 @@ class Post(BaseModel):
     heart: Optional[int]
     share: Optional[int]
     script: Optional[int]
+    view: Optional[int]
     comment: Optional[int]
     hash: Optional[str]
 
@@ -62,6 +65,7 @@ class PostTable(DB_Base):
     heart = Column(Integer, nullable=True)
     share = Column(Integer, nullable=True)
     script = Column(Integer, nullable=True)
+    view = Column(Integer, nullable=True)
     comment = Column(Integer, nullable=True)
     hash = Column(String(100), nullable=True)
 

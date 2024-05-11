@@ -90,18 +90,19 @@ CREATE TABLE pcconnect(
 );
 
 CREATE TABLE aidoctor(
-id INT PRIMARY KEY auto_increment NOT NULL,
-parent_id VARCHAR(255) NOT NULL,
-date DATETIME NOT NULL,
-ask text NOT NULL,
-res text NOT NULL,
-haddr text,
-FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+    id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL,
+    ask text NOT NULL,
+    res text NOT NULL,
+    haddr text,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE post(
     post_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
+    public tinyint(4) NOT NULL,
     title VARCHAR(144) NOT NULL,
     photo TEXT,
     post_time DATETIME NOT NULL,
@@ -110,6 +111,7 @@ CREATE TABLE post(
     heart INT UNSIGNED,
     share INT UNSIGNED,
     script INT UNSIGNED,
+    view INT UNSIGNED,
     comment INT UNSIGNED,
     hash VARCHAR(100),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)

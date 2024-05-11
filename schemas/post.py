@@ -8,7 +8,7 @@ from model.post import *
 class CreatePostInput(BaseModel):
     title: str
     post: str
-    photos: Optional[str]
+    photo: Optional[str]
     post_time: datetime = datetime.now()
     hash: Optional[str]
 
@@ -20,7 +20,7 @@ class UpdatePostInput(BaseModel):
     post_id: int
     title: str
     post: str
-    photos: Optional[str]
+    photo: Optional[str]
     modify_time: datetime = datetime.now()
     hash: Optional[str]
 

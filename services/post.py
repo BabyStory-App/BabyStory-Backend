@@ -1,6 +1,11 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from typing import Optional, List
 from sqlalchemy.orm import joinedload
+
+import os
+import shutil
+from uuid import uuid4
+from constants.path import PROJECT_DIR
 
 from model.post import Post
 
@@ -12,15 +17,25 @@ class PostService:
 
     # 게시물 생성
     def createPost(self, parent_id: str,
-                   createPostInput: CreatePostInput) -> Post:
+                   createPostInput: CreatePostInput,
+                   file: UploadFile) -> Post:
         db = get_db_session()
+
         try:
+            # save photo image if exists
+            photo_id = None
+            if createPostInput.photo != None:
+                photo_id = str(uuid4())
+                photo_save_path = os.path.join(
+                    PROJECT_DIR, f"{photo_id}.jpg")
+                with open(photo_save_path, "wb") as buffer:
+                    shutil.copyfileobj(file.file, buffer)
+
             print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
                 title=createPostInput.title,
                 post=createPostInput.post,
-                photos=createPostInput.photos if createPostInput.photos else None,
                 post_time=createPostInput.post_time,
                 modify_time=None,
                 delete_time=None,
@@ -30,6 +45,9 @@ class PostService:
                 comment=None,
                 hash=createPostInput.hash if createPostInput.hash else None
             )
+
+            if photo_id:
+                post.photo = photo_id
 
             db.add(post)
             db.commit()
@@ -99,7 +117,7 @@ class PostService:
             if post is None:
                 return None
             
-            for key in ['title', 'post', 'photos', 'modify_time', 'hash']:
+            for key in ['title', 'post', 'photo', 'modify_time', 'hash']:
                 setattr(post, key, getattr(updatePostInput, key))
 
             db.add(post)

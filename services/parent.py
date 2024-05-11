@@ -25,7 +25,9 @@ class ParentService:
                 signInMethod=createParentInput.signInMethod,
                 emailVerified=createParentInput.emailVerified,
                 photoId=createParentInput.photoId if createParentInput.photoId else None,
-                description=createParentInput.description if createParentInput.description else None
+                description=createParentInput.description if createParentInput.description else None,
+                mainaddr=createParentInput.mainaddr if createParentInput.mainaddr else None,
+                subaddr=createParentInput.subaddr if createParentInput.subaddr else None
             )
 
             db.add(parent)
@@ -134,7 +136,7 @@ class ParentService:
 
     #         return parent
     #     except Exception as e:
-    #         raise HttpException(
+    #         raise HTTPException(
     #             status_code=400, detail="Failed to get parent")
 
 

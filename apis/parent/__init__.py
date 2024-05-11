@@ -36,7 +36,9 @@ def create_parent(createParentInput: CreateParentInput)-> CreateParentOutput:
         'signInMethod': parent.signInMethod,
         'emailVerified': parent.emailVerified,
         'photoId': parent.photoId,
-        'description': parent.description
+        'description': parent.description,
+        'mainaddr': parent.mainaddr,
+        'subaddr': parent.subaddr
     }
 
     return JSONResponse(status_code=201, content={
@@ -46,12 +48,12 @@ def create_parent(createParentInput: CreateParentInput)-> CreateParentOutput:
 
 # 부모 정보 조회
 @router.get("/", dependencies=[Depends(JWTBearer())])
-def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOutput:
+async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOutput:
     if parent_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    parent = parentService.getParentByEmail(parent_id)
+    parent = await parentService.getParentByEmail(parent_id)
 
     if parent is None:
         raise HTTPException(
@@ -66,7 +68,9 @@ def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOutput:
         'signInMethod': parent.signInMethod,
         'emailVerified': parent.emailVerified,
         'photoId': parent.photoId,
-        'description': parent.description
+        'description': parent.description,
+        'mainaddr': parent.mainaddr,
+        'subaddr': parent.subaddr
     }
 
     return JSONResponse(status_code=200, content={
@@ -76,13 +80,13 @@ def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOutput:
 
 # 부모 정보 수정
 @router.put("/", dependencies=[Depends(JWTBearer())])
-def update_parent(updateParentInput: UpdateParentInput,
+async def update_parent(updateParentInput: UpdateParentInput,
                    parent_id: str = Depends(JWTBearer())) -> UpdateParentOutput:
     if parent_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
     
-    parent=parentService.updateParent(parent_id, updateParentInput)
+    parent= await parentService.updateParent(parent_id, updateParentInput)
 
     if parent is None:
         raise HTTPException(
@@ -95,12 +99,12 @@ def update_parent(updateParentInput: UpdateParentInput,
 
 # 부모 삭제
 @router.delete("/", dependencies=[Depends(JWTBearer())])
-def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOutput:
+async def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOutput:
     if parent_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
     
-    parent=parentService.deleteParent(parent_id)
+    parent= await parentService.deleteParent(parent_id)
 
     return {
         "success": 200 if parent else 403,
@@ -108,20 +112,20 @@ def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOutput:
 
 # 이메일로 부모 목록 조회
 @router.get("/friends")
-def get_friends(emails: Optional[str] = None):
+async def get_friends(emails: Optional[str] = None):
 
     email_list = emails.split(',') if emails is not None else []
 
-    friends_dict = parentService.getFriends(email_list)
+    friends_dict = await parentService.getFriends(email_list)
 
     return friends_dict
 
 
 # 부모에게 다른 아기 pbconnect 요청
 @router.post("/pbconnect")
-def create_pbconnect(baby_id: str,parent_id: str = Depends(JWTBearer())) -> CreatePBConnectOutput:
+async def create_pbconnect(baby_id: str,parent_id: str = Depends(JWTBearer())) -> CreatePBConnectOutput:
 
-    pbconnect = parentService.create_pbconnect(baby_id,parent_id)
+    pbconnect = await parentService.create_pbconnect(baby_id,parent_id)
 
     if pbconnect is None:
         raise HTTPException(
@@ -133,7 +137,7 @@ def create_pbconnect(baby_id: str,parent_id: str = Depends(JWTBearer())) -> Crea
 
 
 @router.get("/all")
-def get_parent():
-    parent = parentService.getParentAll()
+async def get_parent():
+    parent = await parentService.getParentAll()
 
     return parent

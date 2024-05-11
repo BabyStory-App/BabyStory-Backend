@@ -1,3 +1,4 @@
+import os
 from fastapi import HTTPException
 from typing import Optional, List
 from sqlalchemy.orm import joinedload
@@ -14,7 +15,11 @@ class PostMainService:
 
     # 메인 페이지 배너 생성
     def createPostMainBanner(self)->CreatePostMainBannerListOutput:
-
+        """
+        메인 페이지 배너 생성
+        --output
+            - List<{postid, photoid, title, author_name, desc 초반 100자}> : 메인 페이지 배너
+        """
         # 오늘 00시부터 하루 전 23시 59분까지의 시간 간격을 계산합니다.
         end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         start = end - timedelta(days=1)
@@ -69,27 +74,38 @@ class PostMainService:
             raise (e)
             #raise Exception("Failed to create banner")
         
-    def createPostMainFriend(self, parent_id: str, size: int =-1, page: int =-1)->CreatePostMainFriendListOutput:
+    def createPostMainFriend(self, createPostMainInput: CreatePostMainInput)->CreatePostMainFriendListOutput:
+        """
+        짝꿍이 쓴 게시물
+        --input
+            - createPostMainInput.parent_id: 부모 아이디
+            - createPostMainInput.size: 게시물 개수 default -1
+            - createPostMainInput.page: 페이지 수 default -1
+        --output
+            - List<{postid, photoid, title, author_photo, author_name}> : 짝꿍이 쓴 게시물
+        """
+
         db = get_db_session()
         try:
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             
             # size와 page가 -1이면 기본 페이지를 가져온다.
-            if size == -1 and page == -1:
+            if createPostMainInput.size == -1 and createPostMainInput.page == -1:
                 size = 10
                 page = 0
             else:
-                page = (page - 1) * 10
+                size = createPostMainInput.size
+                page = (createPostMainInput.page - 1) * 10
 
             # 친구 가져오기
             friends = db.query(FriendTable).filter(
-                FriendTable.parent_id1 == parent_id
+                FriendTable.parent_id1 == createPostMainInput.parent_id
                 ).all()
             
             # 짝꿍 : 친구도 나를 친구로 등록했는지 확인
             friend = db.query(FriendTable).filter(
                 db.query(FriendTable).filter(
-                    FriendTable.parent_id2 == parent_id
+                    FriendTable.parent_id2 == createPostMainInput.parent_id
                 ).first().parent_id1 in friends.parent_id2
                 ).all()
 
@@ -121,22 +137,32 @@ class PostMainService:
             #raise Exception("Failed to create friend banner")
 
 
-    def createPostMainFriendRead(self,parent_id: str, size: int =-1, page: int =-1)->CreatePostMainFriendListOutput:
+    def createPostMainFriendRead(self,createPostMainInput: CreatePostMainInput)->CreatePostMainFriendListOutput:
+        """
+        친구가 쓴 게시물
+        --input
+            - createPostMainInput.parent_id: 부모 아이디
+            - createPostMainInput.size: 게시물 개수 default -1
+            - createPostMainInput.page: 페이지 수 default -1
+        --output
+            - List<{postid, photoid, title, heart, comment, author_name, desc}> : 친구가 쓴 게시물
+        """
         db = get_db_session()
         try:
             # 어제 시간
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
             # size와 page가 -1이면 기본 페이지를 가져온다.
-            if size == -1 and page == -1:
+            if createPostMainInput.size == -1 and createPostMainInput.page == -1:
                 size = 10
                 page = 0
             else:
-                page = (page - 1) * 10
+                size = createPostMainInput.size
+                page = (createPostMainInput.page - 1) * 10
 
             # 친구 가져오기
             friend = db.query(FriendTable).filter(
-                FriendTable.parent_id1 == parent_id
+                FriendTable.parent_id1 == createPostMainInput.parent_id
                 ).all()
 
             # 친구가 쓴 게시물 중 page에서 size개 가져오기
@@ -166,6 +192,13 @@ class PostMainService:
             #raise Exception("Failed to create friend read")
 
     def getNeighbor(self, parent_id: str)->GetNeighborOutputListOutput:
+        """
+        친구로 등록되지 않은 이웃목록
+        --input
+            - parent_id: 부모 아이디
+        --output
+            - List<{parent_id, photo_id, name, mainaddr, desc}> : 친구로 등록되지 않은 이웃목록
+        """
         db = get_db_session()
         try:
             # 친구로 등록되지 않은 이웃목록을 10개 가져오기
@@ -197,21 +230,31 @@ class PostMainService:
             raise (e)
             #raise Exception("Failed to get neighbor list")
 
-    def createPostMainNeighbor(self, parent_id: str, size: int =-1, page: int =-1 )->CreatePostMainNeighborListOutput:
+    def createPostMainNeighbor(self, createPostMainInput: CreatePostMainInput )->CreatePostMainNeighborListOutput:
+        """
+        이웃들이 쓴 게시물
+        --input
+            - createPostMainInput.parent_id: 부모 아이디
+            - createPostMainInput.size: 게시물 개수 default -1
+            - createPostMainInput.page: 페이지 수 default -1
+        --output
+            - List<{postid, photoid, title, heart, comment, author_name, desc}> : 이웃이 쓴 게시물
+        """
         db = get_db_session()
         try:
             # size와 page가 -1이면 기본 페이지를 가져온다.
-            if size == -1 and page == -1:
+            if createPostMainInput.size == -1 and createPostMainInput.page == -1:
                 size = 10
                 page = 0
             else:
-                page = (page - 1) * 10
+                size = createPostMainInput.size
+                page = (createPostMainInput.page - 1) * 10
 
             # 이웃을 가져오기
             neighbors = db.query(ParentTable).filter(
-                ParentTable.parent_id != parent_id,
+                ParentTable.parent_id != createPostMainInput.parent_id,
                 ParentTable.mainaddr == db.query(ParentTable.mainaddr).filter(
-                    ParentTable.parent_id == parent_id
+                    ParentTable.parent_id == createPostMainInput.parent_id
                 )
             ).all()
 
@@ -241,6 +284,11 @@ class PostMainService:
             #raise Exception("Failed to create neighbor banner")
 
     def createPostMainHighView(self)->CreatePostMainHighViewListOutput:
+        """
+        조회수가 높은 게시물
+        --output
+            - List<{postid, photoid, title, author_name, desc}> : 조회수가 높은 게시물
+        """
         db = get_db_session()
         try:
             # 조회수가 높은 게시물을 가져옵니다.
@@ -266,6 +314,13 @@ class PostMainService:
             #raise Exception("Failed to create high view banner")
     
     def createPostMainHashtag(self, parent_id:str)->CreatePostMainHashtagListOutput:
+        """
+        많이 본 해시태그로 게시물 추천
+        --input
+            - parent_id: 부모 아이디
+        --output
+            - List<{postid, photoid, title, author_name, desc, hash}> : 많이 본 해시태그로 게시물 추천
+        """
         db = get_db_session()
         try:
             # 부모 테이블에 많이본 해시태그가 몇 개 있고 그게 포함된 게시물을 가져오기

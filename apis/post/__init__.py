@@ -18,7 +18,7 @@ postService = PostService()
 
 # 게시물 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
-def create_post(createPostInput: CreatePostInput,
+async def create_post(createPostInput: CreatePostInput,
                 parent_id: str = Depends(JWTBearer()))-> CreatePostOutput:
     
     # 부모 아이디가 없으면 에러
@@ -26,7 +26,7 @@ def create_post(createPostInput: CreatePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    post = postService.createPost(parent_id, createPostInput)
+    post = await postService.createPost(parent_id, createPostInput)
 
     if post is None:
         raise HTTPException(
@@ -37,14 +37,14 @@ def create_post(createPostInput: CreatePostInput,
 
 # 모든 게시물 가져오기
 @router.get("/", dependencies=[Depends(JWTBearer())])
-def get_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
+async def get_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
 
     # 부모 아이디가 없으면 에러
     if parent_id == None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
     # 게시물 정보 가져오기
-    post = postService.getAllPost(parent_id)
+    post = await postService.getAllPost(parent_id)
 
     if post is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
@@ -53,14 +53,14 @@ def get_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
 
 # 하나의 게시물 가져오기
 @router.get("/{post_id}", dependencies=[Depends(JWTBearer())])
-def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Post]:
+async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Post]:
 
     # 부모 아이디가 없으면 에러
     if parent_id == None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
     # 게시물 정보 가져오기
-    post = postService.getPost(post_id, parent_id)
+    post = await postService.getPost(post_id, parent_id)
 
     if post is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
@@ -69,7 +69,7 @@ def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Po
 
 # 게시물 수정
 @router.put("/{post_id}", dependencies=[Depends(JWTBearer())])
-def update_post(updatePostInput: UpdatePostInput,
+async def update_post(updatePostInput: UpdatePostInput,
                 parent_id:str = Depends(JWTBearer())) -> UpdatePostOutput:
     
     # 부모 아이디가 없으면 에러
@@ -77,7 +77,7 @@ def update_post(updatePostInput: UpdatePostInput,
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
     # 게시물 정보 수정
-    post = postService.updatePost(updatePostInput,parent_id)
+    post = await postService.updatePost(updatePostInput,parent_id)
 
     if post is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
@@ -86,7 +86,7 @@ def update_post(updatePostInput: UpdatePostInput,
 
 # 게시물 삭제
 @router.put("/delete/{post_id}", dependencies=[Depends(JWTBearer())])
-def delete_post(deletePostInput: DeletePostInput,
+async def delete_post(deletePostInput: DeletePostInput,
                 parent_id:str = Depends(JWTBearer()))-> DeletePostOutput:
     
     # 부모 아이디가 없으면 에러
@@ -94,7 +94,7 @@ def delete_post(deletePostInput: DeletePostInput,
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
     # 게시물 삭제
-    success = postService.deletePost(deletePostInput, parent_id)
+    success = await postService.deletePost(deletePostInput, parent_id)
    
     if success is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")

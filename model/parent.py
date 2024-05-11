@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
 
-
 # 부모 테이블
 # +---------------+--------------+------+-----+---------+-------+
 # | Field         | Type         | Null | Key | Default | Extra |
@@ -41,6 +40,8 @@ class Parent(BaseModel):
     emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
+    mainaddr: Optional[str]
+    subaddr: Optional[str]
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -66,6 +67,9 @@ class ParentTable(DB_Base):
     emailVerified = Column(Boolean, nullable=False)
     photoId = Column(String(255))
     description = Column(String(255))
+    mainaddr = Column(String(255))
+    subaddr = Column(String(255))
+
 
 # CREATE TABLE parent (
 #     uid VARCHAR(255) UNIQUE NOT NULL,

@@ -21,20 +21,34 @@ class PostMainService:
 
         db = get_db_session()
         try:
-            # 전날 00시부터 23시 59분까지의 조회수를 기준으로 상위 5개의 포스트를 가져옵니다.
-            banner = db.query(PostTable).filter(
-                PostTable.post_time <= end,
-                PostTable.post_time >= start
-                ).order_by(desc(PostTable.heart)).limit(5).all()
+            # (start)어제의 날짜.txt 라는 파일이 존재하지 않으면
+            if not os.path.exists(str(start) + '.txt'):
 
-            # 각각의 post_id 리스트를 저장한다(로그 파일로 저장)
-            post_id_list = []
-            for i in banner:
-                post_id_list.append({i.post_id, i.post_time})
+                # 전날 00시부터 23시 59분까지의 하트를 기준으로 상위 5개의 포스트를 가져옵니다.
+                banner = db.query(PostTable).filter(
+                    PostTable.post_time <= end,
+                    PostTable.post_time >= start
+                    ).order_by(desc(PostTable.heart)).limit(5).all()
 
-            with open('post_id_list.txt', 'a') as f:
-                for item in post_id_list:
-                    f.write("%s\n" % item)
+                # 각각의 post_id를 리스트에 저장한다
+                post_id_list = []
+                for i in banner:
+                    post_id_list.append({i.post_id})
+                
+                # (start)어제의 날짜.txt 파일을 생성합니다.
+                with open(str(start) + '.txt', 'w') as f:
+                    for item in post_id_list:
+                        f.write("%s\n" % item)
+
+            # (start)어제의 날짜.txt 파일이 존재하면
+            else:
+                with open(str(start) + '.txt', 'r') as f:
+                    post_id_list = f.readlines()
+
+                # post_id_list에 있는 post_id를 이용하여 post를 가져옵니다.
+                banner = db.query(PostTable).filter(
+                    PostTable.post_id.in_(post_id_list)
+                ).all()           
 
             # banner의 값을 반환:List<{postid, photoid, title, author name, desc 초반 100자}>
             # 이때, desc는 100자로 제한한다.
@@ -49,20 +63,23 @@ class PostMainService:
                     'desc': i.post[:100]
                 })
 
-            # post테이블에 제목, 조회수 없음
-
             return banners
         
         except Exception as e:
             raise (e)
             #raise Exception("Failed to create banner")
         
-    
-    def createPostMainFriend(self, parent_id: str)->CreatePostMainFriendListOutput:
+    def createPostMainFriend(self, parent_id: str, size: int =-1, page: int =-1)->CreatePostMainFriendListOutput:
         db = get_db_session()
         try:
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             
+            # size와 page가 -1이면 기본 페이지를 가져온다.
+            if size == -1 and page == -1:
+                size = 10
+                page = 0
+            else:
+                page = (page - 1) * 10
 
             # 친구 가져오기
             friends = db.query(FriendTable).filter(
@@ -77,11 +94,12 @@ class PostMainService:
                 ).all()
 
             
-            # 오늘 친구가 쓴 게시물 10개 가져오기
+            # 오늘 친구가 쓴 게시물 중 page에서 size개 가져오기
             post = db.query(PostTable).filter(
                 PostTable.parent_id == friend.parent_id2,
                 PostTable.post_time >= end
-                ).order_by(desc(PostTable.post_time)).limit(10).all()
+                ).order_by(desc(PostTable.post_time)).limit(size).offset(page).all()
+
 
             # 값을 반환: List<{postid, photoid, title, author_photo, author_name}>
             banners = []
@@ -95,8 +113,6 @@ class PostMainService:
                     'author_name': db.query(ParentTable).filter(
                         ParentTable.parent_id == i.parent_id).first().name
                 })
-
-            # post테이블에 제목 없음
 
             return banners
         
@@ -105,37 +121,43 @@ class PostMainService:
             #raise Exception("Failed to create friend banner")
 
 
-    def createPostMainFriendRead(self,parent_id: str)->CreatePostMainFriendListOutput:
+    def createPostMainFriendRead(self,parent_id: str, size: int =-1, page: int =-1)->CreatePostMainFriendListOutput:
         db = get_db_session()
         try:
             # 어제 시간
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+            # size와 page가 -1이면 기본 페이지를 가져온다.
+            if size == -1 and page == -1:
+                size = 10
+                page = 0
+            else:
+                page = (page - 1) * 10
 
             # 친구 가져오기
             friend = db.query(FriendTable).filter(
                 FriendTable.parent_id1 == parent_id
                 ).all()
 
-            # 친구가 쓴 게시물 10개 가져오기
+            # 친구가 쓴 게시물 중 page에서 size개 가져오기
             post = db.query(PostTable).filter(
                 PostTable.parent_id == friend.parent_id2,
                 PostTable.post_time >= end
-                ).order_by(desc(PostTable.post_time)).limit(10).all()
+                ).order_by(desc(PostTable.post_time)).limit(size).offset(page).all()
 
-            # 값을 반환: List<{postid, photoid, title, author_photo, author_name}>
+            # 값을 반환: List<{postid, photoid, title, heart, comment, author_name, desc}>
             banners = []
             for i in post:
                 banners.append({
                     'post_id': i.post_id,
                     'photo_id': i.photos,
                     'title': i.title,
-                    'author_photo': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().photoId,
+                    'heart': i.heart,
+                    'comment': i.comment,
                     'author_name': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().name
+                        ParentTable.parent_id == i.parent_id).first().name,
+                    'desc': i.post[:100]
                 })
-
-            # post테이블에 제목 없음
 
             return banners
         
@@ -152,23 +174,22 @@ class PostMainService:
                 ParentTable.parent_id not in db.query(FriendTable.parent_id2).filter(
                     FriendTable.parent_id1 == parent_id
                 ),
-                ParentTable.region == db.query(ParentTable.region).filter(
+                ParentTable.mainaddr == db.query(ParentTable.mainaddr).filter(
                     ParentTable.parent_id == parent_id
                 )
             ).limit(10).all()
 
-            # 값을 반환: List<{parent_id, photo_id, name, region, desc}>
+            # 값을 반환: List<{parent_id, photo_id, name, mainaddr, desc}>
             banners = []
             for i in neighbors:
                 banners.append({
                     'parent_id': i.parent_id,
                     'photo_id': i.photoId,
                     'name': i.name,
-                    'region': i.region,
+                    'mainaddr': i.mainaddr,
                     'desc': i.description
                 })
 
-            # parent테이블에 region 없음
 
             return banners
         
@@ -176,21 +197,28 @@ class PostMainService:
             raise (e)
             #raise Exception("Failed to get neighbor list")
 
-    def createPostMainNeighbor(self, parent_id: str)->CreatePostMainNeighborListOutput:
+    def createPostMainNeighbor(self, parent_id: str, size: int =-1, page: int =-1 )->CreatePostMainNeighborListOutput:
         db = get_db_session()
         try:
+            # size와 page가 -1이면 기본 페이지를 가져온다.
+            if size == -1 and page == -1:
+                size = 10
+                page = 0
+            else:
+                page = (page - 1) * 10
+
             # 이웃을 가져오기
             neighbors = db.query(ParentTable).filter(
                 ParentTable.parent_id != parent_id,
-                ParentTable.region == db.query(ParentTable.region).filter(
+                ParentTable.mainaddr == db.query(ParentTable.mainaddr).filter(
                     ParentTable.parent_id == parent_id
                 )
             ).all()
 
-            # 이웃이 쓴 게시물을 가져오기
+            # 이웃이 쓴 게시물 중 page에서 size개 가져오기
             post = db.query(PostTable).filter(
                 PostTable.parent_id.in_([i.parent_id for i in neighbors])
-            ).order_by(desc(PostTable.post_time)).limit(10).all()
+            ).order_by(desc(PostTable.post_time)).limit(size).offset(page).all()
 
             # 값을 반환: List<{postid, photoid, title, heart, comment, author_name, desc}>
             banners = []
@@ -205,8 +233,6 @@ class PostMainService:
                         ParentTable.parent_id == i.parent_id).first().name,
                     'desc': i.post[:100]
                 })
-
-            # post테이블에 제목 없음
 
             return banners
         
@@ -232,7 +258,6 @@ class PostMainService:
                     'desc': i.post[:100]
                 })
 
-            # post테이블에 제목 없음
 
             return banners
         
@@ -274,5 +299,5 @@ class PostMainService:
             raise (e)
             #raise Exception("Failed to create hashtag banner")
 
-# post에 title, 조회수 없음
-# parent에 지역,hash 없음
+# post에 조회수 없음
+# parent에 hash 없음

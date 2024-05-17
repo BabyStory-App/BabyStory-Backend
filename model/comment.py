@@ -4,9 +4,6 @@ from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 from typing import Optional
-from model.post import PostTable
-from model.parent import ParentTable
-from model.comment import CommentTable
 
 
 # 게시물 댓글 테이블
@@ -52,6 +49,6 @@ class CommentTable(DB_Base):
     time = Column(DateTime, nullable=False)
     cheart = Column(Integer, nullable=True)
 
-    post = relationship(PostTable, backref='comment', passive_deletes=True)
-    parent = relationship(ParentTable, backref='comment', passive_deletes=True)
-    comment = relationship(CommentTable, backref='comment', passive_deletes=True)
+    post = relationship("PostTable", backref='comment', passive_deletes=True)
+    parent = relationship("ParentTable", backref='comment', passive_deletes=True)
+    comment = relationship("CommentTable", backref='comment', passive_deletes=True)

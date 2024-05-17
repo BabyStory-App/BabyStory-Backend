@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Float
+from sqlalchemy import Column, String, DateTime, Float, Integer
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
@@ -29,7 +29,7 @@ class Baby(BaseModel):
     baby_id: str
     obn: str
     name: Optional[str]
-    gender: Optional[str]
+    gender: Optional[int]
     birthDate: Optional[datetime]
     bloodType: Optional[str]
     cm: Optional[float]
@@ -51,7 +51,7 @@ class BabyTable(DB_Base):
     baby_id = Column(String(255), primary_key=True, nullable=False, default=uuid.uuid4)
     obn = Column(String(255), nullable=False)
     name = Column(String(255), index=True)
-    gender = Column(String(3), nullable=True)
+    gender = Column(Integer, nullable=True)
     birthDate = Column(DateTime, nullable=True)
     bloodType = Column(String(3), nullable=True)
     cm = Column(Float, nullable=True)

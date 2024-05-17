@@ -1,14 +1,13 @@
-# 산모수첩
-
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
-
 from model.parent import ParentTable
 from model.baby import BabyTable
 
+
+# 산모수첩 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
@@ -19,16 +18,7 @@ from model.baby import BabyTable
 # | img       | varchar(255) | YES  |     | NULL    |                |
 # | time      | datetime     | NO   |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
-# CREATE TABLE pregnancy (
-#     pregn_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     baby_id VARCHAR(255) NOT NULL,
-#     dname VARCHAR(50),
-#     img VARCHAR(255),
-#     time DATETIME NOT NULL,
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-#     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
-# );
+
 
 class Pregnancy(BaseModel):
     pregn_id: int
@@ -37,9 +27,6 @@ class Pregnancy(BaseModel):
     dname: Optional[str]
     img: Optional[str]
     time: DateTime
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -56,8 +43,8 @@ class PregnancyTable(DB_Base):
     pregn_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
-    dname = Column(String(50))
-    img = Column(String(255))
+    dname = Column(String(50), nullable=True)
+    img = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=False)
 
     parent = relationship(ParentTable, back_populates='pregnancy', passive_deletes=True)

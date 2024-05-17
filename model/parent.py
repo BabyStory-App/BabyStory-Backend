@@ -70,6 +70,11 @@ class ParentTable(DB_Base):
     mainaddr = Column(String(255))
     subaddr = Column(String(255))
 
+    # friends1 = relationship("FriendTable", foreign_keys="[FriendTable.parent_id1]", back_populates="parent", passive_deletes=True)
+    # friends2 = relationship("FriendTable", foreign_keys="[FriendTable.parent_id2]", back_populates="parent", passive_deletes=True)
+    friends1 = relationship("FriendTable", foreign_keys="[FriendTable.parent_id]", back_populates="parent1", passive_deletes=True)
+    friends2 = relationship("FriendTable", foreign_keys="[FriendTable.friend]", back_populates="parent2", passive_deletes=True)
+
 
 # CREATE TABLE parent (
 #     uid VARCHAR(255) UNIQUE NOT NULL,

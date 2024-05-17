@@ -1,38 +1,29 @@
-from sqlalchemy import Column, String, DateTime, Text
+from sqlalchemy import Column, String, DateTime, Float
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 from db import DB_Base
 import uuid
-
-# 아기 테이블
 #from model.baby_state_record import BabyStateRecord
 #from model.cry_state import CryState
 
 
+# 아기 테이블
 # +-----------+--------------+------+-----+---------+-------+
 # | Field     | Type         | Null | Key | Default | Extra |
 # +-----------+--------------+------+-----+---------+-------+
 # | baby_id   | varchar(255) | NO   | PRI | NULL    |       |
 # | obn       | varchar(255) | NO   |     | NULL    |       |
 # | name      | varchar(255) | YES  |     | NULL    |       |
-# | gender    | varchar(4)   | YES  |     | NULL    |       |
+# | gender    | tinyint(3)   | YES  |     | NULL    |       |
 # | birthDate | datetime     | YES  |     | NULL    |       |
 # | bloodType | char(3)      | YES  |     | NULL    |       |
+# | cm        | float        | YES  |     | NULL    |       |
+# | kg        | float        | YES  |     | NULL    |       |
 # | photoId   | varchar(255) | YES  |     | NULL    |       |
 # +-----------+--------------+------+-----+---------+-------+
-# CREATE TABLE baby (
-#     baby_id VARCHAR(255) NOT NULL PRIMARY KEY,
-#     obn VARCHAR(255) NOT NULL,
-#     name VARCHAR(255),
-#     gender tinyint(3),
-#     birthDate DATETIME,
-#     bloodType CHAR(3),
-#     cm FLOAT,
-#     kg FLOAT,
-#     photoId VARCHAR(255)
-# );
+
 
 class Baby(BaseModel):
     baby_id: str
@@ -41,6 +32,8 @@ class Baby(BaseModel):
     gender: Optional[str]
     birthDate: Optional[datetime]
     bloodType: Optional[str]
+    cm: Optional[float]
+    kg: Optional[float]
     photoId: Optional[str]
 
     class Config:
@@ -58,10 +51,12 @@ class BabyTable(DB_Base):
     baby_id = Column(String(255), primary_key=True, nullable=False, default=uuid.uuid4)
     obn = Column(String(255), nullable=False)
     name = Column(String(255), index=True)
-    gender = Column(String(4))
-    birthDate = Column(DateTime)
-    bloodType = Column(String(3))
-    photoId = Column(String(255))
+    gender = Column(String(3), nullable=True)
+    birthDate = Column(DateTime, nullable=True)
+    bloodType = Column(String(3), nullable=True)
+    cm = Column(Float, nullable=True)
+    kg = Column(Float, nullable=True)
+    photoId = Column(String(255), nullable=True)
 
 
     # Relationships

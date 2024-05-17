@@ -2,9 +2,9 @@ from sqlalchemy import Column,String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-
 from model.parent import ParentTable
 from model.baby import BabyTable
+
 
 # 유저와 아이를 연결하는 테이블
 # +-----------+--------------+------+-----+---------+----------------+
@@ -14,22 +14,12 @@ from model.baby import BabyTable
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
 # | baby_id   | varchar(255) | NO   | MUL | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
-# CREATE TABLE pbconnect(
-#     pbc_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     baby_id VARCHAR(255) NOT NULL,
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-#     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
-# );
 
 
 class PBConnect(BaseModel):
     pbc_id: int
     parent_id: str
     baby_id: str
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True

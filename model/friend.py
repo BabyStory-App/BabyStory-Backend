@@ -5,7 +5,6 @@ from db import DB_Base
 import uuid
 from model.parent import ParentTable
 
-
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
@@ -23,8 +22,8 @@ from model.parent import ParentTable
 
 class Friend(BaseModel):
     friend_id: int
-    parent_id1: str
-    parent_id2: str
+    parent_id: str
+    friend: str
 
     def __hash__(self):
         return hash((type(self),) + tuple(self.__dict__.values()))
@@ -42,9 +41,10 @@ class FriendTable(DB_Base):
     __tablename__ = 'friend'
 
     friend_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id1 = Column(String(255), ForeignKey('parent.parent_id', ondelete="CASCADE"), nullable=False)
-    parent_id2 = Column(String(255), ForeignKey('parent.parent_id', ondelete="CASCADE"), nullable=False)
+    parent_id = Column(String(255), ForeignKey('parent.parent_id', ondelete="CASCADE"), nullable=False)
+    friend = Column(String(255), ForeignKey('parent.parent_id', ondelete="CASCADE"), nullable=False)
 
-    parent1 = relationship(ParentTable, foreign_keys= [parent_id1], back_populates='friend', passive_deletes=True)
-    parent2 = relationship(ParentTable, foreign_keys= [parent_id2], back_populates='friend', passive_deletes=True)
+    parent1 = relationship("ParentTable", foreign_keys=[parent_id], back_populates="friends1", passive_deletes=True)
+    parent2 = relationship("ParentTable", foreign_keys=[friend], back_populates="friends2", passive_deletes=True)
+
 

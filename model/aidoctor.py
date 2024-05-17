@@ -1,13 +1,13 @@
-# AI 의사 테이블
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
 from typing import Optional
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-
 from model.parent import ParentTable
 
+
+# AI 의사 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
@@ -18,22 +18,14 @@ from model.parent import ParentTable
 # | res       | text         | NO   |     | NULL    |                |
 # | haddr     | text         | YES  |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
-# CREATE TABLE aidoctor (
-# id INT PRIMARY KEY auto_increment NOT NULL,
-# parent_id VARCHAR(255) NOT NULL,
-# date DATETIME NOT NULL,
-# ask text NOT NULL,
-# res text NOT NULL,
-# haddr text,
-# FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
-# );
+
 
 class AIDoctor(BaseModel):
     id: int
     parent_id: str
     date: datetime
-    ask_id: str
-    res_id: str
+    ask: str
+    res: str
     haddr: Optional[str]
 
     class Config:
@@ -51,8 +43,8 @@ class AIDoctorTable(DB_Base):
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     date = Column(DateTime, nullable=False)
-    ask_id = Column(String(100), nullable=False)
-    res_id = Column(String(100), nullable=False)
-    haddr = Column(String(255))
+    ask_id = Column(Text, nullable=False)
+    res_id = Column(Text, nullable=False)
+    haddr = Column(Text, nullable=True)
 
     parent = relationship(ParentTable, back_populates='aidoctor', passive_deletes=True)

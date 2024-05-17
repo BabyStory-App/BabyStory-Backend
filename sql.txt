@@ -1,5 +1,7 @@
 create database babystory;
 
+use babystory;
+
 CREATE TABLE parent(
     parent_id VARCHAR(255) PRIMARY KEY NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -88,18 +90,19 @@ CREATE TABLE pcconnect(
 );
 
 CREATE TABLE aidoctor(
-id INT PRIMARY KEY auto_increment NOT NULL,
-parent_id VARCHAR(255) NOT NULL,
-date DATETIME NOT NULL,
-ask text NOT NULL,
-res text NOT NULL,
-haddr text,
-FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+    id INT PRIMARY KEY auto_increment NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL,
+    ask text NOT NULL,
+    res text NOT NULL,
+    haddr text,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE post(
     post_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
+    public tinyint(4) NOT NULL,
     title VARCHAR(144) NOT NULL,
     photo TEXT,
     post_time DATETIME NOT NULL,
@@ -108,6 +111,7 @@ CREATE TABLE post(
     heart INT UNSIGNED,
     share INT UNSIGNED,
     script INT UNSIGNED,
+    view INT UNSIGNED,
     comment INT UNSIGNED,
     hash VARCHAR(100),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
@@ -131,6 +135,14 @@ CREATE TABLE share(
 
 CREATE TABLE script(
     script_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    parent_id VARCHAR(255) NOT NULL,
+    post_id INT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE view(
+    view_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     parent_id VARCHAR(255) NOT NULL,
     post_id INT NOT NULL,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
@@ -180,10 +192,10 @@ CREATE TABLE dheart (
 
 CREATE TABLE friend (
     friend_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    parent_id1 VARCHAR(255) NOT NULL,
-    parent_id2 VARCHAR(255) NOT NULL,
-    FOREIGN KEY (parent_id1) REFERENCES parent(parent_id),
-    FOREIGN KEY (parent_id2) REFERENCES parent(parent_id)
+    parent_id VARCHAR(255) NOT NULL,
+    friend VARCHAR(255) NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (friend) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE purchase (

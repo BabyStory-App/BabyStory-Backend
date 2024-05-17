@@ -1,14 +1,13 @@
-# 산모수첩 ( 병원 ) 테이블
-
 from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 from typing import Optional
-
 from model.pregnancy import PregnancyTable
 
+
+# 산모수첩 ( 병원 ) 테이블
 # +-------------+--------------+------+-----+---------+----------------+
 # | Field       | Type         | Null | Key | Default | Extra          |
 # +-------------+--------------+------+-----+---------+----------------+
@@ -23,19 +22,7 @@ from model.pregnancy import PregnancyTable
 # | ultrasound  | varchar(255) | YES  |     | NULL    |                |
 # | uvideo      | varchar(255) | YES  |     | NULL    |                |
 # +-------------+--------------+------+-----+---------+----------------+
-# CREATE TABLE phospital (
-#     hospital_id INT PRIMARY KEY auto_increment NOT NULL,
-#     pregn_id INT NOT NULL,
-#     hday DATETIME NOT NULL,
-#     parent_kg FLOAT NOT NULL,
-#     bpressure FLOAT NOT NULL,
-#     special VARCHAR(50),
-#     baby_kg FLOAT,
-#     baby_heart INT,
-#     ultrasound VARCHAR(255),
-#     uvideo VARCHAR(255),
-#     FOREIGN KEY (pregn_id) REFERENCES pregnancy(pregn_id)
-# );
+
 
 class Phospital(BaseModel):
     hospital_id: int
@@ -48,9 +35,6 @@ class Phospital(BaseModel):
     baby_heart: Optional[int]
     ultrasound: Optional[str]
     uvideo: Optional[str]
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -69,10 +53,10 @@ class PhospitalTable(DB_Base):
     hday = Column(DateTime, nullable=False)
     parent_kg = Column(Float, nullable=False)
     bpressure = Column(Float, nullable=False)
-    special = Column(String(50))
-    baby_kg = Column(Float)
-    baby_heart = Column(Integer)
-    ultrasound = Column(String(255))
-    uvideo = Column(String(255))
+    special = Column(String(50), nullable=True)
+    baby_kg = Column(Float, nullable=True)
+    baby_heart = Column(Integer, nullable=True)
+    ultrasound = Column(String(255), nullable=True)
+    uvideo = Column(String(255), nullable=True)
 
     pregnancy = relationship(PregnancyTable, backref='phospital', passive_deletes=True)

@@ -1,13 +1,12 @@
-# 실시간 채팅 말풍선 테이블
-
 from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-
 from model.chat import ChatTable
 from model.parent import ParentTable
 
+
+# 실시간 채팅 말풍선 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
@@ -18,16 +17,7 @@ from model.parent import ParentTable
 # | chat_type | varchar(255) | NO   |     | NULL    |                |
 # | content   | text         | NO   |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
-# CREATE TABLE chatbubble (
-#     chat_id INT PRIMARY KEY auto_increment NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     room_id INT NOT NULL,
-#     time DATETIME NOT NULL,
-#     chat_type VARCHAR(255) NOT NULL,
-#     content TEXT NOT NULL,
-#     FOREIGN KEY (room_id) REFERENCES chat(room_id),
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
-# );
+
 
 class Chatbubble(BaseModel):
     chat_id: int
@@ -36,9 +26,6 @@ class Chatbubble(BaseModel):
     time: DateTime
     chat_type: str
     content: str
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True

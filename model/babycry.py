@@ -1,14 +1,12 @@
-# 울음 기록 테이블
-
 from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime, JSON
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-import uuid
-
 from model.baby import BabyTable
 
+
+# 울음 기록 테이블
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
@@ -21,17 +19,7 @@ from model.baby import BabyTable
 # | intensity  | varchar(50)  | YES  |     | NULL    |                |
 # | duration   | float        | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
-# CREATE TABLE babycry (
-#     babycry_id INT PRIMARY KEY auto_increment NOT NULL,
-#     baby_id VARCHAR(255) NOT NULL,
-#     time DATETIME,
-#     type VARCHAR(50),
-#     audioid CHAR,
-#     predictMap JSON,
-#     intensity VARCHAR(50),
-#     duration FLOAT,
-#     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
-# );
+
 
 class Babycry(BaseModel):
     babycry_id: int
@@ -42,9 +30,6 @@ class Babycry(BaseModel):
     predictMap: dict
     intensity: str
     duration: float
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -59,12 +44,12 @@ class BabycryTable(DB_Base):
     __tablename__ = 'babycry'
 
     babycry_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    baby_id = Column(String(255), ForeignKey('baby.baby_id'))
-    time = Column(DateTime)
-    type = Column(String(50))
-    audioid = Column(String(1))
-    predictMap = Column(JSON)
-    intensity = Column(String(50))
-    duration = Column(Float)
+    baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
+    time = Column(DateTime, nullable=True)
+    type = Column(String(50), nullable=True)
+    audioid = Column(String(1), nullable=True)
+    predictMap = Column(JSON, nullable=True)
+    intensity = Column(String(50), nullable=True)
+    duration = Column(Float, nullable=True)
 
     baby = relationship(BabyTable, back_populates='babycry', passive_deletes=True)

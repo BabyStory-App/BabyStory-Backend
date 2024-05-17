@@ -1,16 +1,15 @@
-# 게시물 댓글 테이블
-
 from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 from typing import Optional
-
 from model.post import PostTable
 from model.parent import ParentTable
 from model.comment import CommentTable
 
+
+# 게시물 댓글 테이블
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
@@ -22,18 +21,7 @@ from model.comment import CommentTable
 # | time       | datetime     | NO   |     | NULL    |                |
 # | cheart     | int(11)      | YES  |     | 0       |                |
 # +------------+--------------+------+-----+---------+----------------+
-# CREATE TABLE comment(
-#     comment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-#     parent_id VARCHAR(255) NOT NULL,
-#     post_id INT NOT NULL,
-#     reply_id INT DEFAULT NULL,
-#     comment TEXT NOT NULL,
-#     time DATETIME NOT NULL,
-#     cheart INT DEFAULT 0,
-#     FOREIGN KEY (post_id) REFERENCES post(post_id),
-#     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-#     FOREIGN KEY (reply_id) REFERENCES comment(comment_id)
-# );
+
 
 class Comment(BaseModel):
     comment_id: int
@@ -43,9 +31,6 @@ class Comment(BaseModel):
     comment: str
     time: datetime
     cheart: Optional[int]
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
     
     class Config:
         orm_mode = True
@@ -65,7 +50,7 @@ class CommentTable(DB_Base):
     reply_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=True)
     comment = Column(TEXT, nullable=False)
     time = Column(DateTime, nullable=False)
-    cheart = Column(Integer)
+    cheart = Column(Integer, nullable=True)
 
     post = relationship(PostTable, backref='comment', passive_deletes=True)
     parent = relationship(ParentTable, backref='comment', passive_deletes=True)

@@ -29,7 +29,9 @@ class Comment(BaseModel):
     post_id: int
     reply_id: int
     comment: str
-    time: datetime
+    comment_time: datetime
+    modify_time: Optional[datetime]
+    delete_time: Optional[datetime]
     cheart: Optional[int]
     
     class Config:
@@ -49,7 +51,9 @@ class CommentTable(DB_Base):
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
     reply_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=True)
     comment = Column(TEXT, nullable=False)
-    time = Column(DateTime, nullable=False)
+    comment_time = Column(DateTime, nullable=False)
+    modify_time = Column(DateTime, nullable=True)
+    delete_time = Column(DateTime, nullable=True)
     cheart = Column(Integer, nullable=True)
 
     post = relationship(PostTable, backref='comment', passive_deletes=True)

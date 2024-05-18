@@ -51,7 +51,7 @@ class CommentTable(DB_Base):
     time = Column(DateTime, nullable=False)
     cheart = Column(Integer, nullable=True)
 
-    replies = relationship("CommentTable", backref=backref('post', remote_side=[comment_id]))
+    replies = relationship("CommentTable", backref=backref('parent_comment', remote_side=[comment_id]))
     #post = relationship("PostTable", backref='comment', passive_deletes=True)
     #parent = relationship("ParentTable", backref='comment', passive_deletes=True)
     #comment = relationship("CommentTable", backref='comment', passive_deletes=True)

@@ -104,6 +104,7 @@ CREATE TABLE post(
     parent_id VARCHAR(255) NOT NULL,
     public tinyint(4) NOT NULL,
     title VARCHAR(144) NOT NULL,
+    text TEXT NOT NULL,
     photo TEXT,
     post_time DATETIME NOT NULL,
     modify_time DATETIME,

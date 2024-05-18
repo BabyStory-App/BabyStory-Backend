@@ -32,6 +32,7 @@ class Post(BaseModel):
     post_id: int
     parent_id: str
     title: str
+    text: str
     photo: Optional[str]
     post_time: datetime
     modify_time: Optional[datetime]
@@ -58,6 +59,7 @@ class PostTable(DB_Base):
     post_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(144), nullable=False)
+    text = Column(TEXT, nullable=False)
     photo = Column(TEXT, nullable=True)
     post_time = Column(DateTime, nullable=False)
     modify_time = Column(DateTime, nullable=True)

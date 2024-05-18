@@ -53,7 +53,7 @@ async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOu
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    parent = await parentService.getParentByEmail(parent_id)
+    parent =  parentService.getParentByEmail(parent_id)
 
     if parent is None:
         raise HTTPException(
@@ -86,7 +86,7 @@ async def update_parent(updateParentInput: UpdateParentInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
     
-    parent= await parentService.updateParent(parent_id, updateParentInput)
+    parent=  parentService.updateParent(parent_id, updateParentInput)
 
     if parent is None:
         raise HTTPException(
@@ -104,7 +104,7 @@ async def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOu
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
     
-    parent= await parentService.deleteParent(parent_id)
+    parent=  parentService.deleteParent(parent_id)
 
     return {
         "success": 200 if parent else 403,
@@ -116,7 +116,7 @@ async def get_friends(emails: Optional[str] = None):
 
     email_list = emails.split(',') if emails is not None else []
 
-    friends_dict = await parentService.getFriends(email_list)
+    friends_dict = parentService.getFriends(email_list)
 
     return friends_dict
 
@@ -125,7 +125,7 @@ async def get_friends(emails: Optional[str] = None):
 @router.post("/pbconnect")
 async def create_pbconnect(baby_id: str,parent_id: str = Depends(JWTBearer())) -> CreatePBConnectOutput:
 
-    pbconnect = await parentService.create_pbconnect(baby_id,parent_id)
+    pbconnect = parentService.create_pbconnect(baby_id,parent_id)
 
     if pbconnect is None:
         raise HTTPException(
@@ -138,6 +138,6 @@ async def create_pbconnect(baby_id: str,parent_id: str = Depends(JWTBearer())) -
 
 @router.get("/all")
 async def get_parent():
-    parent = await parentService.getParentAll()
+    parent = parentService.getParentAll()
 
     return parent

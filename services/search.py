@@ -31,7 +31,7 @@ class SearchService:
             # 제목에 검색어가 포함된 게시물을 조회
             # .order_by(desc(PostTable.view)) 조회수는 포스트마다 계산하기 힘들어서 안함(post에 따로 저장하지않음)
             post = db.query(PostTable).filter(
-                PostTable.post.like(f'%{createSearchInput.search}%')
+                PostTable.title.ilike(f'%{createSearchInput.search}%')
             ).limit(createSearchInput.size).offset(page).all()
 
             # 값을 반환: List<{title, photoid,  author_name, heart, commnet, desc}>

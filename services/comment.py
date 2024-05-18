@@ -1,6 +1,7 @@
 from fastapi import HTTPException
-from typing import Optional, List
+from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm.session import Session
 
 from model.comment import CommentTable
 from schemas.comment import *
@@ -8,6 +9,9 @@ from schemas.comment import *
 from db import get_db_session
 
 class CommentService:
+    def __init__(self):
+        self.comment_list = []
+
     def createComment(self, createCommentInput: CreateCommentInput) -> Optional[Comment]:
         """
         댓글 생성
@@ -116,42 +120,33 @@ class CommentService:
             print(e)
             raise HTTPException(status_code=400, detail="deleteComment error")
     
-    def get_comments_recursive(db, post_id, comment_id, comments):
-        # 대댓글 가져오기
-        replies = db.query(CommentTable).filter(CommentTable.reply_id == comment_id).all()
-        
-        # 대댓글이 없으면 반환
-        if not replies:
-            return
-        
-        # 대댓글 리스트를 최상위 댓글 객체에 추가
-        comments.extend(replies)
-        
-        # 각 대댓글에 대해 재귀적으로 처리
-        for reply in replies:
-            get_comments_recursive(db, post_id, reply.comment_id, comments)
 
-    def getAllComment(db, post_id: str) -> Optional[List[Comment]]:
-        """
-        해당 게시물의 모든 댓글 가져오기
-        --input
-            - post_id: 게시물 아이디
-        --output
-            - List<Comment>: 댓글 리스트
-        """
-        db = get_db_session()
+    def getCommentRecursive(self, comment: CommentTable) -> Comment:
+        db=get_db_session()
+        comment_data = Comment.from_orm(comment)
+        replies = db.query(CommentTable).filter(CommentTable.reply_id == comment.comment_id).all()
+
+        if replies:
+            for reply in replies:
+                print(reply.comment_id)
+                # 이미 추가한 댓글이 아니면 추가하고 재귀 호출
+                comment_data.replies.append(self.getCommentRecursive(reply))
+        
+        return comment_data
+
+    def getAllComment(self, post_id: str) -> List[Comment]:
+        db=get_db_session()
         try:
-            # 최상위 댓글 가져오기
-            top_comments = db.query(CommentTable).filter(CommentTable.post_id == post_id, CommentTable.reply_id == None).all()
+            top_comments = db.query(CommentTable).filter(
+                CommentTable.post_id == post_id,
+                CommentTable.reply_id == None).all()
+
+            self.comment_list = []
             
-            # 대댓글을 모두 저장할 리스트
-            all_comments = []
-            
-            # 각 최상위 댓글에 대한 대댓글 리스트 추가
             for top_comment in top_comments:
-                get_comments_recursive(db, post_id, top_comment.comment_id, all_comments)
+                self.comment_list.append(self.getCommentRecursive(top_comment))
             
-            return all_comments
+            return self.comment_list
             
         except Exception as e:
             raise (e)

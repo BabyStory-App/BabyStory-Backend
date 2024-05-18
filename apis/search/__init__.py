@@ -50,9 +50,14 @@ async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInp
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid page")
 
+
     # 짝꿍이 쓴 게시물
     if createSearchRecommendInput.type == 'friend':
-        result = await postMainService.createPostMainFriend(parent_id, createSearchRecommendInput.size, createSearchRecommendInput.page)
+        result = postMainService.createPostMainFriend(
+            CreatePostMainInput(parent_id=parent_id,
+                                size=createSearchRecommendInput.size,
+                                page=createSearchRecommendInput.page
+                                ))
 
         if result is None:
             raise HTTPException(
@@ -60,16 +65,22 @@ async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInp
 
     # 친구가 쓴 게시물
     elif createSearchRecommendInput.type == 'friend_read':
-        result = await postMainService.createPostMainFriendRead(parent_id, createSearchRecommendInput.size, createSearchRecommendInput.page)
-
+        result = postMainService.createPostMainFriendRead(
+            CreatePostMainInput(parent_id=parent_id,
+                                size=createSearchRecommendInput.size,
+                                page=createSearchRecommendInput.page
+                                ))
         if result is None:
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="createpostmainfriendread not found")
                 
     # 이웃들이 쓴 게시물
     elif createSearchRecommendInput.type == 'neighbor':
-        result = await postMainService.createPostMainNeighbor(parent_id, createSearchRecommendInput.size, createSearchRecommendInput.page)
-
+        result = postMainService.createPostMainNeighbor(
+            CreatePostMainInput(parent_id=parent_id,
+                                size=createSearchRecommendInput.size,
+                                page=createSearchRecommendInput.page
+                                ))
         if result is None:
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="createpostmainneighbor not found")
@@ -118,7 +129,7 @@ async def create_result(createSearchInput: CreateSearchInput, parent_id: str = D
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid page")
 
     # 검색 결과 생성
-    result = await searchService.createSearch(createSearchInput.search, createSearchInput.size, createSearchInput.page)
+    result = searchService.createSearch(createSearchInput)
 
     if result is None:
         raise HTTPException(
@@ -133,7 +144,7 @@ async def create_result(createSearchInput: CreateSearchInput, parent_id: str = D
 
 
 
-# asnc, await schema
+# asnc, schema
 # 주석처리
 # 테스트
 

@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 
 # 게시물 댓글 테이블
@@ -24,14 +24,16 @@ class Comment(BaseModel):
     comment_id: int
     parent_id: str
     post_id: int
-    reply_id: int
+    reply_id: Optional[int]
     comment: str
     time: datetime
     cheart: Optional[int]
+    replies: List['Comment'] = []
     
     class Config:
         orm_mode = True
         use_enum_values = True
+        from_attributes = True
     
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
@@ -49,6 +51,7 @@ class CommentTable(DB_Base):
     time = Column(DateTime, nullable=False)
     cheart = Column(Integer, nullable=True)
 
-    post = relationship("PostTable", backref='comment', passive_deletes=True)
-    parent = relationship("ParentTable", backref='comment', passive_deletes=True)
-    comment = relationship("CommentTable", backref='comment', passive_deletes=True)
+    replies = relationship("CommentTable", backref=backref('post', remote_side=[comment_id]))
+    #post = relationship("PostTable", backref='comment', passive_deletes=True)
+    #parent = relationship("ParentTable", backref='comment', passive_deletes=True)
+    #comment = relationship("CommentTable", backref='comment', passive_deletes=True)

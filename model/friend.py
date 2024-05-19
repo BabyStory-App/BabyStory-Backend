@@ -2,31 +2,23 @@ from sqlalchemy import Column,String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-import uuid
 from model.parent import ParentTable
 
-# +------------+--------------+------+-----+---------+----------------+
-# | Field      | Type         | Null | Key | Default | Extra          |
-# +------------+--------------+------+-----+---------+----------------+
-# | friend_id  | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id1 | varchar(255) | NO   | MUL | NULL    |                |
-# | parent_id2 | varchar(255) | NO   | MUL | NULL    |                |
-# +------------+--------------+------+-----+---------+----------------+
-# CREATE TABLE friend (
-#     friend_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-#     parent_id1 VARCHAR(255) NOT NULL,
-#     parent_id2 VARCHAR(255) NOT NULL,
-#     FOREIGN KEY (parent_id1) REFERENCES parent(parent_id),
-#     FOREIGN KEY (parent_id2) REFERENCES parent(parent_id)
-# );
+
+# 유저간의 친구 테이블
+# +-----------+--------------+------+-----+---------+----------------+
+# | Field     | Type         | Null | Key | Default | Extra          |
+# +-----------+--------------+------+-----+---------+----------------+
+# | friend_id | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
+# | friend    | varchar(255) | NO   | MUL | NULL    |                |
+# +-----------+--------------+------+-----+---------+----------------+
+
 
 class Friend(BaseModel):
     friend_id: int
     parent_id: str
     friend: str
-
-    def __hash__(self):
-        return hash((type(self),) + tuple(self.__dict__.values()))
 
     class Config:
         orm_mode = True
@@ -41,10 +33,8 @@ class FriendTable(DB_Base):
     __tablename__ = 'friend'
 
     friend_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id', ondelete="CASCADE"), nullable=False)
-    friend = Column(String(255), ForeignKey('parent.parent_id', ondelete="CASCADE"), nullable=False)
+    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    friend = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
 
-    parent1 = relationship("ParentTable", foreign_keys=[parent_id], back_populates="friends1", passive_deletes=True)
-    parent2 = relationship("ParentTable", foreign_keys=[friend], back_populates="friends2", passive_deletes=True)
-
-
+    parent = relationship(ParentTable, back_populates='friend', passive_deletes=True)
+    friend = relationship(ParentTable, back_populates='friend', passive_deletes=True)

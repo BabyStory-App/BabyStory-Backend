@@ -104,6 +104,7 @@ CREATE TABLE post(
     parent_id VARCHAR(255) NOT NULL,
     public tinyint(4) NOT NULL,
     title VARCHAR(144) NOT NULL,
+    text TEXT NOT NULL,
     photo TEXT,
     post_time DATETIME NOT NULL,
     modify_time DATETIME,
@@ -155,7 +156,9 @@ CREATE TABLE comment(
     post_id INT NOT NULL,
     reply_id INT DEFAULT NULL,
     comment TEXT NOT NULL,
-    time DATETIME NOT NULL,
+    comment_time DATETIME NOT NULL,
+    modify_time DATETIME,
+    delete_time DATETIME,
     cheart INT DEFAULT 0,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
@@ -282,3 +285,104 @@ CREATE TABLE alert (
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
     FOREIGN KEY (target) REFERENCES parent(parent_id)
 );
+
+
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER pheart_insert
+AFTER INSERT ON pheart
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET heart = IFNULL(heart, 0) + 1
+    WHERE post_id = NEW.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER pheart_delete
+AFTER DELETE ON pheart
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET heart = IFNULL(heart, 0) - 1
+    WHERE post_id = OLD.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER share_insert
+AFTER INSERT ON share
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET share = IFNULL(share, 0) + 1
+    WHERE post_id = NEW.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER share_delete
+AFTER DELETE ON share
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET share = IFNULL(share, 0) - 1
+    WHERE post_id = OLD.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER script_insert
+AFTER INSERT ON script
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET script = IFNULL(script, 0) + 1
+    WHERE post_id = NEW.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER script_delete
+AFTER DELETE ON script
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET script = IFNULL(script, 0) - 1
+    WHERE post_id = OLD.post_id;
+END $$
+
+DELIMITER ;
+
+
+
+
+
+SET GLOBAL event_scheduler = ON;
+
+CREATE EVENT update_post_views
+ON SCHEDULE EVERY 30 SECOND
+DO
+BEGIN
+    UPDATE post p
+    JOIN (
+        SELECT post_id, COUNT(*) AS view_count
+        FROM view
+        GROUP BY post_id
+    ) v ON p.post_id = v.post_id
+    SET p.view = v.view_count;
+END;

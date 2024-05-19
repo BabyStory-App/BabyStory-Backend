@@ -10,6 +10,7 @@ import uuid
 
 
 # 아기 테이블
+# 아기 테이블
 # +-----------+--------------+------+-----+---------+-------+
 # | Field     | Type         | Null | Key | Default | Extra |
 # +-----------+--------------+------+-----+---------+-------+
@@ -17,12 +18,16 @@ import uuid
 # | obn       | varchar(255) | NO   |     | NULL    |       |
 # | name      | varchar(255) | YES  |     | NULL    |       |
 # | gender    | tinyint(3)   | YES  |     | NULL    |       |
+# | gender    | tinyint(3)   | YES  |     | NULL    |       |
 # | birthDate | datetime     | YES  |     | NULL    |       |
 # | bloodType | char(3)      | YES  |     | NULL    |       |
 # | cm        | float        | YES  |     | NULL    |       |
 # | kg        | float        | YES  |     | NULL    |       |
+# | cm        | float        | YES  |     | NULL    |       |
+# | kg        | float        | YES  |     | NULL    |       |
 # | photoId   | varchar(255) | YES  |     | NULL    |       |
 # +-----------+--------------+------+-----+---------+-------+
+
 
 
 class Baby(BaseModel):
@@ -32,6 +37,8 @@ class Baby(BaseModel):
     gender: Optional[int]
     birthDate: Optional[datetime]
     bloodType: Optional[str]
+    cm: Optional[float]
+    kg: Optional[float]
     cm: Optional[float]
     kg: Optional[float]
     photoId: Optional[str]

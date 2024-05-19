@@ -20,13 +20,16 @@ from typing import Optional, List
 # +------------+--------------+------+-----+---------+----------------+
 
 
+
 class Comment(BaseModel):
     comment_id: int
     parent_id: str
     post_id: int
     reply_id: Optional[int]
     comment: str
-    time: datetime
+    comment_time: datetime
+    modify_time: Optional[datetime]
+    delete_time: Optional[datetime]
     cheart: Optional[int]
     replies: List['Comment'] = []
     

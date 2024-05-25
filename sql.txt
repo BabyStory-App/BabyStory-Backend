@@ -374,6 +374,8 @@ DELIMITER ;
 
 SET GLOBAL event_scheduler = ON;
 
+DELIMITER //
+
 CREATE EVENT update_post_views
 ON SCHEDULE EVERY 30 SECOND
 DO
@@ -385,4 +387,6 @@ BEGIN
         GROUP BY post_id
     ) v ON p.post_id = v.post_id
     SET p.view = v.view_count;
-END;
+END//
+
+DELIMITER ;

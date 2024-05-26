@@ -72,9 +72,9 @@ CREATE TABLE chat(
     parent_id VARCHAR(255) NOT NULL,
     room_id INT NOT NULL,
     createTime DATETIME NOT NULL,
-    chat_type VARCHAR(255) NOT NULL,
+    chatType VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    FOREIGN KEY (room_id) REFERENCES chat(room_id),
+    FOREIGN KEY (room_id) REFERENCES chatroom(room_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -87,7 +87,7 @@ CREATE TABLE pcconnect(
     parent_id VARCHAR(255) NOT NULL,
     room_id INT NOT NULL,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-    FOREIGN KEY (room_id) REFERENCES chat(room_id)
+    FOREIGN KEY (room_id) REFERENCES chatroom(room_id)
 );
 
 CREATE TABLE aidoctor(
@@ -114,7 +114,7 @@ CREATE TABLE post(
     pScript INT UNSIGNED,
     pView INT UNSIGNED,
     pComment INT UNSIGNED,
-    hashlist VARCHAR(100),
+    hashList VARCHAR(100),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -149,15 +149,15 @@ CREATE TABLE pcomment(
     comment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     post_id INT NOT NULL,
-    reply_id INT NULL,
-    pComment TEXT NOT NULL,
+    reply_id INT,
+    content TEXT NOT NULL,
     createTime DATETIME NOT NULL,
     modifyTime DATETIME,
     deleteTime DATETIME,
     cheart INT DEFAULT 0,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-    FOREIGN KEY (reply_id) REFERENCES comment(comment_id)
+    FOREIGN KEY (reply_id) REFERENCES pcomment(comment_id)
 );
 
 CREATE TABLE cheart (
@@ -165,7 +165,7 @@ CREATE TABLE cheart (
     parent_id VARCHAR(255) NOT NULL,
     comment_id INT NOT NULL,
     createTime DATETIME NOT NULL,
-    FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
+    FOREIGN KEY (comment_id) REFERENCES pcomment(comment_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -223,20 +223,20 @@ CREATE TABLE purchase (
 );
 
 CREATE TABLE jheart(
-    pheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    jheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     purchase_id INT NOT NULL,
     createTime DATETIME,
-    FOREIGN KEY (purchase_id) REFERENCES post(purchase_id),
+    FOREIGN KEY (purchase_id) REFERENCES purchase(purchase_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE jview(
-    view_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    jview_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     parent_id VARCHAR(255) NOT NULL,
     purchase_id INT NOT NULL,
     createTime DATETIME,
-    FOREIGN KEY (purchase_id) REFERENCES post(purchase_id),
+    FOREIGN KEY (purchase_id) REFERENCES purchase(purchase_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -253,7 +253,7 @@ CREATE TABLE alert (
     parent_id VARCHAR(255) NOT NULL,
     target VARCHAR(255),
     message TEXT NOT NULL,
-    click CHAR(4),
+    click boolean,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
     FOREIGN KEY (target) REFERENCES parent(parent_id)
 );
@@ -269,7 +269,7 @@ AFTER INSERT ON pheart
 FOR EACH ROW
 BEGIN
     UPDATE post
-    SET heart = IFNULL(heart, 0) + 1
+    SET pheart = IFNULL(pheart, 0) + 1
     WHERE post_id = NEW.post_id;
 END $$
 
@@ -282,7 +282,7 @@ AFTER DELETE ON pheart
 FOR EACH ROW
 BEGIN
     UPDATE post
-    SET heart = IFNULL(heart, 0) - 1
+    SET pheart = IFNULL(pheart, 0) - 1
     WHERE post_id = OLD.post_id;
 END $$
 
@@ -290,12 +290,12 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE TRIGGER script_insert
-AFTER INSERT ON script
+CREATE TRIGGER pscript_insert
+AFTER INSERT ON pscript
 FOR EACH ROW
 BEGIN
     UPDATE post
-    SET script = IFNULL(script, 0) + 1
+    SET pscript = IFNULL(pscript, 0) + 1
     WHERE post_id = NEW.post_id;
 END $$
 
@@ -303,12 +303,12 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE TRIGGER script_delete
-AFTER DELETE ON script
+CREATE TRIGGER pscript_delete
+AFTER DELETE ON pscript
 FOR EACH ROW
 BEGIN
     UPDATE post
-    SET script = IFNULL(script, 0) - 1
+    SET pscript = IFNULL(pscript, 0) - 1
     WHERE post_id = OLD.post_id;
 END $$
 
@@ -325,11 +325,11 @@ DO
 BEGIN
     UPDATE post p
     JOIN (
-        SELECT post_id, COUNT(*) AS view_count
-        FROM view
+        SELECT post_id, COUNT(*) AS pview_count
+        FROM pview
         GROUP BY post_id
     ) v ON p.post_id = v.post_id
-    SET p.view = v.view_count;
+    SET p.view = v.pview_count;
 END//
 
 DELIMITER ;

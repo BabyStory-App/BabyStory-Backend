@@ -6,11 +6,11 @@ from model.post import *
 
 # 게시물 생성
 class CreatePostInput(BaseModel):
+    reveal: int
     title: str
-    post: str
-    photo: Optional[str]
-    post_time: datetime = datetime.now()
-    hash: Optional[str]
+    content: str
+    photoId: Optional[str]
+    createTime: datetime = datetime.now()
 
 class CreatePostOutput(BaseModel):
     post: Optional[Post]
@@ -18,11 +18,12 @@ class CreatePostOutput(BaseModel):
 # 게시물 수정
 class UpdatePostInput(BaseModel):
     post_id: int
+    reveal: int
     title: str
-    post: str
-    photo: Optional[str]
+    content: str
+    photoId: Optional[str]
     modify_time: datetime = datetime.now()
-    hash: Optional[str]
+    hashList: Optional[str]
 
 class UpdatePostOutput(BaseModel):
     success: int

@@ -10,12 +10,14 @@ class CreateParentInput(BaseModel):
     email: str
     name: str
     nickname: str
+    gender: int
     signInMethod: str
     emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
     mainaddr: Optional[str]
     subaddr: Optional[str]
+    hashList: Optional[str]
 
 
 class CreateParentOutput(BaseModel):
@@ -33,12 +35,14 @@ class UpdateParentInput(BaseModel):
     email: str
     name: str
     nickname: str
+    gender: int
     signInMethod: str
     emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
     mainaddr: Optional[str]
     subaddr: Optional[str]
+    hashList: Optional[str]
 
 class UpdateParentOutput(BaseModel):
     success: int

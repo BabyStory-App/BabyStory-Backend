@@ -20,6 +20,7 @@ class Dheart(BaseModel):
     dheart_id: int
     parent_id: str
     deal_id: int
+    createTime: datetime
 
     class Config:
         orm_mode = True
@@ -36,6 +37,7 @@ class DheartTable(DB_Base):
     dheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     deal_id = Column(Integer, ForeignKey('deal.deal_id'), nullable=False)
+    createTime = Column(DateTime, nullable=False)
 
     parent = relationship(ParentTable, back_populates='dheart', passive_deletes=True)
     deal = relationship(DealTable, back_populates='dheart', passive_deletes=True)

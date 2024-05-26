@@ -8,12 +8,14 @@ CREATE TABLE parent(
     email VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(50) NOT NULL,
     nickname VARCHAR(255) NOT NULL,
+    gender tinyint(3),
     signInMethod VARCHAR(50) NOT NULL,
     emailVerified boolean NOT NULL,
     photoId VARCHAR(255),
     description VARCHAR(255),
-    mainaddr VARCHAR(50),
-    subaddr VARCHAR(255)
+    mainAddr VARCHAR(50),
+    subAddr VARCHAR(255),
+    hashList VARCHAR(100)
 );
 
 CREATE TABLE baby(
@@ -29,9 +31,9 @@ CREATE TABLE baby(
 );
 
 CREATE TABLE babystate (
-    graph_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    state_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     baby_id VARCHAR(255) NOT NULL,
-    date DATETIME NOT NULL,
+    createTime DATETIME NOT NULL,
     cm FLOAT,
     kg FLOAT,
     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
@@ -40,11 +42,11 @@ CREATE TABLE babystate (
 CREATE TABLE babycry (
     babycry_id INT PRIMARY KEY auto_increment NOT NULL,
     baby_id VARCHAR(255) NOT NULL,
-    time DATETIME,
-    type VARCHAR(50),
-    audioid CHAR,
+    createTime DATETIME,
+    cryType VARCHAR(50),
+    audioId CHAR(36),
     predictMap JSON,
-    intensity VARCHAR(50),
+    intensity tinyint(3),
     duration FLOAT,
     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
 );
@@ -57,29 +59,28 @@ CREATE TABLE pbconnect(
     FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
 );
 
-CREATE TABLE chat(
+CREATE TABLE chatroom(
     room_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    end_chat INT NOT NULL,
+    lastChat INT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    pid VARCHAR(255),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
-CREATE TABLE chatbubble(
+CREATE TABLE chat(
     chat_id INT PRIMARY KEY auto_increment NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     room_id INT NOT NULL,
-    time DATETIME NOT NULL,
+    createTime DATETIME NOT NULL,
     chat_type VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     FOREIGN KEY (room_id) REFERENCES chat(room_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
-ALTER TABLE chat
-ADD CONSTRAINT fk_end_chat
-FOREIGN KEY (end_chat) REFERENCES chatbubble(chat_id);
+ALTER TABLE chatroom
+ADD CONSTRAINT fk_lastChat
+FOREIGN KEY (lastChat) REFERENCES chat(chat_id);
 
 CREATE TABLE pcconnect(
     pcc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -90,31 +91,30 @@ CREATE TABLE pcconnect(
 );
 
 CREATE TABLE aidoctor(
-    id INT PRIMARY KEY auto_increment NOT NULL,
+    ai_id INT PRIMARY KEY auto_increment NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    date DATETIME NOT NULL,
+    createTime DATETIME NOT NULL,
     ask text NOT NULL,
     res text NOT NULL,
-    haddr text,
+    hAddr text,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE post(
     post_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    public tinyint(4) NOT NULL,
+    reveal tinyint(4) NOT NULL,
     title VARCHAR(144) NOT NULL,
-    text TEXT NOT NULL,
-    photo TEXT,
-    post_time DATETIME NOT NULL,
-    modify_time DATETIME,
-    delete_time DATETIME,
-    heart INT UNSIGNED,
-    share INT UNSIGNED,
-    script INT UNSIGNED,
-    view INT UNSIGNED,
-    comment INT UNSIGNED,
-    hash VARCHAR(100),
+    content TEXT NOT NULL,
+    photoId TEXT,
+    createTime DATETIME NOT NULL,
+    modifyTime DATETIME,
+    deleteTime DATETIME,
+    pHeart INT UNSIGNED,
+    pScript INT UNSIGNED,
+    pView INT UNSIGNED,
+    pComment INT UNSIGNED,
+    hashlist VARCHAR(100),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -122,43 +122,38 @@ CREATE TABLE pheart(
     pheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     post_id INT NOT NULL,
+    createTime DATETIME,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
-CREATE TABLE share(
-    share_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    parent_id VARCHAR(255) NOT NULL,
-    post_id INT NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES post(post_id),
-    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
-);
-
-CREATE TABLE script(
+CREATE TABLE pscript(
     script_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     parent_id VARCHAR(255) NOT NULL,
     post_id INT NOT NULL,
+    createTime DATETIME,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
-CREATE TABLE view(
+CREATE TABLE pview(
     view_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     parent_id VARCHAR(255) NOT NULL,
     post_id INT NOT NULL,
+    createTime DATETIME,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
-CREATE TABLE comment(
+CREATE TABLE pcomment(
     comment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     post_id INT NOT NULL,
-    reply_id INT DEFAULT NULL,
-    comment TEXT NOT NULL,
-    comment_time DATETIME NOT NULL,
-    modify_time DATETIME,
-    delete_time DATETIME,
+    reply_id INT NULL,
+    pComment TEXT NOT NULL,
+    createTime DATETIME NOT NULL,
+    modifyTime DATETIME,
+    deleteTime DATETIME,
     cheart INT DEFAULT 0,
     FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
@@ -169,6 +164,7 @@ CREATE TABLE cheart (
     cheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     comment_id INT NOT NULL,
+    createTime DATETIME NOT NULL,
     FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
@@ -177,11 +173,12 @@ CREATE TABLE deal (
     deal_id INT PRIMARY KEY auto_increment NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     title VARCHAR(20) NOT NULL,
-    post TEXT,
-    img VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    photoId VARCHAR(255) NOT NULL,
     price INT NOT NULL,
-    time DATETIME NOT NULL,
-    dheart int DEFAULT 0,
+    createTime DATETIME NOT NULL,
+    dheart INT DEFAULT 0,
+    dview INT DEFAULT 0,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -189,7 +186,17 @@ CREATE TABLE dheart (
     dheart_id INT PRIMARY KEY auto_increment NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     deal_id INT NOT NULL,
+    createTime DATETIME NOT NULL,
     FOREIGN KEY (deal_id) REFERENCES deal(deal_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE dview(
+    view_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    parent_id VARCHAR(255) NOT NULL,
+    deal_id INT NOT NULL,
+    createTime DATETIME,
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -204,11 +211,32 @@ CREATE TABLE friend (
 CREATE TABLE purchase (
     purchase_id INT PRIMARY KEY auto_increment NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    title VARCHAR(20) NOT NULL,
-    post TEXT,
-    img VARCHAR(255) NOT NULL,
-    time DATETIME NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    photoId VARCHAR(255) NOT NULL,
+    createTime DATETIME NOT NULL,
     link VARCHAR(255) NOT NULL,
+    jheart INT DEFAULT 0,
+    jview INT DEFAULT 0,
+    joint INT DEFAULT 0,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE jheart(
+    pheart_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    purchase_id INT NOT NULL,
+    createTime DATETIME,
+    FOREIGN KEY (purchase_id) REFERENCES post(purchase_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+);
+
+CREATE TABLE jview(
+    view_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    parent_id VARCHAR(255) NOT NULL,
+    purchase_id INT NOT NULL,
+    createTime DATETIME,
+    FOREIGN KEY (purchase_id) REFERENCES post(purchase_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -218,62 +246,6 @@ CREATE TABLE joint (
     purchase_id INT NOT NULL,
     FOREIGN KEY (purchase_id) REFERENCES purchase(purchase_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
-);
-
-CREATE TABLE parenting (
-    parenting_id INT PRIMARY KEY auto_increment NOT NULL,
-    parent_id VARCHAR(255) NOT NULL,
-    baby_id VARCHAR(255) NOT NULL,
-    ptitle VARCHAR(50) NOT NULL,
-    img VARCHAR(255),
-    time DATETIME NOT NULL,
-    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
-);
-
-CREATE TABLE pdaily (
-    daily_id INT PRIMARY KEY auto_increment NOT NULL,
-    parenting_id INT NOT NULL,
-    daily DATETIME NOT NULL,
-    title VARCHAR(50) NOT NULL,
-    picture VARCHAR(255),
-    post TEXT,
-    FOREIGN KEY (parenting_id) REFERENCES parenting(parenting_id)
-);
-
-CREATE TABLE pregnancy (
-    pregn_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    parent_id VARCHAR(255) NOT NULL,
-    baby_id VARCHAR(255) NOT NULL,
-    dname VARCHAR(50),
-    img VARCHAR(255),
-    time DATETIME NOT NULL,
-    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-    FOREIGN KEY (baby_id) REFERENCES baby(baby_id)
-);
-
-CREATE TABLE pregndaily (
-    daily_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    pregn_id INT NOT NULL,
-    daily DATETIME NOT NULL,
-    title VARCHAR(50) NOT NULL,
-    picture VARCHAR(255),
-    post TEXT,
-    FOREIGN KEY (pregn_id) REFERENCES pregnancy(pregn_id)
-);
-
-CREATE TABLE phospital (
-    hospital_id INT PRIMARY KEY auto_increment NOT NULL,
-    pregn_id INT NOT NULL,
-    hday DATETIME NOT NULL,
-    parent_kg FLOAT NOT NULL,
-    bpressure FLOAT NOT NULL,
-    special VARCHAR(50),
-    baby_kg FLOAT,
-    baby_heart INT,
-    ultrasound VARCHAR(255),
-    uvideo VARCHAR(255),
-    FOREIGN KEY (pregn_id) REFERENCES pregnancy(pregn_id)
 );
 
 CREATE TABLE alert (
@@ -318,32 +290,6 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE TRIGGER share_insert
-AFTER INSERT ON share
-FOR EACH ROW
-BEGIN
-    UPDATE post
-    SET share = IFNULL(share, 0) + 1
-    WHERE post_id = NEW.post_id;
-END $$
-
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER share_delete
-AFTER DELETE ON share
-FOR EACH ROW
-BEGIN
-    UPDATE post
-    SET share = IFNULL(share, 0) - 1
-    WHERE post_id = OLD.post_id;
-END $$
-
-DELIMITER ;
-
-DELIMITER $$
-
 CREATE TRIGGER script_insert
 AFTER INSERT ON script
 FOR EACH ROW
@@ -369,10 +315,9 @@ END $$
 DELIMITER ;
 
 
-
-
-
 SET GLOBAL event_scheduler = ON;
+
+DELIMITER //
 
 CREATE EVENT update_post_views
 ON SCHEDULE EVERY 30 SECOND
@@ -385,4 +330,6 @@ BEGIN
         GROUP BY post_id
     ) v ON p.post_id = v.post_id
     SET p.view = v.view_count;
-END;
+END//
+
+DELIMITER ;

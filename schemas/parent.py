@@ -14,6 +14,8 @@ class CreateParentInput(BaseModel):
     emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
+    mainaddr: Optional[str]
+    subaddr: Optional[str]
 
 
 class CreateParentOutput(BaseModel):
@@ -35,6 +37,8 @@ class UpdateParentInput(BaseModel):
     emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
+    mainaddr: Optional[str]
+    subaddr: Optional[str]
 
 class UpdateParentOutput(BaseModel):
     success: int

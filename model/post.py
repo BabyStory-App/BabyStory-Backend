@@ -8,11 +8,16 @@ from model.parent import ParentTable
 
 
 # 게시물 테이블
+
+# 게시물 테이블
 # +-------------+------------------+------+-----+---------+----------------+
 # | Field       | Type             | Null | Key | Default | Extra          |
 # +-------------+------------------+------+-----+---------+----------------+
 # | post_id     | int(11)          | NO   | PRI | NULL    | auto_increment |
 # | parent_id   | varchar(255)     | NO   | MUL | NULL    |                |
+# | public      | tinyint(4)       | NO   |     | NULL    |                |
+# | title       | varchar(144)     | NO   |     | NULL    |                |
+# | photo       | text             | YES  |     | NULL    |                |
 # | public      | tinyint(4)       | NO   |     | NULL    |                |
 # | title       | varchar(144)     | NO   |     | NULL    |                |
 # | photo       | text             | YES  |     | NULL    |                |
@@ -23,6 +28,7 @@ from model.parent import ParentTable
 # | share       | int(10) unsigned | YES  |     | NULL    |                |
 # | script      | int(10) unsigned | YES  |     | NULL    |                |
 # | view        | int(10) unsigned | YES  |     | NULL    |                |
+# | view        | int(10) unsigned | YES  |     | NULL    |                |
 # | comment     | int(10) unsigned | YES  |     | NULL    |                |
 # | hash        | varchar(100)     | YES  |     | NULL    |                |
 # +-------------+------------------+------+-----+---------+----------------+
@@ -32,7 +38,6 @@ class Post(BaseModel):
     post_id: int
     parent_id: str
     title: str
-    text: str
     photo: Optional[str]
     post_time: datetime
     modify_time: Optional[datetime]
@@ -40,6 +45,7 @@ class Post(BaseModel):
     heart: Optional[int]
     share: Optional[int]
     script: Optional[int]
+    view: Optional[int]
     view: Optional[int]
     comment: Optional[int]
     hash: Optional[str]
@@ -59,9 +65,16 @@ class PostTable(DB_Base):
     post_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(144), nullable=False)
-    text = Column(TEXT, nullable=False)
     photo = Column(TEXT, nullable=True)
     post_time = Column(DateTime, nullable=False)
+    modify_time = Column(DateTime, nullable=True)
+    delete_time = Column(DateTime, nullable=True)
+    heart = Column(Integer, nullable=True)
+    share = Column(Integer, nullable=True)
+    script = Column(Integer, nullable=True)
+    view = Column(Integer, nullable=True)
+    comment = Column(Integer, nullable=True)
+    hash = Column(String(100), nullable=True)
     modify_time = Column(DateTime, nullable=True)
     delete_time = Column(DateTime, nullable=True)
     heart = Column(Integer, nullable=True)

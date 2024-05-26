@@ -15,6 +15,12 @@ class CreatePostMainBannerOutput(BaseModel):
 class CreatePostMainBannerListOutput(BaseModel):
     banners: List[CreatePostMainBannerOutput]
 
+
+class CreatePostMainInput(BaseModel):
+    parent_id: str
+    size: int = -1
+    page: int = -1
+
 class CreatePostMainFriendOutput(BaseModel):
     post_id: int
     photo_id: str

@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
 
-
 # 부모 테이블
 # +---------------+--------------+------+-----+---------+-------+
 # | Field         | Type         | Null | Key | Default | Extra |
@@ -33,6 +32,8 @@ class Parent(BaseModel):
     emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
+    mainaddr: Optional[str]
+    subaddr: Optional[str]
 
     class Config:
         orm_mode = True

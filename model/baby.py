@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Float
+from sqlalchemy import Column, String, DateTime, Float, Integer
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
@@ -10,6 +10,7 @@ import uuid
 
 
 # 아기 테이블
+# 아기 테이블
 # +-----------+--------------+------+-----+---------+-------+
 # | Field     | Type         | Null | Key | Default | Extra |
 # +-----------+--------------+------+-----+---------+-------+
@@ -17,21 +18,27 @@ import uuid
 # | obn       | varchar(255) | NO   |     | NULL    |       |
 # | name      | varchar(255) | YES  |     | NULL    |       |
 # | gender    | tinyint(3)   | YES  |     | NULL    |       |
+# | gender    | tinyint(3)   | YES  |     | NULL    |       |
 # | birthDate | datetime     | YES  |     | NULL    |       |
 # | bloodType | char(3)      | YES  |     | NULL    |       |
+# | cm        | float        | YES  |     | NULL    |       |
+# | kg        | float        | YES  |     | NULL    |       |
 # | cm        | float        | YES  |     | NULL    |       |
 # | kg        | float        | YES  |     | NULL    |       |
 # | photoId   | varchar(255) | YES  |     | NULL    |       |
 # +-----------+--------------+------+-----+---------+-------+
 
 
+
 class Baby(BaseModel):
     baby_id: str
     obn: str
     name: Optional[str]
-    gender: Optional[str]
+    gender: Optional[int]
     birthDate: Optional[datetime]
     bloodType: Optional[str]
+    cm: Optional[float]
+    kg: Optional[float]
     cm: Optional[float]
     kg: Optional[float]
     photoId: Optional[str]
@@ -51,7 +58,7 @@ class BabyTable(DB_Base):
     baby_id = Column(String(255), primary_key=True, nullable=False, default=uuid.uuid4)
     obn = Column(String(255), nullable=False)
     name = Column(String(255), index=True)
-    gender = Column(String(3), nullable=True)
+    gender = Column(Integer, nullable=True)
     birthDate = Column(DateTime, nullable=True)
     bloodType = Column(String(3), nullable=True)
     cm = Column(Float, nullable=True)

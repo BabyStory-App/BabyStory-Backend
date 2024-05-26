@@ -1,12 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-from typing import Optional
-from model.post import PostTable
-from model.parent import ParentTable
-from model.comment import CommentTable
+from typing import Optional, List
 
 
 # 게시물 댓글 테이블
@@ -23,20 +20,23 @@ from model.comment import CommentTable
 # +------------+--------------+------+-----+---------+----------------+
 
 
+
 class Comment(BaseModel):
     comment_id: int
     parent_id: str
     post_id: int
-    reply_id: int
+    reply_id: Optional[int]
     comment: str
     comment_time: datetime
     modify_time: Optional[datetime]
     delete_time: Optional[datetime]
     cheart: Optional[int]
+    replies: List['Comment'] = []
     
     class Config:
         orm_mode = True
         use_enum_values = True
+        from_attributes = True
     
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
@@ -51,11 +51,10 @@ class CommentTable(DB_Base):
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
     reply_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=True)
     comment = Column(TEXT, nullable=False)
-    comment_time = Column(DateTime, nullable=False)
-    modify_time = Column(DateTime, nullable=True)
-    delete_time = Column(DateTime, nullable=True)
+    time = Column(DateTime, nullable=False)
     cheart = Column(Integer, nullable=True)
 
-    post = relationship(PostTable, backref='comment', passive_deletes=True)
-    parent = relationship(ParentTable, backref='comment', passive_deletes=True)
-    comment = relationship(CommentTable, backref='comment', passive_deletes=True)
+    replies = relationship("CommentTable", backref=backref('parent_comment', remote_side=[comment_id]))
+    #post = relationship("PostTable", backref='comment', passive_deletes=True)
+    #parent = relationship("ParentTable", backref='comment', passive_deletes=True)
+    #comment = relationship("CommentTable", backref='comment', passive_deletes=True)

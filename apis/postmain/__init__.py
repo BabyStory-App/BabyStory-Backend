@@ -16,7 +16,20 @@ postMainService = PostMainService()
 
 # 메인페이지 생성
 @router.post("/", dependencies=[Depends(JWTBearer())])
-def create_postmain(parent_id: str = Depends(JWTBearer())):
+async def create_postmain(parent_id: str = Depends(JWTBearer())):
+    """
+    메인페이지 생성
+    --input
+        - parent_id: 부모 아이디
+    --output
+        - banner: 메인페이지 배너
+        - friend: 짝꿍이 쓴 게시물
+        - friend_read: 친구가 쓴 게시물
+        - neighbor: 친구로 등록되지 않은 이웃목록
+        - neighbor_post: 이웃들이 쓴 게시물
+        - highview: 조회수가 높은 게시물
+        - hashtag: 많이 본 해시태그로 게시물 추천
+    """
     
     # 부모 아이디가 없으면 에러
     if parent_id is None:
@@ -31,14 +44,14 @@ def create_postmain(parent_id: str = Depends(JWTBearer())):
             status_code=HTTP_400_BAD_REQUEST, detail="createpostmain not found")
     
     # 짝꿍이 쓴 게시물
-    createpostmainfriend = postMainService.createPostMainFriend(parent_id)
+    createpostmainfriend = postMainService.createPostMainFriend(CreatePostMainInput(parent_id=parent_id))
 
     if createpostmainfriend is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="createpostmainfriend not found")
 
     # 친구가 쓴 게시물
-    createpostmainfriendread = postMainService.createPostMainFriendRead(parent_id)
+    createpostmainfriendread = postMainService.createPostMainFriendRead(CreatePostMainInput(parent_id=parent_id))
 
     if createpostmainfriendread is None:
         raise HTTPException(
@@ -53,7 +66,7 @@ def create_postmain(parent_id: str = Depends(JWTBearer())):
             status_code=HTTP_400_BAD_REQUEST, detail="neighbor not found")
 
     # 이웃들이 쓴 게시물
-    createpostmainneighbor = postMainService.createPostMainNeighbor(parent_id)
+    createpostmainneighbor = postMainService.createPostMainNeighbor(CreatePostMainInput(parent_id=parent_id))
 
     if createpostmainneighbor is None:
         raise HTTPException(
@@ -67,19 +80,20 @@ def create_postmain(parent_id: str = Depends(JWTBearer())):
             status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhighview not found")
 
     # 많이 본 해시태그로 게시물 추천
-    createpostmainhashtag = postMainService.createPostMainHashtag(parent_id)
+    # createpostmainhashtag = postMainService.createPostMainHashtag(parent_id)
 
-    if createpostmainhashtag is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhashtag not found")
+    # if createpostmainhashtag is None:
+    #     raise HTTPException(
+    #         status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhashtag not found")
+
 
     return { 'banner' : createpostmain,
              'friend' : createpostmainfriend,
             'friend_read' : createpostmainfriendread,
             'neighbor' : getneighbor,
             'neighbor_post' : createpostmainneighbor,
-            'highview' : createpostmainhighview,
-            'hashtag' : createpostmainhashtag
+            'highview' : createpostmainhighview
+            #'hashtag' : createpostmainhashtag
              }
 
 

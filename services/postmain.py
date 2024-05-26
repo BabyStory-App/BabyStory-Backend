@@ -1,4 +1,6 @@
+
 import os
+
 from fastapi import HTTPException
 from typing import Optional, List
 from sqlalchemy.orm import joinedload
@@ -69,6 +71,8 @@ class PostMainService:
                     'desc': i.post[:100]
                 })
 
+           # post테이블에 제목, 조회수 없음
+
             return banners
         
         except Exception as e:
@@ -85,7 +89,6 @@ class PostMainService:
         --output
             - List<{postid, photoid, title, author_photo, author_name}> : 짝꿍이 쓴 게시물
         """
-
         db = get_db_session()
         try:
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -159,6 +162,7 @@ class PostMainService:
             # 어제 시간
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
+            
             # size와 page가 -1이면 기본 페이지를 가져온다.
             if createPostMainInput.size == -1 and createPostMainInput.page == -1:
                 size = 10
@@ -185,6 +189,7 @@ class PostMainService:
             for i in post:
                 banners.append({
                     'post_id': i.post_id,
+
                     'photo_id': i.photo,
                     'title': i.title,
                     'heart': i.heart,
@@ -208,6 +213,7 @@ class PostMainService:
         --output
             - List<{parent_id, photo_id, name, mainaddr, desc}> : 친구로 등록되지 않은 이웃목록
         """
+
         db = get_db_session()
         try:
             # 친구로 등록되지 않은 이웃목록을 10개 가져오기
@@ -221,6 +227,7 @@ class PostMainService:
                 )
             ).limit(10).all()
 
+
             # 값을 반환: List<{parent_id, photo_id, name, mainaddr, desc}>
             banners = []
             for i in neighbors:
@@ -228,16 +235,17 @@ class PostMainService:
                     'parent_id': i.parent_id,
                     'photo_id': i.photoId,
                     'name': i.name,
+
                     'mainaddr': i.mainaddr,
                     'desc': i.description
                 })
-
 
             return banners
         
         except Exception as e:
             raise (e)
             #raise Exception("Failed to get neighbor list")
+
 
     def createPostMainNeighbor(self, createPostMainInput: CreatePostMainInput )->CreatePostMainNeighborListOutput:
         """
@@ -283,6 +291,7 @@ class PostMainService:
                     'comment': i.comment,
                     'author_name': db.query(ParentTable).filter(
                         ParentTable.parent_id == i.parent_id).first().name,
+
                     #'desc': i.post[:100]
                 })
 
@@ -293,6 +302,7 @@ class PostMainService:
             #raise Exception("Failed to create neighbor banner")
 
     def createPostMainHighView(self)->CreatePostMainHighViewListOutput:
+
         """
         조회수가 높은 게시물
         --output
@@ -323,6 +333,7 @@ class PostMainService:
             #raise Exception("Failed to create high view banner")
     
     def createPostMainHashtag(self, parent_id:str)->CreatePostMainHashtagListOutput:
+
         """
         많이 본 해시태그로 게시물 추천
         --input
@@ -362,6 +373,3 @@ class PostMainService:
         except Exception as e:
             raise (e)
             #raise Exception("Failed to create hashtag banner")
-
-# post에 조회수 없음
-# parent에 hash 없음

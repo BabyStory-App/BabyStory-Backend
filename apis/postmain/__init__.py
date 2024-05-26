@@ -86,6 +86,7 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
     #     raise HTTPException(
     #         status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhashtag not found")
 
+
     return { 'banner' : createpostmain,
              'friend' : createpostmainfriend,
             'friend_read' : createpostmainfriendread,

@@ -15,6 +15,7 @@ class CreatePostMainBannerOutput(BaseModel):
 class CreatePostMainBannerListOutput(BaseModel):
     banners: List[CreatePostMainBannerOutput]
 
+
 class CreatePostMainInput(BaseModel):
     parent_id: str
     size: int = -1

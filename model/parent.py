@@ -28,12 +28,14 @@ class Parent(BaseModel):
     email: str
     name: str
     nickname: str
+    gender: Optional[int]
     signInMethod: str
     emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
-    mainaddr: Optional[str]
-    subaddr: Optional[str]
+    mainAddr: Optional[str]
+    subAddr: Optional[str]
+    hashList: Optional[str]
 
     class Config:
         orm_mode = True
@@ -52,10 +54,14 @@ class ParentTable(DB_Base):
     email = Column(String(255), nullable=False, unique=True)
     name = Column(String(50), nullable=False)
     nickname = Column(String(255), nullable=False)
+    gender = Column(Integer, nullable=True)
     signInMethod = Column(String(50), nullable=False)
     emailVerified = Column(Boolean, nullable=False)
     photoId = Column(String(255), nullable=True)
     description = Column(String(255), nullable=True)
+    mainAddr = Column(String(50), nullable=True)
+    subAddr = Column(String(255), nullable=True)
+    hashList = Column(String(100), nullable=True)
 
 # CREATE TABLE parent (
 #     uid VARCHAR(255) UNIQUE NOT NULL,

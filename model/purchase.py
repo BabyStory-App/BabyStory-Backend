@@ -25,10 +25,13 @@ class Purchase(BaseModel):
     purchase_id: int
     parent_id: str
     title: str
-    post: Optional[str]
-    img: str
-    time: datetime
+    content: Optional[str]
+    photoId: str
+    createTime: datetime
     link: str
+    jheart: int
+    jview: int
+    joint: int
 
     class Config:
         orm_mode = True
@@ -45,9 +48,12 @@ class PurchaseTable(DB_Base):
     purchase_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
-    post = Column(TEXT, nullable=True)
-    img = Column(String(255), nullable=False)
-    time = Column(DateTime, nullable=False)
+    content = Column(TEXT, nullable=True)
+    photoId = Column(String(255), nullable=False)
+    createTime = Column(DateTime, nullable=False)
     link = Column(String(255), nullable=False)
+    jheart = Column(Integer, nullable=False)
+    jview = Column(Integer, nullable=False)
+    joint = Column(Integer, nullable=False)
 
     parent = relationship(ParentTable, back_populates='purchase', passive_deletes=True)

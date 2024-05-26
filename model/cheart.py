@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from model.comment import CommentTable
+from model.pcomment import PCommentTable
 from model.parent import ParentTable
 
 
@@ -20,6 +20,7 @@ class Cheart(BaseModel):
     cheart_id: int
     parent_id: str
     comment_id: int
+    createTime: datetime
     
     class Config:
         orm_mode = True
@@ -35,7 +36,8 @@ class CheartTable(DB_Base):
 
     cheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    comment_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=False)
-    
+    comment_id = Column(Integer, ForeignKey('pcomment.comment_id'), nullable=False)
+    createTime = Column(DateTime, nullable=False)
+
     comment = relationship(CommentTable, back_populates='cheart', passive_deletes=True)
     parent = relationship(ParentTable, back_populates='cheart', passive_deletes=True)

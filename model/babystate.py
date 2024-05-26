@@ -19,9 +19,9 @@ from model.baby import BabyTable
 
 
 class Babystate(BaseModel):
-    graph_id: int
+    state_id: int
     baby_id: str
-    date: datetime
+    createTime: datetime
     cm: float
     kg: float
 
@@ -37,9 +37,9 @@ class Babystate(BaseModel):
 class BabystateTable(DB_Base):
     __tablename__ = 'babystate'
 
-    graph_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    state_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     baby_id = Column(String(255), nullable=False)
-    date = Column(DateTime, nullable=False)
+    createTime = Column(DateTime, nullable=False)
     cm = Column(Float, nullable=True)
     kg = Column(Float, nullable=True)
 

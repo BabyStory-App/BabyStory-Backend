@@ -24,11 +24,11 @@ from model.baby import BabyTable
 class Babycry(BaseModel):
     babycry_id: int
     baby_id: str
-    time: datetime
-    type: str
-    audioid: str
+    createTime: datetime
+    cryType: str
+    audioId: str
     predictMap: dict
-    intensity: str
+    intensity: int
     duration: float
 
     class Config:
@@ -45,11 +45,11 @@ class BabycryTable(DB_Base):
 
     babycry_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
-    time = Column(DateTime, nullable=True)
-    type = Column(String(50), nullable=True)
-    audioid = Column(String(1), nullable=True)
+    createTime = Column(DateTime, nullable=True)
+    cryType = Column(String(50), nullable=True)
+    audioId = Column(String(36), nullable=True)
     predictMap = Column(JSON, nullable=True)
-    intensity = Column(String(50), nullable=True)
+    intensity = Column(Integer, nullable=True)
     duration = Column(Float, nullable=True)
 
     baby = relationship(BabyTable, back_populates='babycry', passive_deletes=True)

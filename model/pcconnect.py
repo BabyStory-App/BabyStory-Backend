@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from model.parent import ParentTable
-from model.chat import ChatTable
+from model.chatroom import ChatRoomTable
 
 
 # 유저와 채팅방을 연결하는 테이블
@@ -35,7 +35,7 @@ class PCConnectTable(DB_Base):
 
     pcc_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    room_id = Column(Integer, ForeignKey('chat.room_id'), nullable=False)
+    room_id = Column(Integer, ForeignKey('chatroom.room_id'), nullable=False)
 
     parent = relationship(ParentTable, backref='pcconnect', passive_deletes=True)
     chat = relationship(ChatTable, backref='pcconnect', passive_deletes=True)

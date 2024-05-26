@@ -26,11 +26,12 @@ class Deal(BaseModel):
     deal_id: int
     parent_id: str
     title: str
-    post: Optional[str]
-    img: str
+    content: Optional[str]
+    photoId: str
     price: int
-    time: datetime
+    createTime: datetime
     dheart: int
+    dview: int
 
     class Config:
         orm_mode = True
@@ -47,10 +48,11 @@ class DealTable(DB_Base):
     deal_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
-    post = Column(TEXT, nullable=True)
-    img = Column(String(255), nullable=False)
+    content = Column(TEXT, nullable=True)
+    photoId = Column(String(255), nullable=False)
     price = Column(Integer, nullable=False)
-    time = Column(DateTime, nullable=False)
+    createTime = Column(DateTime, nullable=False)
     dheart = Column(Integer, nullable=True)
+    dview = Column(Integer, nullable=True)
 
     parent = relationship(ParentTable, back_populates='deal', passive_deletes=True)

@@ -196,7 +196,7 @@ CREATE TABLE dview(
     parent_id VARCHAR(255) NOT NULL,
     deal_id INT NOT NULL,
     createTime DATETIME,
-    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (deal_id) REFERENCES deal(deal_id),
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 

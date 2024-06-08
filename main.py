@@ -6,7 +6,7 @@ from apis.parent import router as parent_router
 from apis.baby import router as baby_router
 from apis.raws import router as raws_router
 from apis.post import router as post_router
-from apis.postmain import router as postmain_router
+from apis.post.postmain import router as postmain_router
 from apis.search import router as search_router
 from apis.post.comment import router as comment_router
 

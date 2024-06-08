@@ -31,7 +31,7 @@ class PComment(BaseModel):
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
     cheart: Optional[int]
-    replies: List['Comment'] = []
+    replies: List['PComment'] = []
     
     class Config:
         orm_mode = True

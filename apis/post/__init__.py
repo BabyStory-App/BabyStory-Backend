@@ -26,7 +26,7 @@ async def create_post(createPostInput: CreatePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    post = await postService.createPost(parent_id, createPostInput)
+    post = postService.createPost(parent_id, createPostInput)
 
     if post is None:
         raise HTTPException(

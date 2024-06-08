@@ -24,7 +24,7 @@ class PostService:
         try:
             # save photo image if exists
             photo_id = None
-            if createPostInput.photo != None:
+            if createPostInput.photoId != None:
                 photo_id = str(uuid4())
                 photo_save_path = os.path.join(
                     PROJECT_DIR, f"{photo_id}.jpg")
@@ -34,20 +34,21 @@ class PostService:
             print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
+                reveal=createPostInput.reveal,
                 title=createPostInput.title,
-                post=createPostInput.post,
-                post_time=createPostInput.post_time,
-                modify_time=None,
-                delete_time=None,
-                heart=None,
-                share=None,
-                script=None,
-                comment=None,
-                hash=createPostInput.hash if createPostInput.hash else None
+                content=createPostInput.content,
+                createTime=createPostInput.createTime,
+                modifyTime=None,
+                deleteTime=None,
+                pHeart=None,
+                pScript=None,
+                pView=None,
+                pComment=None,
+                hashList=createPostInput.hashList if createPostInput.hashList else None
             )
 
             if photo_id:
-                post.photo = photo_id
+                post.photoId = photo_id
 
             db.add(post)
             db.commit()
@@ -69,7 +70,7 @@ class PostService:
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id, 
-                PostTable.delete_time == None).all()
+                PostTable.deleteTime == None).all()
 
             if post is None:
                 return None
@@ -90,7 +91,7 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
                 PostTable.post_id == post_id, 
-                PostTable.delete_time == None).first()
+                PostTable.deleteTime == None).first()
 
             if post is None:
                 return None
@@ -112,7 +113,7 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
                 PostTable.post_id == updatePostInput.post_id,
-                PostTable.delete_time == None).first()
+                PostTable.deleteTime == None).first()
             
             if post is None:
                 return None
@@ -141,12 +142,12 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.post_id == deletePostInput.post_id, 
                 PostTable.parent_id == parent_id,
-                PostTable.delete_time == None).first()
+                PostTable.deleteTime == None).first()
             
             if post is None:
                 return None
             
-            setattr(post, 'delete_time', deletePostInput.delete_time)
+            setattr(post, 'deleteTime', deletePostInput.deleteTime)
             
             db.add(post)
             db.commit()

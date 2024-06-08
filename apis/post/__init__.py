@@ -37,7 +37,7 @@ async def create_post(createPostInput: CreatePostInput,
 
 # 모든 게시물 가져오기
 @router.get("/", dependencies=[Depends(JWTBearer())])
-async def get_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
+async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
 
     # 부모 아이디가 없으면 에러
     if parent_id == None:

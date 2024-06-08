@@ -11,6 +11,13 @@ class CreatePostInput(BaseModel):
     content: str
     photoId: Optional[str]
     createTime: datetime = datetime.now()
+    modifyTime: Optional[datetime]
+    deleteTime: Optional[datetime]
+    pHeart: Optional[int]
+    pScript: Optional[int]
+    pView: Optional[int]
+    pComment: Optional[int]
+    hashList: Optional[str]
 
 class CreatePostOutput(BaseModel):
     post: Optional[Post]
@@ -22,7 +29,7 @@ class UpdatePostInput(BaseModel):
     title: str
     content: str
     photoId: Optional[str]
-    modify_time: datetime = datetime.now()
+    modifyTime: datetime = datetime.now()
     hashList: Optional[str]
 
 class UpdatePostOutput(BaseModel):
@@ -32,7 +39,7 @@ class UpdatePostOutput(BaseModel):
 # 게시물 삭제
 class DeletePostInput(BaseModel):
     post_id: int
-    delete_time: datetime = datetime.now()
+    deleteTime: datetime = datetime.now()
 
 class DeletePostOutput(BaseModel):
     success: int

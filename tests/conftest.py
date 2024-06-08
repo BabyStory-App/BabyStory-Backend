@@ -16,4 +16,4 @@ def client():
 
 @pytest.fixture(scope="session")
 def test_jwt():
-    return None
+    return {"access_token": None}

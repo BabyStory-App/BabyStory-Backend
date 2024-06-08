@@ -30,7 +30,6 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
         - highview: 조회수가 높은 게시물
         - hashtag: 많이 본 해시태그로 게시물 추천
     """
-    
     # 부모 아이디가 없으면 에러
     if parent_id is None:
         raise HTTPException(

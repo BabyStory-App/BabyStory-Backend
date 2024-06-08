@@ -10,28 +10,24 @@ from model.parent import ParentTable
 # 게시물 테이블
 
 # 게시물 테이블
-# +-------------+------------------+------+-----+---------+----------------+
-# | Field       | Type             | Null | Key | Default | Extra          |
-# +-------------+------------------+------+-----+---------+----------------+
-# | post_id     | int(11)          | NO   | PRI | NULL    | auto_increment |
-# | parent_id   | varchar(255)     | NO   | MUL | NULL    |                |
-# | public      | tinyint(4)       | NO   |     | NULL    |                |
-# | title       | varchar(144)     | NO   |     | NULL    |                |
-# | photo       | text             | YES  |     | NULL    |                |
-# | public      | tinyint(4)       | NO   |     | NULL    |                |
-# | title       | varchar(144)     | NO   |     | NULL    |                |
-# | photo       | text             | YES  |     | NULL    |                |
-# | post_time   | datetime         | NO   |     | NULL    |                |
-# | modify_time | datetime         | YES  |     | NULL    |                |
-# | delete_time | datetime         | YES  |     | NULL    |                |
-# | heart       | int(10) unsigned | YES  |     | NULL    |                |
-# | share       | int(10) unsigned | YES  |     | NULL    |                |
-# | script      | int(10) unsigned | YES  |     | NULL    |                |
-# | view        | int(10) unsigned | YES  |     | NULL    |                |
-# | view        | int(10) unsigned | YES  |     | NULL    |                |
-# | comment     | int(10) unsigned | YES  |     | NULL    |                |
-# | hash        | varchar(100)     | YES  |     | NULL    |                |
-# +-------------+------------------+------+-----+---------+----------------+
+# +------------+------------------+------+-----+---------+----------------+
+# | Field      | Type             | Null | Key | Default | Extra          |
+# +------------+------------------+------+-----+---------+----------------+
+# | post_id    | int(11)          | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255)     | NO   | MUL | NULL    |                |
+# | reveal     | tinyint(4)       | NO   |     | NULL    |                |
+# | title      | varchar(144)     | NO   |     | NULL    |                |
+# | content    | text             | NO   |     | NULL    |                |
+# | photoId    | text             | YES  |     | NULL    |                |
+# | createTime | datetime         | NO   |     | NULL    |                |
+# | modifyTime | datetime         | YES  |     | NULL    |                |
+# | deleteTime | datetime         | YES  |     | NULL    |                |
+# | pHeart     | int(10) unsigned | YES  |     | NULL    |                |
+# | pScript    | int(10) unsigned | YES  |     | NULL    |                |
+# | pView      | int(10) unsigned | YES  |     | NULL    |                |
+# | pComment   | int(10) unsigned | YES  |     | NULL    |                |
+# | hashList   | varchar(100)     | YES  |     | NULL    |                |
+# +------------+------------------+------+-----+---------+----------------+
 
 
 class Post(BaseModel):
@@ -39,9 +35,9 @@ class Post(BaseModel):
     parent_id: str
     reveal: int
     title: str
-    content: str
+    content: Optional[str]
     photoId: Optional[str]
-    createTime: datetime = datetime.now()
+    createTime: datetime
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
     pHeart: Optional[int]
@@ -76,6 +72,5 @@ class PostTable(DB_Base):
     pView = Column(Integer, nullable=True)
     pComment = Column(Integer, nullable=True)
     hashList = Column(String(100), nullable=True)
-    
 
     parent = relationship(ParentTable, backref='post', passive_deletes=True)

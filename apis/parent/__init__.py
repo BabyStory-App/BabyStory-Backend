@@ -56,7 +56,7 @@ async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOu
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    parent =  parentService.getParentByEmail(parent_id)
+    parent =  parentService.getParent(parent_id)
 
     if parent is None:
         raise HTTPException(

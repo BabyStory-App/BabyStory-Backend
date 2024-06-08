@@ -6,8 +6,6 @@ from services.post import PostService
 
 from schemas.post import *
 
-
-
 router = APIRouter(
     prefix="/post",
     tags=["post"],

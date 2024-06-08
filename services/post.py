@@ -17,9 +17,8 @@ from db import get_db_session
 class PostService:
     # 게시물 생성
     def createPost(self, parent_id: str,
-                   createPostInput: CreatePostInput
-                   ,file: UploadFile) -> Post:
-                     
+                   createPostInput: CreatePostInput,
+                   file: UploadFile) -> Post:
         db = get_db_session()
 
         try:
@@ -38,14 +37,13 @@ class PostService:
                 reveal=createPostInput.reveal,
                 title=createPostInput.title,
                 content=createPostInput.content,
-                photoId=createPostInput.photoId if createPostInput.photoId else None,
                 createTime=createPostInput.createTime,
-                modifyTime=createPostInput.modifyTime if createPostInput.modifyTime else None,
-                deleteTime=createPostInput.deleteTime if createPostInput.deleteTime else None,
-                pHeart=createPostInput.pHeart,
-                pScript=createPostInput.pScript,
-                pView=createPostInput.pView,
-                pComment=createPostInput.pComment,
+                modifyTime=None,
+                deleteTime=None,
+                pHeart=None,
+                pScript=None,
+                pView=None,
+                pComment=None,
                 hashList=createPostInput.hashList if createPostInput.hashList else None
             )
 

@@ -44,7 +44,7 @@ class ParentService:
                 status_code=400, detail="Failed to create parent")
 
     # 부모 정보 조회
-    def getParentByEmail(self, parent_id: str) -> Optional[Parent]:
+    def getParent(self, parent_id: str) -> Optional[Parent]:
         db = get_db_session()
         try:
             parent = db.query(ParentTable).filter(

@@ -16,7 +16,7 @@ commentService = CommentService()
 # 댓글 생성
 @router.post("/commentCreate", dependencies=[Depends(JWTBearer())])
 async def create_comment(createCommentInput: CreateCommentInput, 
-                         parent_id: str = Depends(JWTBearer()))-> Comment:
+                         parent_id: str = Depends(JWTBearer()))-> PComment:
     """
     댓글 생성
     --input
@@ -89,7 +89,7 @@ async def delete_comment(deleteCommentInput: DeleteCommentInput,
 
 # 해당 게시물의 모든 댓글 가져오기
 @router.get("/commentAll/{post_id}", dependencies=[Depends(JWTBearer())])
-async def get_comment(post_id: str)-> List[Comment]:
+async def get_comment(post_id: str)-> List[PComment]:
     """
     해당 게시물의 모든 댓글 가져오기
     --input

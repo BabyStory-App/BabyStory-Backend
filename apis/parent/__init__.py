@@ -21,6 +21,7 @@ parentService = ParentService()
 # 부모 생성
 @router.post("/")
 def create_parent(createParentInput: CreateParentInput)-> CreateParentOutput:
+
     parent = parentService.createParent(createParentInput)
 
     if parent is None:
@@ -33,12 +34,14 @@ def create_parent(createParentInput: CreateParentInput)-> CreateParentOutput:
         'email': parent.email,
         'name': parent.name,
         'nickname': parent.nickname,
+        'gender': parent.gender,
         'signInMethod': parent.signInMethod,
         'emailVerified': parent.emailVerified,
         'photoId': parent.photoId,
         'description': parent.description,
-        'mainaddr': parent.mainaddr,
-        'subaddr': parent.subaddr
+        'mainAddr': parent.mainAddr,
+        'subAddr': parent.subAddr,
+        'hashList': parent.hashList
     }
 
     return JSONResponse(status_code=201, content={
@@ -65,12 +68,14 @@ async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOu
         'email': parent.email,
         'name': parent.name,
         'nickname': parent.nickname,
+        'gender': parent.gender,
         'signInMethod': parent.signInMethod,
         'emailVerified': parent.emailVerified,
         'photoId': parent.photoId,
         'description': parent.description,
-        'mainaddr': parent.mainaddr,
-        'subaddr': parent.subaddr
+        'mainAddr': parent.mainAddr,
+        'subAddr': parent.subAddr,
+        'hashList': parent.hashList
     }
 
     return JSONResponse(status_code=200, content={

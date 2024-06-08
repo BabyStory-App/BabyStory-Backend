@@ -3,7 +3,7 @@ from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 
-from model.comment import CommentTable
+from model.pcomment import PCommentTable, PComment
 from schemas.comment import *
 
 from db import get_db_session
@@ -14,7 +14,7 @@ class CommentService:
         self.comment_list = []
 
     # 댓글 생성
-    def createComment(self, createCommentInput: CreateCommentInput,parent_id: str) -> Optional[Comment]:
+    def createComment(self, createCommentInput: CreateCommentInput,parent_id: str) -> Optional[PComment]:
         """
         댓글 생성
         --input
@@ -30,7 +30,7 @@ class CommentService:
         """
         db = get_db_session()
         try:
-            comment = CommentTable(
+            comment = PCommentTable(
                 comment_id=createCommentInput.comment_id,
                 parent_id=parent_id,
                 post_id=createCommentInput.post_id,
@@ -54,7 +54,7 @@ class CommentService:
         
     # 댓글 수정
     def updateComment(self, parent_id: str, 
-                      updateCommentInput: UpdateCommentInput) -> Optional[Comment]:
+                      updateCommentInput: UpdateCommentInput) -> Optional[PComment]:
         """
         댓글 수정
         --input
@@ -66,9 +66,9 @@ class CommentService:
         """
         db = get_db_session()
         try:
-            comment = db.query(CommentTable).filter(
-                CommentTable.comment_id == updateCommentInput.comment_id,
-                CommentTable.parent_id==parent_id).first()
+            comment = db.query(PCommentTable).filter(
+                PCommentTable.comment_id == updateCommentInput.comment_id,
+                PCommentTable.parent_id==parent_id).first()
             
             if comment is None:
                 return None
@@ -91,7 +91,7 @@ class CommentService:
         
     # 댓글 삭제
     def deleteComment(self, parent_id: str, 
-                      deleteCommentInput: DeleteCommentInput) -> Optional[Comment]:
+                      deleteCommentInput: DeleteCommentInput) -> Optional[PComment]:
         """
         댓글 삭제
         --input
@@ -103,9 +103,9 @@ class CommentService:
         """
         db = get_db_session()
         try:
-            comment = db.query(CommentTable).filter(
-                CommentTable.comment_id == deleteCommentInput.comment_id,
-                CommentTable.parent_id==parent_id).first()
+            comment = db.query(PCommentTable).filter(
+                PCommentTable.comment_id == deleteCommentInput.comment_id,
+                PCommentTable.parent_id==parent_id).first()
             
             if comment is None:
                 return None
@@ -125,7 +125,7 @@ class CommentService:
             raise HTTPException(status_code=400, detail="deleteComment error")
     
     # 재귀적으로 댓글을 가져오는 함수
-    def getCommentRecursive(self, comment: CommentTable) -> Comment:
+    def getCommentRecursive(self, comment: PCommentTable) -> PComment:
         '''
         재귀적으로 댓글을 가져오는 함수
         --input
@@ -135,7 +135,7 @@ class CommentService:
         '''
         try:
             # 댓글의 대댓글을 가져옴
-            comment_data = Comment.from_orm(comment)
+            comment_data = PComment.from_orm(comment)
             
             return comment_data
         
@@ -144,7 +144,7 @@ class CommentService:
             #raise HTTPException(status_code=400, detail="getCommentRecursive error")
 
     # 해당 게시물의 모든 댓글 가져오기
-    def getAllComment(self, post_id: str) -> List[Comment]:
+    def getAllComment(self, post_id: str) -> List[PComment]:
         '''
         해당 게시물의 모든 댓글 가져오기
         --input
@@ -155,9 +155,9 @@ class CommentService:
         db=get_db_session()
         try:
             # 해당 게시물의 최상위 댓글을 가져옴
-            top_comments = db.query(CommentTable).filter(
-                CommentTable.post_id == post_id,
-                CommentTable.reply_id == None).all()
+            top_comments = db.query(PCommentTable).filter(
+                PCommentTable.post_id == post_id,
+                PCommentTable.reply_id == None).all()
 
             # 댓글 리스트 초기화
             self.comment_list = []

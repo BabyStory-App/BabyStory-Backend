@@ -22,12 +22,14 @@ class ParentService:
                 email=createParentInput.email,
                 name=createParentInput.name,
                 nickname=createParentInput.nickname,
+                gender=createParentInput.gender,
                 signInMethod=createParentInput.signInMethod,
                 emailVerified=createParentInput.emailVerified,
                 photoId=createParentInput.photoId if createParentInput.photoId else None,
                 description=createParentInput.description if createParentInput.description else None,
-                mainaddr=createParentInput.mainaddr if createParentInput.mainaddr else None,
-                subaddr=createParentInput.subaddr if createParentInput.subaddr else None
+                mainAddr=createParentInput.mainAddr if createParentInput.mainAddr else None,
+                subAddr=createParentInput.subAddr if createParentInput.subAddr else None,
+                hashList=createParentInput.hashList if createParentInput.hashList else None
             )
 
             db.add(parent)
@@ -38,11 +40,8 @@ class ParentService:
 
         except Exception as e:
             db.rollback()
-            print(e)
-
-            raise Exception(e)
-            # raise HTTPException(
-            #     status_code=400, detail="Failed to create parent")
+            raise HTTPException(
+                status_code=400, detail="Failed to create parent")
 
     # 부모 정보 조회
     def getParentByEmail(self, parent_id: str) -> Optional[Parent]:
@@ -106,7 +105,7 @@ class ParentService:
                 status_code=400, detail="Failed to delete parent")
 
     # 이메일리스트를 입력 받아 해당 부모의 특정 정보 가져오기
-    def getFriends(self, emails: Optional[str]) -> GetFriendsByEmailOuput:
+    def getFriends(self, emails: Optional[str]) -> GetFriendsByEmailOutput:
         db = get_db_session()
         friends_dict = {}
         try:

@@ -1,8 +1,9 @@
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy import Column, String, Boolean, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
+
 
 # 부모 테이블
 # +---------------+--------------+------+-----+---------+-------+

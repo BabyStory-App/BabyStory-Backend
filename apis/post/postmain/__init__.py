@@ -7,15 +7,15 @@ from schemas.postmain import *
 
 
 router = APIRouter(
-    prefix="/post/main",
-    tags=["post/main"],
+    prefix="/main",
+    tags=["main"],
     responses={404: {"description": "Not found"}},
 )
 
 postMainService = PostMainService()
 
 # 메인페이지 생성
-@router.post("/", dependencies=[Depends(JWTBearer())])
+@router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_postmain(parent_id: str = Depends(JWTBearer())):
     """
     메인페이지 생성
@@ -80,11 +80,11 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
             status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhighview not found")
 
     # 많이 본 해시태그로 게시물 추천
-    # createpostmainhashtag = postMainService.createPostMainHashtag(parent_id)
+    createpostmainhashtag = postMainService.createPostMainHashtag(parent_id)
 
-    # if createpostmainhashtag is None:
-    #     raise HTTPException(
-    #         status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhashtag not found")
+    if createpostmainhashtag is None:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhashtag not found")
 
 
     return { 'banner' : createpostmain,
@@ -92,8 +92,8 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
             'friend_read' : createpostmainfriendread,
             'neighbor' : getneighbor,
             'neighbor_post' : createpostmainneighbor,
-            'highview' : createpostmainhighview
-            #'hashtag' : createpostmainhashtag
+            'highview' : createpostmainhighview,
+            'hashtag' : createpostmainhashtag
              }
 
 

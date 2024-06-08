@@ -36,5 +36,10 @@ class FriendTable(DB_Base):
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     friend = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
 
-    parent = relationship(ParentTable, back_populates='friend', passive_deletes=True)
-    friend = relationship(ParentTable, back_populates='friend', passive_deletes=True)
+    # parent = relationship(ParentTable, back_populates='friend', passive_deletes=True)
+    # friend = relationship(ParentTable, back_populates='friend', passive_deletes=True)
+    parent = relationship("ParentTable", foreign_keys=[parent_id], back_populates='friends')
+    friend_parent = relationship("ParentTable", foreign_keys=[friend], back_populates='friend_of', uselist=False)
+
+ParentTable.friends = relationship("FriendTable", foreign_keys=[FriendTable.parent_id], back_populates="parent", passive_deletes=True)
+ParentTable.friend_of = relationship("FriendTable", foreign_keys=[FriendTable.friend], back_populates="friend_parent", passive_deletes=True)

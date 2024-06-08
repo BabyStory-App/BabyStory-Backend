@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
-from model.comment import *
+from model.pcomment import *
 
 class CreateCommentInput(BaseModel):
     comment_id: int
@@ -19,7 +19,7 @@ class UpdateCommentInput(BaseModel):
 
 class UpdateCommentOutput(BaseModel):
     success: int
-    comment: Optional[Comment]
+    comment: Optional[PComment]
 
 class DeleteCommentInput(BaseModel):
     comment_id: int
@@ -27,4 +27,4 @@ class DeleteCommentInput(BaseModel):
 
 class DeleteCommentOutput(BaseModel):
     success: int
-    comment: Optional[Comment]
+    comment: Optional[PComment]

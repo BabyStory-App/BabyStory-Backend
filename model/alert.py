@@ -15,7 +15,7 @@ from model.parent import ParentTable
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
 # | target    | varchar(255) | YES  | MUL | NULL    |                |
 # | message   | text         | NO   |     | NULL    |                |
-# | click     | char(4)      | YES  |     | NULL    |                |
+# | click     | tinyint(1)   | YES  |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 
 

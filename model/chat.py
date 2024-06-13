@@ -1,30 +1,31 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from typing import Optional
+from model.chat import ChatTable
 from model.parent import ParentTable
-from model.chatbubble import ChatbubbleTable
 
 
-# 채팅방 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | room_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | end_chat  | int(11)      | NO   | MUL | NULL    |                |
-# | name      | varchar(100) | NO   |     | NULL    |                |
-# | pid       | varchar(255) | YES  |     | NULL    |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# 실시간 채팅 말풍선 테이블
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | chat_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | room_id    | int(11)      | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | chatType   | varchar(255) | NO   |     | NULL    |                |
+# | content    | text         | NO   |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
-class Chat(BaseModel):
-    room_id: int
+class Chatbubble(BaseModel):
+    chat_id: int
     parent_id: str
-    end_chat: int
-    name: str
-    pid: Optional[str]
+    room_id: int
+    createTime: DateTime
+    chatType: str
+    content: str
 
     class Config:
         orm_mode = True
@@ -35,14 +36,15 @@ class Chat(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ChatTable(DB_Base):
-    __tablename__ = 'chat'
+class ChatbubbleTable(DB_Base):
+    __tablename__ = 'chatbubble'
 
-    room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    chat_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    end_chat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
-    name = Column(String(100), nullable=False)
-    pid = Column(String(255), nullable=True)
-    
-    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)
-    chat = relationship(ChatbubbleTable, back_populates='chat', passive_deletes=True)
+    room_id = Column(Integer, ForeignKey('chat.room_id'), nullable=False)
+    createTime = Column(DateTime, nullable=False)
+    chatType = Column(String(255), nullable=False)
+    content = Column(TEXT, nullable=False)
+
+    chat = relationship(ChatTable, back_populates='chatbubble', passive_deletes=True)
+    parent = relationship(ParentTable, back_populates='chatbubble', passive_deletes=True)

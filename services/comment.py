@@ -3,7 +3,7 @@ from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 
-from model.comment import CommentTable
+from model.pcomment import CommentTable
 from schemas.comment import *
 
 from db import get_db_session

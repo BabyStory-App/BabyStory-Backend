@@ -2,24 +2,28 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from model.post import PostTable
+from typing import Optional
 from model.parent import ParentTable
+from model.chatbubble import ChatbubbleTable
 
 
-# 게시물 공유 테이블
+# 채팅방 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
-# | share_id  | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | room_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | post_id   | int(11)      | NO   | MUL | NULL    |                |
+# | lastChat  | int(11)      | NO   | MUL | NULL    |                |
+# | name      | varchar(100) | NO   |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 
 
-class Share(BaseModel):
-    share_id: int
+class Chat(BaseModel):
+    room_id: int
     parent_id: str
-    post_id: int
+    end_chat: int
+    name: str
+    pid: Optional[str]
 
     class Config:
         orm_mode = True
@@ -30,12 +34,14 @@ class Share(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ShareTable(DB_Base):
-    __tablename__ = 'share'
+class ChatTable(DB_Base):
+    __tablename__ = 'chat'
 
-    share_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
-
-    post = relationship(PostTable, backref='share', passive_deletes=True)
-    parent = relationship(ParentTable, backref='share', passive_deletes=True)
+    end_chat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
+    name = Column(String(100), nullable=False)
+    pid = Column(String(255), nullable=True)
+    
+    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)
+    chat = relationship(ChatbubbleTable, back_populates='chat', passive_deletes=True)

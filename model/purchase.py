@@ -13,11 +13,14 @@ from model.parent import ParentTable
 # +-------------+--------------+------+-----+---------+----------------+
 # | purchase_id | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id   | varchar(255) | NO   | MUL | NULL    |                |
-# | title       | varchar(20)  | NO   |     | NULL    |                |
-# | post        | text         | YES  |     | NULL    |                |
-# | img         | varchar(255) | NO   |     | NULL    |                |
-# | time        | datetime     | NO   |     | NULL    |                |
+# | title       | varchar(100) | NO   |     | NULL    |                |
+# | content     | text         | NO   |     | NULL    |                |
+# | photoId     | varchar(255) | NO   |     | NULL    |                |
+# | createTime  | datetime     | NO   |     | NULL    |                |
 # | link        | varchar(255) | NO   |     | NULL    |                |
+# | jheart      | int(11)      | YES  |     | 0       |                |
+# | jview       | int(11)      | YES  |     | 0       |                |
+# | joint       | int(11)      | YES  |     | 0       |                |
 # +-------------+--------------+------+-----+---------+----------------+
 
 
@@ -25,10 +28,13 @@ class Purchase(BaseModel):
     purchase_id: int
     parent_id: str
     title: str
-    post: Optional[str]
-    img: str
-    time: datetime
+    content: Optional[str]
+    photoId: str
+    createTime: datetime
     link: str
+    jheart: int
+    jview: int
+    joint: int
 
     class Config:
         orm_mode = True
@@ -45,9 +51,12 @@ class PurchaseTable(DB_Base):
     purchase_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
-    post = Column(TEXT, nullable=True)
-    img = Column(String(255), nullable=False)
-    time = Column(DateTime, nullable=False)
+    content = Column(TEXT, nullable=True)
+    photoId = Column(String(255), nullable=False)
+    createTime = Column(DateTime, nullable=False)
     link = Column(String(255), nullable=False)
+    jheart = Column(Integer, nullable=True, default=0)
+    jview = Column(Integer, nullable=True, default=0)
+    joint = Column(Integer, nullable=True, default=0)
 
     parent = relationship(ParentTable, back_populates='purchase', passive_deletes=True)

@@ -12,11 +12,11 @@ from model.baby import BabyTable
 # +------------+--------------+------+-----+---------+----------------+
 # | babycry_id | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | baby_id    | varchar(255) | NO   | MUL | NULL    |                |
-# | time       | datetime     | YES  |     | NULL    |                |
-# | type       | varchar(50)  | YES  |     | NULL    |                |
-# | audioid    | char(1)      | YES  |     | NULL    |                |
+# | createTime | datetime     | YES  |     | NULL    |                |
+# | cryType    | varchar(50)  | YES  |     | NULL    |                |
+# | audioId    | char(36)     | YES  |     | NULL    |                |
 # | predictMap | json         | YES  |     | NULL    |                |
-# | intensity  | varchar(50)  | YES  |     | NULL    |                |
+# | intensity  | tinyint(3)   | YES  |     | NULL    |                |
 # | duration   | float        | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
 

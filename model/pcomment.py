@@ -14,8 +14,10 @@ from typing import Optional, List
 # | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
 # | post_id    | int(11)      | NO   | MUL | NULL    |                |
 # | reply_id   | int(11)      | YES  | MUL | NULL    |                |
-# | comment    | text         | NO   |     | NULL    |                |
-# | time       | datetime     | NO   |     | NULL    |                |
+# | content    | text         | NO   |     | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | modifyTime | datetime     | YES  |     | NULL    |                |
+# | deleteTime | datetime     | YES  |     | NULL    |                |
 # | cheart     | int(11)      | YES  |     | 0       |                |
 # +------------+--------------+------+-----+---------+----------------+
 
@@ -26,7 +28,7 @@ class Comment(BaseModel):
     parent_id: str
     post_id: int
     reply_id: Optional[int]
-    comment: str
+    content: str
     comment_time: datetime
     modify_time: Optional[datetime]
     delete_time: Optional[datetime]

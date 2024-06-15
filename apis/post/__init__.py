@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, HTTPException, Depends, File
 from starlette.status import HTTP_400_BAD_REQUEST
 from auth.auth_bearer import JWTBearer
 
@@ -19,6 +19,7 @@ postService = PostService()
 # 게시물 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_post(createPostInput: CreatePostInput,
+                file: List[UploadFile] = File(None),
                 parent_id: str = Depends(JWTBearer()))-> CreatePostOutput:
     
     # 부모 아이디가 없으면 에러
@@ -26,7 +27,7 @@ async def create_post(createPostInput: CreatePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    post = postService.createPost(parent_id, createPostInput)
+    post = postService.createPost(parent_id, createPostInput, file)
 
     if post is None:
         raise HTTPException(

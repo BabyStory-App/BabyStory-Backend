@@ -35,7 +35,7 @@ class Post(BaseModel):
     title: str
     content: str
     photoId: Optional[str]
-    createTime: datetime = datetime.now()
+    createTime: datetime
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
     pHeart: Optional[int]

@@ -25,20 +25,25 @@ class PostService:
         try:
             # save photo image if exists
             photo_id = None
-            if createPostInput.photoId != None:
+            if file != None:
+                if createPostInput.photoId == "String":
+                    createPostInput.photoId == parent_id + createPostInput.createTime
                 photo_id = str(uuid4())
                 photo_save_path = os.path.join(
                     PROJECT_DIR, f"{photo_id}.jpg")
                 with open(photo_save_path, "wb") as buffer:
                     shutil.copyfileobj(file.file, buffer)
 
-            print(createPostInput)
+            if createPostInput.reveal not in [0, 1, 2, 3]:
+                raise Exception("Invalid reveal value")
+
+            # print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
                 reveal=createPostInput.reveal,
                 title=createPostInput.title,
                 content=createPostInput.content,
-                photoId=createPostInput.photoId if createPostInput.photoId else None,
+                photoId=createPostInput.photoId,
                 createTime=createPostInput.createTime,
                 modifyTime=None,
                 deleteTime=None,

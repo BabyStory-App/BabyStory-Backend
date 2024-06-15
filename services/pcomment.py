@@ -2,7 +2,6 @@ from fastapi import HTTPException
 from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
-
 from model.pcomment import PCommentTable, PComment
 from schemas.comment import *
 

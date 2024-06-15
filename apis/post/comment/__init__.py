@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from starlette.status import HTTP_400_BAD_REQUEST
 from auth.auth_bearer import JWTBearer
 
-from services.comment import CommentService
+from services.pcomment import CommentService
 from schemas.comment import *
 
 router = APIRouter(

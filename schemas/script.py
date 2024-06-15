@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
-from model.script import *
+from model.pscript import *
 
 class CreateScriptInput(BaseModel):
     post_id: int

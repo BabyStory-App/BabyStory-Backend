@@ -144,12 +144,12 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.post_id == deletePostInput.post_id, 
                 PostTable.parent_id == parent_id,
-                PostTable.delete_time == None).first()
+                PostTable.deleteTime == None).first()
             
             if post is None:
                 return None
             
-            setattr(post, 'delete_time', deletePostInput.delete_time)
+            setattr(post, 'deleteTime', deletePostInput.deleteTime)
             
             db.add(post)
             db.commit()

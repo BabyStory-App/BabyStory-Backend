@@ -2,18 +2,20 @@ from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
+from datetime import datetime
 from model.parent import ParentTable
 from model.post import PostTable
 
 
 # 조회수 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | view_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | post_id   | int(11)      | NO   | MUL | NULL    |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | view_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | post_id    | int(11)      | NO   | MUL | NULL    |                |
+# | createTime | datetime     | YES  |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class PView(BaseModel):
@@ -37,7 +39,7 @@ class PViewTable(DB_Base):
     view_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
-    createTime = Column(DateTime, nullable=False)
+    createTime = Column(datetime, nullable=True)
 
     post = relationship(PostTable, backref='pview', passive_deletes=True)
     parent = relationship(ParentTable, backref='pview', passive_deletes=True)

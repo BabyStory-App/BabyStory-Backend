@@ -12,20 +12,22 @@ test_user_jwt = None
 
 test_CreatePostInput = {
     "post_id": str(uuid4()),
+    "reveal": 1,
     "title": "test title",
-    "post": "test post",
-    "photo": "test photo",
-    "post_time": "2021-10-01T00:00:00",
-    "hash": "test hash"
+    "content": "test post",
+    "photoId": "test photo",
+    "createTime": "2021-10-01T00:00:00",
+    "hashList": "test hash"
 }
 
 test_UpdatePostInput = {
     "post_id": str(uuid4()),
+    "reveal": 2,
     "title": "test title",
-    "post": "test post",
-    "photo": "test photo",
-    "modify_time": "2021-10-01T00:00:00",
-    "hash": "test hash"
+    "content": "test post",
+    "photoId": "test photo",
+    "modifyTime": "2021-10-01T00:00:00",
+    "hashList": "test hash"
 }
 
 # Create post test
@@ -36,11 +38,12 @@ def test_create_post():
     post_json = res_json["post"]
 
     # post 객체 확인
+    assert post_json["reveal"] == test_CreatePostInput["reveal"]
     assert post_json["title"] == test_CreatePostInput["title"]
-    assert post_json["post"] == test_CreatePostInput["post"]
-    assert post_json["photo"] == test_CreatePostInput["photo"]
-    assert post_json["post_time"] == test_CreatePostInput["post_time"]
-    assert post_json["hash"] == test_CreatePostInput["hash"]
+    assert post_json["content"] == test_CreatePostInput["content"]
+    assert post_json["photoId"] == test_CreatePostInput["photoId"]
+    assert post_json["createTime"] == test_CreatePostInput["createTime"]
+    assert post_json["hashList"] == test_CreatePostInput["hashList"]
 
     # jwt 확인
     jwt = response.json()["x-jwt"]['access_token']
@@ -93,11 +96,12 @@ def test_update_post():
     post_json = res_json["post"]
 
     # post 객체 확인
+    assert post_json["reveal"] == test_CreatePostInput["reveal"]
     assert post_json["title"] == test_UpdatePostInput["title"]
-    assert post_json["post"] == test_UpdatePostInput["post"]
-    assert post_json["photo"] == test_UpdatePostInput["photo"]
-    assert post_json["modify_time"] == test_UpdatePostInput["modify_time"]
-    assert post_json["hash"] == test_UpdatePostInput["hash"]
+    assert post_json["content"] == test_UpdatePostInput["content"]
+    assert post_json["photoId"] == test_UpdatePostInput["photoId"]
+    assert post_json["modifyTime"] == test_UpdatePostInput["modifyTime"]
+    assert post_json["hashList"] == test_UpdatePostInput["hashList"]
 
 # Update post test fail
 def test_update_post_fail():

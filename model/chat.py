@@ -6,7 +6,7 @@ from model.chatroom import ChatRoomTable
 from model.parent import ParentTable
 
 
-# 실시간 채팅 말풍선 테이블
+# 채팅 테이블
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+

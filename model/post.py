@@ -8,8 +8,6 @@ from model.parent import ParentTable
 
 
 # 게시물 테이블
-
-# 게시물 테이블
 # +------------+------------------+------+-----+---------+----------------+
 # | Field      | Type             | Null | Key | Default | Extra          |
 # +------------+------------------+------+-----+---------+----------------+
@@ -72,5 +70,5 @@ class PostTable(DB_Base):
     pView = Column(Integer, nullable=True)
     pComment = Column(Integer, nullable=True)
     hashList = Column(String(100), nullable=True)
-    
+
     parent = relationship(ParentTable, backref='post', passive_deletes=True)

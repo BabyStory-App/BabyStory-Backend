@@ -23,17 +23,17 @@ from typing import Optional, List
 
 
 
-class Comment(BaseModel):
+class PComment(BaseModel):
     comment_id: int
     parent_id: str
     post_id: int
     reply_id: Optional[int]
     content: str
-    comment_time: datetime
-    modify_time: Optional[datetime]
-    delete_time: Optional[datetime]
+    createTime: datetime
+    modifyTime: Optional[datetime]
+    deleteTime: Optional[datetime]
     cheart: Optional[int]
-    replies: List['Comment'] = []
+    replies: List['PComment'] = []
     
     class Config:
         orm_mode = True
@@ -45,18 +45,20 @@ class Comment(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class CommentTable(DB_Base):
-    __tablename__ = 'comment'
+class PCommentTable(DB_Base):
+    __tablename__ = 'pcomment'
 
     comment_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
-    reply_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=True)
-    comment = Column(TEXT, nullable=False)
-    time = Column(DateTime, nullable=False)
+    reply_id = Column(Integer, ForeignKey('pcomment.comment_id'), nullable=True)
+    content = Column(TEXT, nullable=False)
+    createTime = Column(DateTime, nullable=False)
+    modifyTime = Column(DateTime, nullable=True)
+    deleteTime = Column(DateTime, nullable=True)
     cheart = Column(Integer, nullable=True)
 
-    replies = relationship("CommentTable", backref=backref('parent_comment', remote_side=[comment_id]))
+    replies = relationship("PCommentTable", backref=backref('parent_comment', remote_side=[comment_id]))
     #post = relationship("PostTable", backref='comment', passive_deletes=True)
     #parent = relationship("ParentTable", backref='comment', passive_deletes=True)
     #comment = relationship("CommentTable", backref='comment', passive_deletes=True)

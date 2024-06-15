@@ -11,6 +11,12 @@ class CreatePostInput(BaseModel):
     content: str
     photoId: Optional[str]
     createTime: datetime = datetime.now()
+    modifyTime: Optional[datetime]
+    deleteTime: Optional[datetime]
+    pHeart: Optional[int]
+    pScript: Optional[int]
+    pView: Optional[int]
+    pComment: Optional[int]
     hashList: Optional[str]
 
 class CreatePostOutput(BaseModel):

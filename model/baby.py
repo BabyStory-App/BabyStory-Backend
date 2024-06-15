@@ -37,8 +37,6 @@ class Baby(BaseModel):
     bloodType: Optional[str]
     cm: Optional[float]
     kg: Optional[float]
-    cm: Optional[float]
-    kg: Optional[float]
     photoId: Optional[str]
 
     class Config:

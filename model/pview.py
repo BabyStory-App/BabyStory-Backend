@@ -18,7 +18,7 @@ from model.post import PostTable
 # +------------+--------------+------+-----+---------+----------------+
 
 
-class View(BaseModel):
+class PView(BaseModel):
     view_id: int
     parent_id: str
     post_id: int
@@ -33,13 +33,13 @@ class View(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ViewTable(DB_Base):
-    __tablename__ = 'view'
+class PViewTable(DB_Base):
+    __tablename__ = 'pview'
 
     view_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
     createTime = Column(datetime, nullable=True)
 
-    post = relationship(PostTable, backref='view', passive_deletes=True)
-    parent = relationship(ParentTable, backref='view', passive_deletes=True)
+    post = relationship(PostTable, backref='pview', passive_deletes=True)
+    parent = relationship(ParentTable, backref='pview', passive_deletes=True)

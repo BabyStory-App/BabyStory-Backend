@@ -35,9 +35,9 @@ class Post(BaseModel):
     parent_id: str
     reveal: int
     title: str
-    content: Optional[str]
+    content: str
     photoId: Optional[str]
-    createTime: datetime
+    createTime: datetime = datetime.now()
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
     pHeart: Optional[int]
@@ -72,5 +72,5 @@ class PostTable(DB_Base):
     pView = Column(Integer, nullable=True)
     pComment = Column(Integer, nullable=True)
     hashList = Column(String(100), nullable=True)
-
+    
     parent = relationship(ParentTable, backref='post', passive_deletes=True)

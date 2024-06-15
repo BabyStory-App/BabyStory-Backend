@@ -10,12 +10,14 @@ class CreateParentInput(BaseModel):
     email: str
     name: str
     nickname: str
+    gender: Optional[int]
     signInMethod: str
-    emailVerified: bool
+    emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
-    mainaddr: Optional[str]
-    subaddr: Optional[str]
+    mainAddr: Optional[str]
+    subAddr: Optional[str]
+    hashList: Optional[str]
 
 
 class CreateParentOutput(BaseModel):
@@ -33,12 +35,14 @@ class UpdateParentInput(BaseModel):
     email: str
     name: str
     nickname: str
+    gender: Optional[int]
     signInMethod: str
-    emailVerified: bool
+    emailVerified: int
     photoId: Optional[str]
     description: Optional[str]
-    mainaddr: Optional[str]
-    subaddr: Optional[str]
+    mainAddr: Optional[str]
+    subAddr: Optional[str]
+    hashList: Optional[str]
 
 class UpdateParentOutput(BaseModel):
     success: int
@@ -50,5 +54,5 @@ class DeleteParentOutput(BaseModel):
 class CreatePBConnectOutput(BaseModel):
     success: int
 
-class GetFriendsByEmailOuput(BaseModel):
+class GetFriendsByEmailOutput(BaseModel):
     parents: Dict[str, Optional[Parent]]

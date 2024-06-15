@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
 from model.parent import ParentTable
-from model.chatbubble import ChatbubbleTable
+from model.chat import ChatTable
 
 
 # 채팅방 테이블
@@ -21,9 +21,8 @@ from model.chatbubble import ChatbubbleTable
 class Chat(BaseModel):
     room_id: int
     parent_id: str
-    end_chat: int
+    lastChat: int
     name: str
-    pid: Optional[str]
 
     class Config:
         orm_mode = True
@@ -34,14 +33,13 @@ class Chat(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ChatTable(DB_Base):
+class ChatRoomTable(DB_Base):
     __tablename__ = 'chat'
 
     room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    end_chat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
+    lastChat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
     name = Column(String(100), nullable=False)
-    pid = Column(String(255), nullable=True)
     
+    chat = relationship(ChatTable, back_populates='chat', passive_deletes=True)
     parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)
-    chat = relationship(ChatbubbleTable, back_populates='chat', passive_deletes=True)

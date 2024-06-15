@@ -21,12 +21,12 @@ from model.parent import ParentTable
 
 
 class AIDoctor(BaseModel):
-    id: int
+    ai_id: int
     parent_id: str
-    date: datetime
+    createTime: datetime
     ask: str
     res: str
-    haddr: Optional[str]
+    hAddr: Optional[str]
 
     class Config:
         orm_mode = True
@@ -40,11 +40,11 @@ class AIDoctor(BaseModel):
 class AIDoctorTable(DB_Base):
     __tablename__ = 'aidoctor'
 
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    ai_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    date = Column(DateTime, nullable=False)
+    createTime = Column(DateTime, nullable=False)
     ask_id = Column(Text, nullable=False)
     res_id = Column(Text, nullable=False)
-    haddr = Column(Text, nullable=True)
+    hAddr = Column(Text, nullable=True)
 
     parent = relationship(ParentTable, back_populates='aidoctor', passive_deletes=True)

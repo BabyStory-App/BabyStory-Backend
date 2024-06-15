@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, TEXT, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from model.chat import ChatTable
+from model.chatroom import ChatRoomTable
 from model.parent import ParentTable
 
 
@@ -19,7 +19,7 @@ from model.parent import ParentTable
 # +------------+--------------+------+-----+---------+----------------+
 
 
-class Chatbubble(BaseModel):
+class Chat(BaseModel):
     chat_id: int
     parent_id: str
     room_id: int
@@ -45,6 +45,6 @@ class ChatbubbleTable(DB_Base):
     createTime = Column(DateTime, nullable=False)
     chatType = Column(String(255), nullable=False)
     content = Column(TEXT, nullable=False)
-
-    chat = relationship(ChatTable, back_populates='chatbubble', passive_deletes=True)
-    parent = relationship(ParentTable, back_populates='chatbubble', passive_deletes=True)
+    
+    chat = relationship(ChatRoomTable, back_populates='chat', passive_deletes=True)
+    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

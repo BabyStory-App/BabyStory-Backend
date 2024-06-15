@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, TEXT
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from typing import Optional
@@ -24,7 +24,7 @@ class Alert(BaseModel):
     parent_id: str
     target: Optional[str]
     message: str
-    click: Optional[str]
+    click: Optional[int]
 
     class Config:
         orm_mode = True
@@ -41,7 +41,7 @@ class AlertTable(DB_Base):
     alert_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     target = Column(String(255), nullable=True)
-    message = Column(String(255), nullable=False)
-    click = Column(String(4), nullable=True)
+    message = Column(TEXT, nullable=False)
+    click = Column(Integer, nullable=True)
 
     parent = relationship(ParentTable, back_populates='alert', passive_deletes=True)

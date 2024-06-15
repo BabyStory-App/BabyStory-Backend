@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
-from model.pcomment import CommentTable
+from model.pcomment import PCommentTable
 from model.parent import ParentTable
 
 
@@ -41,5 +41,5 @@ class CheartTable(DB_Base):
     comment_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=False)
     createTime = Column(datetime, nullable=False)
     
-    comment = relationship(CommentTable, back_populates='cheart', passive_deletes=True)
+    comment = relationship(PCommentTable, back_populates='cheart', passive_deletes=True)
     parent = relationship(ParentTable, back_populates='cheart', passive_deletes=True)

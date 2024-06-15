@@ -18,7 +18,7 @@ from model.parent import ParentTable
 # +------------+--------------+------+-----+---------+----------------+
 
 
-class Script(BaseModel):
+class PScript(BaseModel):
     script_id: int
     parent_id: str
     post_id: int
@@ -33,13 +33,13 @@ class Script(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ScriptTable(DB_Base):
-    __tablename__ = 'script'
+class PScriptTable(DB_Base):
+    __tablename__ = 'pscript'
 
     script_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
     createTime = Column(datetime, nullable=True)
 
-    post = relationship(PostTable, backref='script', passive_deletes=True)
-    parent = relationship(ParentTable, backref='script', passive_deletes=True)
+    post = relationship(PostTable, backref='pscript', passive_deletes=True)
+    parent = relationship(ParentTable, backref='pscript', passive_deletes=True)

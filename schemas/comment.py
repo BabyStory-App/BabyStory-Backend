@@ -19,7 +19,7 @@ class UpdateCommentInput(BaseModel):
 
 class UpdateCommentOutput(BaseModel):
     success: int
-    comment: Optional[Comment]
+    comment: Optional[PComment]
 
 class DeleteCommentInput(BaseModel):
     comment_id: int
@@ -27,4 +27,4 @@ class DeleteCommentInput(BaseModel):
 
 class DeleteCommentOutput(BaseModel):
     success: int
-    comment: Optional[Comment]
+    comment: Optional[PComment]

@@ -105,8 +105,6 @@ CREATE TABLE post(
     parent_id VARCHAR(255) NOT NULL,
     reveal tinyint(4) NOT NULL,
     title VARCHAR(144) NOT NULL,
-    content TEXT NOT NULL,
-    photoId TEXT,
     createTime DATETIME NOT NULL,
     modifyTime DATETIME,
     deleteTime DATETIME,

@@ -15,8 +15,6 @@ from model.parent import ParentTable
 # | parent_id  | varchar(255)     | NO   | MUL | NULL    |                |
 # | reveal     | tinyint(4)       | NO   |     | NULL    |                |
 # | title      | varchar(144)     | NO   |     | NULL    |                |
-# | content    | text             | NO   |     | NULL    |                |
-# | photoId    | text             | YES  |     | NULL    |                |
 # | createTime | datetime         | NO   |     | NULL    |                |
 # | modifyTime | datetime         | YES  |     | NULL    |                |
 # | deleteTime | datetime         | YES  |     | NULL    |                |
@@ -33,8 +31,6 @@ class Post(BaseModel):
     parent_id: str
     reveal: int
     title: str
-    content: str
-    photoId: Optional[str]
     createTime: datetime
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
@@ -60,8 +56,6 @@ class PostTable(DB_Base):
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     reveal = Column(Integer, nullable=False)
     title = Column(String(144), nullable=False)
-    content = Column(TEXT, nullable=False)
-    photoId = Column(TEXT, nullable=True)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
     deleteTime = Column(DateTime, nullable=True)

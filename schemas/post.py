@@ -9,7 +9,6 @@ class CreatePostInput(BaseModel):
     reveal: int
     title: str
     content: str
-    photoId: Optional[str]
     createTime: datetime = datetime.now()
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
@@ -22,13 +21,15 @@ class CreatePostInput(BaseModel):
 class CreatePostOutput(BaseModel):
     post: Optional[Post]
 
+class UploadPhotoOutput(BaseModel):
+    success: bool
+
 # 게시물 수정
 class UpdatePostInput(BaseModel):
     post_id: int
     reveal: int
     title: str
     content: str
-    photoId: Optional[str]
     modifyTime: datetime = datetime.now()
     hashList: Optional[str]
 

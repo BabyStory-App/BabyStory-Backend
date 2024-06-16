@@ -7,6 +7,7 @@ from apis.baby import router as baby_router
 from apis.raws import router as raws_router
 from apis.post import router as post_router
 from apis.post.pheart import router as pheart_router
+from apis.post.pscript import router as pscript_router
 from apis.post.postmain import router as postmain_router
 from apis.search import router as search_router
 from apis.post.comment import router as comment_router
@@ -19,6 +20,7 @@ app.include_router(baby_router)
 app.include_router(raws_router)
 app.include_router(post_router)
 app.include_router(pheart_router)
+app.include_router(pscript_router)
 app.include_router(postmain_router)
 
 app.include_router(search_router)

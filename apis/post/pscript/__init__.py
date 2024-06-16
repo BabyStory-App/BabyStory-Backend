@@ -2,32 +2,32 @@ from fastapi import APIRouter, HTTPException, Depends
 from starlette.status import HTTP_400_BAD_REQUEST
 from auth.auth_bearer import JWTBearer
 
-from services.script import ScriptService
-from schemas.script import *
+from services.pscript import PScriptService
+from schemas.pscript import *
 
 router = APIRouter(
-    prefix="/script",
-    tags=["script"],
+    prefix="/pscript",
+    tags=["pscript"],
     responses={404: {"description": "Not found"}},
 )
 
-scriptService = ScriptService()
+pscriptService = PScriptService()
 
 # 스크립트 생성
-@router.post("/scriptCreate", dependencies=[Depends(JWTBearer())])
-async def create_script(createScriptInput: CreateScriptInput, 
-                        parent_id: str = Depends(JWTBearer()))-> Script:
+@router.post("/pscriptCreate", dependencies=[Depends(JWTBearer())])
+async def create_pscript(createPScriptInput: CreatePScriptInput, 
+                        parent_id: str = Depends(JWTBearer()))-> PScript:
     """
     스크립트 생성
     --input
         - createScriptInput.post_id: 게시물 아이디
         - parent_id: 스크립트한 부모 아이디
     --output
-        - Script: 스크립트 딕셔너리
+        - PScript: 스크립트 딕셔너리
     """
 
     # 스크립트 생성
-    result = scriptService.createScript(createScriptInput, parent_id)
+    result = pscriptService.createPScript(createPScriptInput, parent_id)
 
     if result is None:
         raise HTTPException(
@@ -36,20 +36,20 @@ async def create_script(createScriptInput: CreateScriptInput,
     return result
 
 # 스크립트 삭제
-@router.delete("/scriptDelete", dependencies=[Depends(JWTBearer())])
-async def delete_script(deleteScriptInput: DeleteScriptInput, 
-                        parent_id: str = Depends(JWTBearer()))-> Script:
+@router.delete("/pscriptDelete", dependencies=[Depends(JWTBearer())])
+async def delete_pscript(deletePScriptInput: DeletePScriptInput, 
+                        parent_id: str = Depends(JWTBearer()))-> PScript:
     """
     스크립트 삭제
     --input
         - deleteScriptInput.post_id: 게시물 아이디
         - parent_id: 스크립트한 부모 아이디
     --output
-        - Script: 스크립트 딕셔너리
+        - PScript: 스크립트 딕셔너리
     """
 
     # 스크립트 삭제
-    result = scriptService.deleteScript(deleteScriptInput, parent_id)
+    result = pscriptService.deletePScript(deletePScriptInput, parent_id)
 
     if result is None:
         raise HTTPException(

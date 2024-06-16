@@ -5,7 +5,7 @@ from model.pheart import *
 
 class CreatePHeartInput(BaseModel):
     post_id: int
-    parent_id: int
+    createTime: datetime = datetime.now()
 
 class CreatePHeartOutput(BaseModel):
     success: int
@@ -13,7 +13,6 @@ class CreatePHeartOutput(BaseModel):
 
 class DeletePHeartInput(BaseModel):
     post_id: int
-    parent_id: int
 
 class DeletePHeartOutput(BaseModel):
     success: int

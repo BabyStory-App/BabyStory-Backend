@@ -7,15 +7,15 @@ from model.baby import BabyTable
 
 
 # 아기 상태 테이블
-# +----------+--------------+------+-----+---------+----------------+
-# | Field    | Type         | Null | Key | Default | Extra          |
-# +----------+--------------+------+-----+---------+----------------+
-# | graph_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | baby_id  | varchar(255) | NO   | MUL | NULL    |                |
-# | date     | datetime     | NO   |     | NULL    |                |
-# | cm       | float        | YES  |     | NULL    |                |
-# | kg       | float        | YES  |     | NULL    |                |
-# +----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | state_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | baby_id    | varchar(255) | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | cm         | float        | YES  |     | NULL    |                |
+# | kg         | float        | YES  |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Babystate(BaseModel):

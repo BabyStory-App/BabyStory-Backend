@@ -3,7 +3,7 @@ from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 
-from model.script import ScriptTable
+from model.pscript import ScriptTable
 from schemas.script import *
 
 from db import get_db_session

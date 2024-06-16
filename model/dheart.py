@@ -2,18 +2,20 @@ from sqlalchemy import Column,String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
+from datetime import datetime
 from model.deal import DealTable
 from model.parent import ParentTable
 
 
 # 중고거래 위시리스트 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | dheart_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | deal_id   | int(11)      | NO   | MUL | NULL    |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | dheart_id  | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | deal_id    | int(11)      | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Dheart(BaseModel):
@@ -37,7 +39,7 @@ class DheartTable(DB_Base):
     dheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     deal_id = Column(Integer, ForeignKey('deal.deal_id'), nullable=False)
-    createTime = Column(DateTime, nullable=False)
+    createTime = Column(datetime, nullable=False)
 
     parent = relationship(ParentTable, back_populates='dheart', passive_deletes=True)
     deal = relationship(DealTable, back_populates='dheart', passive_deletes=True)

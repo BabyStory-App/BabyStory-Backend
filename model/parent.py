@@ -14,12 +14,14 @@ from typing import Optional
 # | email         | varchar(255) | NO   | UNI | NULL    |       |
 # | name          | varchar(50)  | NO   |     | NULL    |       |
 # | nickname      | varchar(255) | NO   |     | NULL    |       |
+# | gender        | tinyint(3)   | YES  |     | NULL    |       |
 # | signInMethod  | varchar(50)  | NO   |     | NULL    |       |
 # | emailVerified | tinyint(1)   | NO   |     | NULL    |       |
 # | photoId       | varchar(255) | YES  |     | NULL    |       |
 # | description   | varchar(255) | YES  |     | NULL    |       |
-# | mainaddr      | varchar(50)  | YES  |     | NULL    |       |
-# | subaddr       | varchar(255) | YES  |     | NULL    |       |
+# | mainAddr      | varchar(50)  | YES  |     | NULL    |       |
+# | subAddr       | varchar(255) | YES  |     | NULL    |       |
+# | hashList      | varchar(100) | YES  |     | NULL    |       |
 # +---------------+--------------+------+-----+---------+-------+
 
 
@@ -63,15 +65,3 @@ class ParentTable(DB_Base):
     mainAddr = Column(String(50), nullable=True)
     subAddr = Column(String(255), nullable=True)
     hashList = Column(String(100), nullable=True)
-
-# CREATE TABLE parent (
-#     uid VARCHAR(255) UNIQUE NOT NULL,
-#     email VARCHAR(255) NOT NULL,
-#     nickname VARCHAR(255) NOT NULL,
-#     signInMethod VARCHAR(50) DEFAULT 'email',
-#     emailVerified BOOLEAN DEFAULT FALSE,
-#     photoId TEXT,
-#     description TEXT,
-#     PRIMARY KEY (uid),
-#     INDEX (email)
-# );

@@ -14,8 +14,10 @@ from typing import Optional, List
 # | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
 # | post_id    | int(11)      | NO   | MUL | NULL    |                |
 # | reply_id   | int(11)      | YES  | MUL | NULL    |                |
-# | comment    | text         | NO   |     | NULL    |                |
-# | time       | datetime     | NO   |     | NULL    |                |
+# | content    | text         | NO   |     | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | modifyTime | datetime     | YES  |     | NULL    |                |
+# | deleteTime | datetime     | YES  |     | NULL    |                |
 # | cheart     | int(11)      | YES  |     | 0       |                |
 # +------------+--------------+------+-----+---------+----------------+
 
@@ -31,7 +33,6 @@ class PComment(BaseModel):
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
     cheart: Optional[int]
-    replies: List['PComment'] = []
     
     class Config:
         orm_mode = True
@@ -56,6 +57,8 @@ class PCommentTable(DB_Base):
     deleteTime = Column(DateTime, nullable=True)
     cheart = Column(Integer, nullable=True)
 
+    parent = relationship("ParentTable", backref='pcomment', passive_deletes=True)
+    post = relationship("PostTable", backref='pcomment', passive_deletes=True)
     replies = relationship("PCommentTable", backref=backref('parent_comment', remote_side=[comment_id]))
     #post = relationship("PostTable", backref='comment', passive_deletes=True)
     #parent = relationship("ParentTable", backref='comment', passive_deletes=True)

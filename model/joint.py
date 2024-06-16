@@ -6,7 +6,7 @@ from model.purchase import PurchaseTable
 from model.parent import ParentTable
 
 
-# 공동거래 테이블
+# 공동구매 테이블
 # +-------------+--------------+------+-----+---------+----------------+
 # | Field       | Type         | Null | Key | Default | Extra          |
 # +-------------+--------------+------+-----+---------+----------------+

@@ -40,6 +40,7 @@ class ParentService:
 
         except Exception as e:
             db.rollback()
+            print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to create parent")
 

@@ -40,7 +40,6 @@ class UpdatePostOutput(BaseModel):
 # 게시물 삭제
 class DeletePostInput(BaseModel):
     post_id: int
-    deleteTime: datetime = datetime.now()
 
 class DeletePostOutput(BaseModel):
     success: int

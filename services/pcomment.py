@@ -3,7 +3,7 @@ from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from model.pcomment import PCommentTable, PComment
-from schemas.comment import *
+from schemas.pcomment import *
 
 from db import get_db_session
 
@@ -13,16 +13,16 @@ class CommentService:
         self.comment_list = []
 
     # 댓글 생성
-    def createComment(self, createCommentInput: CreateCommentInput,parent_id: str) -> Optional[PComment]:
+    def createPComment(self, createPCommentInput: CreatePCommentInput,parent_id: str) -> Optional[PComment]:
         """
         댓글 생성
         --input
-            - createCommentInput.comment_id: 댓글 아이디
-            - createCommentInput.post_id: 게시물 아이디
-            - createCommentInput.reply_id: 상위 댓글 아이디
-            - createCommentInput.comment: 댓글 내용
-            - createCommentInput.time: 댓글 생성 시간
-            - createCommentInput.cheart: 댓글 하트 수
+            - createPCommentInput.comment_id: 댓글 아이디
+            - createPCommentInput.post_id: 게시물 아이디
+            - createPCommentInput.reply_id: 상위 댓글 아이디
+            - createPCommentInput.comment: 댓글 내용
+            - createPCommentInput.time: 댓글 생성 시간
+            - createPCommentInput.cheart: 댓글 하트 수
             - parent_id: 부모 댓글 아이디
         --output
             - Comment: 댓글
@@ -30,13 +30,13 @@ class CommentService:
         db = get_db_session()
         try:
             comment = PCommentTable(
-                comment_id=createCommentInput.comment_id,
+                comment_id=createPCommentInput.comment_id,
                 parent_id=parent_id,
-                post_id=createCommentInput.post_id,
-                reply_id=createCommentInput.reply_id,
-                comment=createCommentInput.comment,
-                time=createCommentInput.time,
-                cheart=createCommentInput.cheart,
+                post_id=createPCommentInput.post_id,
+                reply_id=createPCommentInput.reply_id,
+                comment=createPCommentInput.comment,
+                time=createPCommentInput.time,
+                cheart=createPCommentInput.cheart,
                 replies=[]
             )
 
@@ -52,30 +52,30 @@ class CommentService:
             #raise HTTPException(status_code=400, detail="createComment error")
         
     # 댓글 수정
-    def updateComment(self, parent_id: str, 
-                      updateCommentInput: UpdateCommentInput) -> Optional[PComment]:
+    def updatePComment(self, parent_id: str, 
+                      updatePCommentInput: UpdatePCommentInput) -> Optional[PComment]:
         """
         댓글 수정
         --input
             - parent_id: 부모 아이디
-            - updateCommentInput.comment_id: 댓글 아이디
-            - updateCommentInput.comment: 댓글 내용
+            - updatePCommentInput.comment_id: 댓글 아이디
+            - updatePCommentInput.comment: 댓글 내용
         --output
             - Comment: 댓글
         """
         db = get_db_session()
         try:
             comment = db.query(PCommentTable).filter(
-                PCommentTable.comment_id == updateCommentInput.comment_id,
+                PCommentTable.comment_id == updatePCommentInput.comment_id,
                 PCommentTable.parent_id==parent_id).first()
             
             if comment is None:
                 return None
 
             # comment를 수정
-            setattr(comment, 'comment', updateCommentInput.comment)
+            setattr(comment, 'comment', updatePCommentInput.comment)
             # time을 현재 시간으로 수정
-            setattr(comment, 'time', updateCommentInput.time)
+            setattr(comment, 'time', updatePCommentInput.time)
 
             db.add(comment)
             db.commit()
@@ -89,28 +89,28 @@ class CommentService:
             raise HTTPException(status_code=400, detail="updateComment error")
         
     # 댓글 삭제
-    def deleteComment(self, parent_id: str, 
-                      deleteCommentInput: DeleteCommentInput) -> Optional[PComment]:
+    def deletePComment(self, parent_id: str, 
+                      deletePCommentInput: DeletePCommentInput) -> Optional[PComment]:
         """
         댓글 삭제
         --input
             - parent_id: 부모 아이디
-            - deleteCommentInput.comment_id: 댓글 아이디
-            - deleteCommentInput.time: 댓글 삭제 시간 datetime.now()
+            - deletePCommentInput.comment_id: 댓글 아이디
+            - deletePCommentInput.time: 댓글 삭제 시간 datetime.now()
         --output
             - Comment: 댓글
         """
         db = get_db_session()
         try:
             comment = db.query(PCommentTable).filter(
-                PCommentTable.comment_id == deleteCommentInput.comment_id,
+                PCommentTable.comment_id == deletePCommentInput.comment_id,
                 PCommentTable.parent_id==parent_id).first()
             
             if comment is None:
                 return None
             
             # time을 현재 시간으로 수정
-            setattr(comment, 'time', deleteCommentInput.time)
+            setattr(comment, 'time', deletePCommentInput.time)
 
             db.add(comment)
             db.commit()
@@ -124,7 +124,7 @@ class CommentService:
             raise HTTPException(status_code=400, detail="deleteComment error")
     
     # 재귀적으로 댓글을 가져오는 함수
-    def getCommentRecursive(self, comment: PCommentTable) -> PComment:
+    def getPCommentRecursive(self, comment: PCommentTable) -> PComment:
         '''
         재귀적으로 댓글을 가져오는 함수
         --input

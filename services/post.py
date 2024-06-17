@@ -19,6 +19,21 @@ class PostService:
     # 게시물 생성
     def createPost(self, parent_id: str,
                    createPostInput: CreatePostInput) -> Post:
+        
+        """
+        게시물 생성
+        --input
+            - createPostInput.reveal: 게시물 공개 여부
+            - createPostInput.title: 게시물 제목
+            - createPostInput.createTime: 게시물 생성 시간
+            - createPostInput.pHeart: 게시물 하트 수
+            - createPostInput.pScript: 게시물 스크립트
+            - createPostInput.pView: 게시물 조회수
+            - createPostInput.pComment: 게시물 댓글 수
+            - createPostInput.hashList: 게시물 해시태그 리스트
+        --output
+            - Post: 게시물 딕셔너리
+        """
                      
         db = get_db_session()
 
@@ -60,6 +75,17 @@ class PostService:
         
     # 새로 생성된 post 사진 업로드
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
+        
+        """
+        새로 생성된 post 사진 업로드
+        --input
+            - fileList: 업로드할 파일 리스트
+            - post_id: 게시물 아이디
+            - parent_id: 부모 아이디
+        --output
+            - bool: 사진 업로드 성공 여부
+        """
+        
         db = get_db_session()
 
         try:
@@ -93,6 +119,15 @@ class PostService:
 
     # 모든 게시물 가져오기
     def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
+
+        """
+        모든 게시물 가져오기
+        --input
+            - parent_id: 부모 아이디
+        --output
+            - List[Post]: 게시물 리스트
+        """
+
         db = get_db_session()
         
         try:
@@ -113,6 +148,14 @@ class PostService:
 
     # 하나의 게시물 가져오기
     def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
+        """
+        하나의 게시물 가져오기
+        --input
+            - post_id: 게시물 아이디
+            - parent_id: 부모 아이디
+        --output
+            - Post: 게시물 딕셔너리
+        """
         db = get_db_session()
 
         try:
@@ -135,6 +178,18 @@ class PostService:
     def updatePost(self, 
                    updatePostInput: UpdatePostInput, 
                    parent_id: str) -> Optional[Post]:
+        
+        """
+        게시물 수정
+        --input
+            - updatePostInput.post_id: 게시물 아이디
+            - updatePostInput.title: 게시물 제목
+            - updatePostInput.post: 게시물 내용
+            - updatePostInput.modify_time: 게시물 수정 시간
+            - updatePostInput.hash: 게시물 해시태그 리스트
+        --output
+            - Post: 게시물 딕셔너리
+        """
         db = get_db_session()
 
         try:
@@ -164,6 +219,14 @@ class PostService:
     def deletePost(self, 
                    deletePostInput: DeletePostInput, 
                    parent_id: str) -> Optional[Post]:
+        """
+        게시물 삭제
+        --input
+            - deletePostInput.post_id: 게시물 아이디
+            - deletePostInput.deleteTime: 게시물 삭제 시간 datetime.now()
+        --output
+            - Post: 게시물 딕셔너리
+        """
         db = get_db_session()
 
         try:

@@ -3,7 +3,7 @@ from starlette.status import HTTP_400_BAD_REQUEST
 from auth.auth_bearer import JWTBearer
 
 from services.pcomment import CommentService
-from schemas.comment import *
+from schemas.pcomment import *
 
 router = APIRouter(
     prefix="/comment",

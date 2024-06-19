@@ -73,6 +73,8 @@ class PostService:
             #raise Exception(e)
             raise Exception("Failed to create post")
         
+
+        
     # 새로 생성된 post 사진 업로드
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
         
@@ -146,6 +148,7 @@ class PostService:
                 status_code=400, detail="Failed to get post")
         
 
+
     # 하나의 게시물 가져오기
     def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
         """
@@ -173,6 +176,8 @@ class PostService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to get post")
+        
+
         
     # 게시물 수정
     def updatePost(self, 
@@ -214,6 +219,8 @@ class PostService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to update post")
+        
+
         
     # 게시물 삭제
     def deletePost(self, 

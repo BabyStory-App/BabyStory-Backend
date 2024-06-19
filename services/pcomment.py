@@ -7,166 +7,173 @@ from schemas.pcomment import *
 
 from db import get_db_session
 
-class CommentService:
-    def __init__(self):
-        # 댓글 리스트
-        self.comment_list = []
-
+class PCommentService:
     # 댓글 생성
-    def createPComment(self, createPCommentInput: CreatePCommentInput,parent_id: str) -> Optional[PComment]:
+    def createPComment(self, parent_id: str,
+                       createPCommentInput: CreatePCommentInput) -> PComment:
+        
         """
         댓글 생성
         --input
             - createPCommentInput.comment_id: 댓글 아이디
             - createPCommentInput.post_id: 게시물 아이디
-            - createPCommentInput.reply_id: 상위 댓글 아이디
-            - createPCommentInput.comment: 댓글 내용
-            - createPCommentInput.time: 댓글 생성 시간
+            - createPCommentInput.reply_id: 대댓글일 경우 대댓글 부모 아이디
+            - createPCommentInput.content: 댓글 내용
+            - createPCommentInput.createTime: 댓글 생성 시간
             - createPCommentInput.cheart: 댓글 하트 수
-            - parent_id: 부모 댓글 아이디
         --output
-            - Comment: 댓글
+            - PComment: 댓글 딕셔너리
         """
+
         db = get_db_session()
+        
         try:
-            comment = PCommentTable(
-                comment_id=createPCommentInput.comment_id,
+            # print(createPCommentInput)
+            pcomment = PCommentTable(
                 parent_id=parent_id,
                 post_id=createPCommentInput.post_id,
                 reply_id=createPCommentInput.reply_id,
-                comment=createPCommentInput.comment,
-                time=createPCommentInput.time,
-                cheart=createPCommentInput.cheart,
-                replies=[]
+                content=createPCommentInput.content,
+                createTime=createPCommentInput.createTime,
+                modifyTime=None,
+                deleteTime=None,
+                cheart=createPCommentInput.cheart
             )
 
-            db.add(comment)
+            db.add(pcomment)
             db.commit()
-            db.refresh(comment)
+            db.refresh(pcomment)
 
-            return comment
-        
+            return pcomment
         except Exception as e:
             db.rollback()
-            raise (e)
-            #raise HTTPException(status_code=400, detail="createComment error")
+            raise e
+
+
+
+    # 모든 댓글 가져오기
+    def getAllPComment(self, post_id: int) -> List[PComment]:
         
-    # 댓글 수정
-    def updatePComment(self, parent_id: str, 
-                      updatePCommentInput: UpdatePCommentInput) -> Optional[PComment]:
         """
-        댓글 수정
-        --input
-            - parent_id: 부모 아이디
-            - updatePCommentInput.comment_id: 댓글 아이디
-            - updatePCommentInput.comment: 댓글 내용
-        --output
-            - Comment: 댓글
-        """
-        db = get_db_session()
-        try:
-            comment = db.query(PCommentTable).filter(
-                PCommentTable.comment_id == updatePCommentInput.comment_id,
-                PCommentTable.parent_id==parent_id).first()
-            
-            if comment is None:
-                return None
-
-            # comment를 수정
-            setattr(comment, 'comment', updatePCommentInput.comment)
-            # time을 현재 시간으로 수정
-            setattr(comment, 'time', updatePCommentInput.time)
-
-            db.add(comment)
-            db.commit()
-            db.refresh(comment)
-
-            return comment
-        
-        except Exception as e:
-            db.rollback()
-            print(e)
-            raise HTTPException(status_code=400, detail="updateComment error")
-        
-    # 댓글 삭제
-    def deletePComment(self, parent_id: str, 
-                      deletePCommentInput: DeletePCommentInput) -> Optional[PComment]:
-        """
-        댓글 삭제
-        --input
-            - parent_id: 부모 아이디
-            - deletePCommentInput.comment_id: 댓글 아이디
-            - deletePCommentInput.time: 댓글 삭제 시간 datetime.now()
-        --output
-            - Comment: 댓글
-        """
-        db = get_db_session()
-        try:
-            comment = db.query(PCommentTable).filter(
-                PCommentTable.comment_id == deletePCommentInput.comment_id,
-                PCommentTable.parent_id==parent_id).first()
-            
-            if comment is None:
-                return None
-            
-            # time을 현재 시간으로 수정
-            setattr(comment, 'time', deletePCommentInput.time)
-
-            db.add(comment)
-            db.commit()
-            db.refresh(comment)
-
-            return comment
-        
-        except Exception as e:
-            db.rollback()
-            print(e)
-            raise HTTPException(status_code=400, detail="deleteComment error")
-    
-    # 재귀적으로 댓글을 가져오는 함수
-    def getPCommentRecursive(self, comment: PCommentTable) -> PComment:
-        '''
-        재귀적으로 댓글을 가져오는 함수
-        --input
-            - comment: 댓글
-        --output
-            - Comment: 댓글
-        '''
-        try:
-            # 댓글의 대댓글을 가져옴
-            comment_data = PComment.from_orm(comment)
-            
-            return comment_data
-        
-        except Exception as e:
-            raise (e)
-            #raise HTTPException(status_code=400, detail="getCommentRecursive error")
-
-    # 해당 게시물의 모든 댓글 가져오기
-    def getAllComment(self, post_id: str) -> List[PComment]:
-        '''
-        해당 게시물의 모든 댓글 가져오기
+        모든 댓글 가져오기
         --input
             - post_id: 게시물 아이디
         --output
-            - List<Comment>: 댓글 리스트
-        '''
-        db=get_db_session()
-        try:
-            # 해당 게시물의 최상위 댓글을 가져옴
-            top_comments = db.query(PCommentTable).filter(
-                PCommentTable.post_id == post_id,
-                PCommentTable.reply_id == None).all()
+            - List[PComment]: 댓글 리스트
+        """
 
-            # 댓글 리스트 초기화
-            self.comment_list = []
+        db = get_db_session()
+        
+        try:
+            # 대댓글인 경우 제외
+            pcomment = db.query(PCommentTable).filter(
+                PCommentTable.post_id == post_id,
+                PCommentTable.deleteTime == None,
+                PCommentTable.reply_id == None).all()
             
-            # 최상위 댓글부터 재귀적으로 댓글을 가져옴
-            for top_comment in top_comments:
-                self.comment_list.append(self.getCommentRecursive(top_comment))
-            
-            return self.comment_list
-            
+            return pcomment
+        
         except Exception as e:
-            raise (e)
-            #raise HTTPException(status_code=400, detail="getAllComment error")
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to get all comment")
+        
+
+
+    # 댓글에 대댓글이 있는 경우 대댓글 가져오기
+    def getReplyPComment(self, comment_id: int) -> List[PComment]:
+        
+        """
+        댓글에 대댓글이 있는 경우 대댓글 가져오기
+        --input
+            - comment_id: 댓글 아이디
+        --output
+            - List[PComment]: 대댓글 리스트
+        """
+
+        db = get_db_session()
+        
+        try:
+            pcomment = db.query(PCommentTable).filter(
+                PCommentTable.reply_id == comment_id,
+                PCommentTable.deleteTime == None).all()
+
+            return pcomment
+        
+        except Exception as e:
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to get reply comment")
+        
+
+    # 댓글 수정
+    def updatePComment(self, updatePCommentInput: UpdatePCommentInput) -> PComment:
+        
+        """
+        댓글 수정
+        --input
+            - updatePCommentInput.comment_id: 댓글 아이디
+            - updatePCommentInput.content: 댓글 내용
+            - updatePCommentInput.modifyTime: 댓글 수정 시간
+        --output
+            - PComment: 댓글 딕셔너리
+        """
+
+        db = get_db_session()
+        
+        try:
+            pcomment = db.query(PCommentTable).filter(
+                PCommentTable.comment_id == updatePCommentInput.comment_id,
+                PCommentTable.deleteTime == None).first()
+            
+            if pcomment is None:
+                return None
+
+            pcomment.content = updatePCommentInput.content
+            pcomment.modifyTime = updatePCommentInput.modifyTime
+
+            db.add(pcomment)
+            db.commit()
+            db.refresh(pcomment)
+
+            return pcomment
+        
+        except Exception as e:
+            db.rollback()
+            raise e
+        
+
+
+    # 댓글 삭제
+    def deletePComment(self, deletePCommentInput: DeletePCommentInput) -> PComment:
+        
+        """
+        댓글 삭제
+        --input
+            - deletePCommentInput.comment_id: 댓글 아이디
+            - deletePCommentInput.deleteTime: 댓글 삭제 시간
+        --output
+            - PComment: 댓글 딕셔너리
+        """
+
+        db = get_db_session()
+        
+        try:
+            pcomment = db.query(PCommentTable).filter(
+                PCommentTable.comment_id == deletePCommentInput.comment_id,
+                PCommentTable.deleteTime == None).first()
+            
+            if pcomment is None:
+                return None
+
+            pcomment.deleteTime = deletePCommentInput.deleteTime
+
+            db.add(pcomment)
+            db.commit()
+            db.refresh(pcomment)
+
+            return pcomment
+        
+        except Exception as e:
+            db.rollback()
+            raise e

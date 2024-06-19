@@ -21,6 +21,7 @@ class CreatePostInput(BaseModel):
 class CreatePostOutput(BaseModel):
     post: Optional[Post]
 
+# 게시물 사진
 class UploadPhotoOutput(BaseModel):
     success: bool
 

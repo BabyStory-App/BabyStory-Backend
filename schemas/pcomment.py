@@ -8,14 +8,21 @@ class CreatePCommentInput(BaseModel):
     comment_id: int
     post_id: int
     reply_id: Optional[int]
-    comment: str
-    time: datetime = datetime.now()
+    content: str
+    createTime: datetime = datetime.now()
     cheart: int
+
+class CreatePCommentOutput(BaseModel):
+    success: int
+    comment: Optional[PComment]
+
+class GetAllPCommentInput(BaseModel):
+    post_id: int
 
 class UpdatePCommentInput(BaseModel):
     comment_id: int
-    comment: str
-    time: datetime = datetime.now()
+    content: str
+    modifyTime: datetime = datetime.now()
 
 class UpdatePCommentOutput(BaseModel):
     success: int
@@ -23,7 +30,7 @@ class UpdatePCommentOutput(BaseModel):
 
 class DeletePCommentInput(BaseModel):
     comment_id: int
-    time: datetime = datetime.now()
+    deleteTime: datetime = datetime.now()
 
 class DeletePCommentOutput(BaseModel):
     success: int

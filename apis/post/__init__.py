@@ -35,6 +35,7 @@ async def create_post(createPostInput: CreatePostInput,
     return { 'post': post }
 
 
+
 # 새로 생성된 post 사진 업로드
 @router.post("/photoUpload", dependencies=[Depends(JWTBearer())])
 async def upload_photo(fileList: List[UploadFile],
@@ -68,6 +69,8 @@ async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
     
     return post
 
+
+
 # 하나의 게시물 가져오기
 @router.get("/{post_id}", dependencies=[Depends(JWTBearer())])
 async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Post]:
@@ -83,6 +86,8 @@ async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optio
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
     
     return post
+
+
 
 # 게시물 수정
 @router.put("/{post_id}", dependencies=[Depends(JWTBearer())])
@@ -100,6 +105,8 @@ async def update_post(updatePostInput: UpdatePostInput,
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
     
     return{ "success": 200 if post else 403, "post": post }
+
+
 
 # 게시물 삭제
 @router.put("/delete/{post_id}", dependencies=[Depends(JWTBearer())])

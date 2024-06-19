@@ -24,13 +24,13 @@ async def create_comment(createCommentInput: CreatePCommentInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
-    comment = pcommentService.createPComment(parent_id, createCommentInput)
+    pcomment = pcommentService.createPComment(parent_id, createCommentInput)
 
-    if comment is None:
+    if pcomment is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
     
-    return { 'comment': comment }
+    return { 'pcomment': pcomment }
 
 
 

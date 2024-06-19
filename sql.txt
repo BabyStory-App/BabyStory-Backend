@@ -312,6 +312,33 @@ END $$
 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE TRIGGER pcomment_insert
+AFTER INSERT ON pcomment
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET pcomment = IFNULL(pcomment, 0) + 1
+    WHERE post_id = NEW.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER pcomment_delete
+AFTER DELETE ON pcomment
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET pcomment = IFNULL(pcomment, 0) - 1
+    WHERE post_id = OLD.post_id;
+END $$
+
+DELIMITER ;
+
+
 
 SET GLOBAL event_scheduler = ON;
 

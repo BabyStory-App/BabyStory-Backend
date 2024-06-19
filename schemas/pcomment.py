@@ -13,7 +13,6 @@ class CreatePCommentInput(BaseModel):
     cheart: int
 
 class CreatePCommentOutput(BaseModel):
-    success: int
     comment: Optional[PComment]
 
 class GetAllPCommentInput(BaseModel):

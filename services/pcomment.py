@@ -32,7 +32,7 @@ class PCommentService:
             pcomment = PCommentTable(
                 parent_id=parent_id,
                 post_id=createPCommentInput.post_id,
-                reply_id=createPCommentInput.reply_id,
+                reply_id=None if createPCommentInput.reply_id == 0 else createPCommentInput.reply_id,
                 content=createPCommentInput.content,
                 createTime=createPCommentInput.createTime,
                 modifyTime=None,

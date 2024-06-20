@@ -4,7 +4,7 @@ from datetime import datetime
 
 from model.pcomment import *
 
-class CreateCommentInput(BaseModel):
+class CreatePCommentInput(BaseModel):
     comment_id: int
     post_id: int
     reply_id: Optional[int]
@@ -12,19 +12,19 @@ class CreateCommentInput(BaseModel):
     time: datetime = datetime.now()
     cheart: int
 
-class UpdateCommentInput(BaseModel):
+class UpdatePCommentInput(BaseModel):
     comment_id: int
     comment: str
     time: datetime = datetime.now()
 
-class UpdateCommentOutput(BaseModel):
+class UpdatePCommentOutput(BaseModel):
     success: int
     comment: Optional[PComment]
 
-class DeleteCommentInput(BaseModel):
+class DeletePCommentInput(BaseModel):
     comment_id: int
     time: datetime = datetime.now()
 
-class DeleteCommentOutput(BaseModel):
+class DeletePCommentOutput(BaseModel):
     success: int
     comment: Optional[PComment]

@@ -8,8 +8,6 @@ from model.parent import ParentTable
 
 
 # 게시물 테이블
-
-# 게시물 테이블
 # +------------+------------------+------+-----+---------+----------------+
 # | Field      | Type             | Null | Key | Default | Extra          |
 # +------------+------------------+------+-----+---------+----------------+
@@ -22,10 +20,10 @@ from model.parent import ParentTable
 # | createTime | datetime         | NO   |     | NULL    |                |
 # | modifyTime | datetime         | YES  |     | NULL    |                |
 # | deleteTime | datetime         | YES  |     | NULL    |                |
-# | pHeart     | int(10) unsigned | YES  |     | NULL    |                |
-# | pScript    | int(10) unsigned | YES  |     | NULL    |                |
-# | pView      | int(10) unsigned | YES  |     | NULL    |                |
-# | pComment   | int(10) unsigned | YES  |     | NULL    |                |
+# | pHeart     | int(10) unsigned | YES  |     | 0       |                |
+# | pScript    | int(10) unsigned | YES  |     | 0       |                |
+# | pView      | int(10) unsigned | YES  |     | 0       |                |
+# | pComment   | int(10) unsigned | YES  |     | 0       |                |
 # | hashList   | varchar(100)     | YES  |     | NULL    |                |
 # +------------+------------------+------+-----+---------+----------------+
 

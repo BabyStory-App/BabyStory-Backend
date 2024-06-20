@@ -10,7 +10,6 @@ import uuid
 
 
 # 아기 테이블
-# 아기 테이블
 # +-----------+--------------+------+-----+---------+-------+
 # | Field     | Type         | Null | Key | Default | Extra |
 # +-----------+--------------+------+-----+---------+-------+
@@ -18,16 +17,12 @@ import uuid
 # | obn       | varchar(255) | NO   |     | NULL    |       |
 # | name      | varchar(255) | YES  |     | NULL    |       |
 # | gender    | tinyint(3)   | YES  |     | NULL    |       |
-# | gender    | tinyint(3)   | YES  |     | NULL    |       |
 # | birthDate | datetime     | YES  |     | NULL    |       |
 # | bloodType | char(3)      | YES  |     | NULL    |       |
 # | cm        | float        | YES  |     | NULL    |       |
 # | kg        | float        | YES  |     | NULL    |       |
-# | cm        | float        | YES  |     | NULL    |       |
-# | kg        | float        | YES  |     | NULL    |       |
 # | photoId   | varchar(255) | YES  |     | NULL    |       |
 # +-----------+--------------+------+-----+---------+-------+
-
 
 
 class Baby(BaseModel):
@@ -68,16 +63,3 @@ class BabyTable(DB_Base):
     # state_records = relationship(
     #     BabyStateRecord, backref='baby', passive_deletes=True)
     # cry_states = relationship(CryState, backref='baby', passive_deletes=True)
-
-# CREATE TABLE baby (
-#     id VARCHAR(36) NOT NULL DEFAULT (UUID()),
-#     parentId VARCHAR(36),
-#     name VARCHAR(255) NOT NULL,
-#     gender VARCHAR(50) NOT NULL,
-#     birthDate DATETIME NOT NULL,
-#     bloodType VARCHAR(50) NOT NULL,
-#     photoId VARCHAR(255),
-#     PRIMARY KEY (id),
-#     INDEX (name),
-#     FOREIGN KEY (parentId) REFERENCES parent(uid) ON DELETE SET NULL
-# );

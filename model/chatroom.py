@@ -13,13 +13,12 @@ from model.chat import ChatTable
 # +-----------+--------------+------+-----+---------+----------------+
 # | room_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | end_chat  | int(11)      | NO   | MUL | NULL    |                |
+# | lastChat  | int(11)      | NO   | MUL | NULL    |                |
 # | name      | varchar(100) | NO   |     | NULL    |                |
-# | pid       | varchar(255) | YES  |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 
 
-class ChatRoom(BaseModel):
+class Chat(BaseModel):
     room_id: int
     parent_id: str
     lastChat: int
@@ -35,12 +34,12 @@ class ChatRoom(BaseModel):
         super().__init__(**kwargs)
 
 class ChatRoomTable(DB_Base):
-    __tablename__ = 'chatroom'
+    __tablename__ = 'chat'
 
     room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     lastChat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
     name = Column(String(100), nullable=False)
-
-    parent = relationship(ParentTable, back_populates='chatroom', passive_deletes=True)
-    chat = relationship(ChatTable, back_populates='chatroom', passive_deletes=True)
+    
+    chat = relationship(ChatTable, back_populates='chat', passive_deletes=True)
+    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

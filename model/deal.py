@@ -8,18 +8,19 @@ from model.parent import ParentTable
 
 
 # 중고거래 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | deal_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | title     | varchar(20)  | NO   |     | NULL    |                |
-# | post      | text         | YES  |     | NULL    |                |
-# | img       | varchar(255) | NO   |     | NULL    |                |
-# | price     | int(11)      | NO   |     | NULL    |                |
-# | time      | datetime     | NO   |     | NULL    |                |
-# | dheart    | int(11)      | YES  |     | 0       |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | deal_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | title      | varchar(20)  | NO   |     | NULL    |                |
+# | content    | text         | NO   |     | NULL    |                |
+# | photoId    | varchar(255) | NO   |     | NULL    |                |
+# | price      | int(11)      | NO   |     | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | dheart     | int(11)      | YES  |     | 0       |                |
+# | dview      | int(11)      | YES  |     | 0       |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Deal(BaseModel):

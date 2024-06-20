@@ -13,11 +13,14 @@ from model.parent import ParentTable
 # +-------------+--------------+------+-----+---------+----------------+
 # | purchase_id | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id   | varchar(255) | NO   | MUL | NULL    |                |
-# | title       | varchar(20)  | NO   |     | NULL    |                |
-# | post        | text         | YES  |     | NULL    |                |
-# | img         | varchar(255) | NO   |     | NULL    |                |
-# | time        | datetime     | NO   |     | NULL    |                |
+# | title       | varchar(100) | NO   |     | NULL    |                |
+# | content     | text         | NO   |     | NULL    |                |
+# | photoId     | varchar(255) | NO   |     | NULL    |                |
+# | createTime  | datetime     | NO   |     | NULL    |                |
 # | link        | varchar(255) | NO   |     | NULL    |                |
+# | jheart      | int(11)      | YES  |     | 0       |                |
+# | jview       | int(11)      | YES  |     | 0       |                |
+# | joint       | int(11)      | YES  |     | 0       |                |
 # +-------------+--------------+------+-----+---------+----------------+
 
 
@@ -52,8 +55,8 @@ class PurchaseTable(DB_Base):
     photoId = Column(String(255), nullable=False)
     createTime = Column(DateTime, nullable=False)
     link = Column(String(255), nullable=False)
-    jheart = Column(Integer, nullable=False)
-    jview = Column(Integer, nullable=False)
-    joint = Column(Integer, nullable=False)
+    jheart = Column(Integer, nullable=True, default=0)
+    jview = Column(Integer, nullable=True, default=0)
+    joint = Column(Integer, nullable=True, default=0)
 
     parent = relationship(ParentTable, back_populates='purchase', passive_deletes=True)

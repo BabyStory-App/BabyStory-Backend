@@ -6,17 +6,17 @@ from model.chatroom import ChatRoomTable
 from model.parent import ParentTable
 
 
-# 실시간 채팅 말풍선 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | chat_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | room_id   | int(11)      | NO   | MUL | NULL    |                |
-# | time      | datetime     | NO   |     | NULL    |                |
-# | chat_type | varchar(255) | NO   |     | NULL    |                |
-# | content   | text         | NO   |     | NULL    |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# 채팅 테이블
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | chat_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | room_id    | int(11)      | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | chatType   | varchar(255) | NO   |     | NULL    |                |
+# | content    | text         | NO   |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Chat(BaseModel):
@@ -36,8 +36,8 @@ class Chat(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ChatTable(DB_Base):
-    __tablename__ = 'chat'
+class ChatbubbleTable(DB_Base):
+    __tablename__ = 'chatbubble'
 
     chat_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
@@ -45,6 +45,6 @@ class ChatTable(DB_Base):
     createTime = Column(DateTime, nullable=False)
     chatType = Column(String(255), nullable=False)
     content = Column(TEXT, nullable=False)
-
+    
     chat = relationship(ChatRoomTable, back_populates='chat', passive_deletes=True)
     parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

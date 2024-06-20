@@ -8,16 +8,16 @@ from model.parent import ParentTable
 
 
 # AI 의사 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | id        | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | date      | datetime     | NO   |     | NULL    |                |
-# | ask       | text         | NO   |     | NULL    |                |
-# | res       | text         | NO   |     | NULL    |                |
-# | haddr     | text         | YES  |     | NULL    |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | ai_id      | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | ask        | text         | NO   |     | NULL    |                |
+# | res        | text         | NO   |     | NULL    |                |
+# | hAddr      | text         | YES  |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class AIDoctor(BaseModel):

@@ -17,19 +17,20 @@ from db import get_db_session
 class PostService:
     # 게시물 생성
     def createPost(self, parent_id: str,
-                   createPostInput: CreatePostInput,
-                   file: UploadFile) -> Post:
+                   createPostInput: CreatePostInput
+                   #,file: UploadFile
+                   ) -> Post:
         db = get_db_session()
 
         try:
             # save photo image if exists
             photo_id = None
-            if createPostInput.photoId != None:
-                photo_id = str(uuid4())
-                photo_save_path = os.path.join(
-                    PROJECT_DIR, f"{photo_id}.jpg")
-                with open(photo_save_path, "wb") as buffer:
-                    shutil.copyfileobj(file.file, buffer)
+            # if createPostInput.photoId != None:
+            #     photo_id = str(uuid4())
+            #     photo_save_path = os.path.join(
+            #         PROJECT_DIR, f"{photo_id}.jpg")
+            #     with open(photo_save_path, "wb") as buffer:
+            #         shutil.copyfileobj(file.file, buffer)
 
             print(createPostInput)
             post = PostTable(
@@ -142,12 +143,12 @@ class PostService:
             post = db.query(PostTable).filter(
                 PostTable.post_id == deletePostInput.post_id, 
                 PostTable.parent_id == parent_id,
-                PostTable.delete_time == None).first()
+                PostTable.deleteTime == None).first()
             
             if post is None:
                 return None
             
-            setattr(post, 'delete_time', deletePostInput.delete_time)
+            setattr(post, 'deleteTime', deletePostInput.deleteTime)
             
             db.add(post)
             db.commit()

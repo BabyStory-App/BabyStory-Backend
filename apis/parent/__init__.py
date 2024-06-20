@@ -22,12 +22,17 @@ parentService = ParentService()
 @router.post("/")
 def create_parent(createParentInput: CreateParentInput)-> CreateParentOutput:
 
+    if createParentInput.gender not in [0, 1, 2]:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Gender must be 0, 1, 2"
+        )
+
     parent = parentService.createParent(createParentInput)
 
     if parent is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
-
+    
     parent_data = {
         'parent_id': parent.parent_id,
         'password': parent.password,
@@ -87,6 +92,12 @@ async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOu
 @router.put("/", dependencies=[Depends(JWTBearer())])
 async def update_parent(updateParentInput: UpdateParentInput,
                    parent_id: str = Depends(JWTBearer())) -> UpdateParentOutput:
+    
+    if updateParentInput.gender not in [0, 1, 2]:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Gender must be 0, 1, 2"
+        )
+    
     if parent_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")

@@ -1,9 +1,7 @@
-
 import os
-
+from constants.path import *
 from fastapi import HTTPException
-from typing import Optional, List
-from sqlalchemy.orm import joinedload
+
 from datetime import datetime, timedelta
 from sqlalchemy import desc
 
@@ -44,13 +42,15 @@ class PostMainService:
                     post_id_list.append({i.post_id})
                 
                 # (start)어제의 날짜.txt 파일을 생성합니다.
-                with open(str(file_name) + '.txt', 'w') as f:
+                file_path = os.path.join(POSTMAIN_BANNER_DIR, str(file_name) + '.txt')
+                with open(file_path, 'w', encoding='UTF-8') as f:
                     for item in post_id_list:
                         f.write("%s\n" % item)
 
             # (start)어제의 날짜.txt 파일이 존재하면
             else:
-                with open(str(file_name) + '.txt', 'r') as f:
+                file_path = os.path.join(POSTMAIN_BANNER_DIR, str(file_name) + '.txt')
+                with open(file_path, 'r') as f:
                     post_id_list = [int(line.strip('{}\n')) for line in f.readlines()]
 
                 # post_id_list에 있는 post_id를 이용하여 post를 가져옵니다.

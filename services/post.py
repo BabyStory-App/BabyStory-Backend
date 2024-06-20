@@ -18,22 +18,6 @@ from db import get_db_session
 class PostService:
     # 게시물 생성
     def createPost(self, parent_id: str,
-<<<<<<< HEAD
-                   createPostInput: CreatePostInput
-                   #,file: UploadFile
-                   ) -> Post:
-        db = get_db_session()
-
-        try:
-            # save photo image if exists
-            photo_id = None
-            # if createPostInput.photoId != None:
-            #     photo_id = str(uuid4())
-            #     photo_save_path = os.path.join(
-            #         PROJECT_DIR, f"{photo_id}.jpg")
-            #     with open(photo_save_path, "wb") as buffer:
-            #         shutil.copyfileobj(file.file, buffer)
-=======
                    createPostInput: CreatePostInput) -> Post:
         
         """
@@ -56,7 +40,6 @@ class PostService:
         try:
             if createPostInput.reveal not in [0, 1, 2, 3]:
                 raise Exception("Invalid reveal value")
->>>>>>> a2e8541713403e69e360a6133b80d65e41d85440
 
             # print(createPostInput)
             post = PostTable(
@@ -66,10 +49,10 @@ class PostService:
                 createTime=createPostInput.createTime,
                 modifyTime=None,
                 deleteTime=None,
-                pHeart=createPostInput.pHeart,
-                pScript=createPostInput.pScript,
-                pView=createPostInput.pView,
-                pComment=createPostInput.pComment,
+                pHeart=0,
+                pScript=0,
+                pView=0,
+                pComment=0,
                 hashList=createPostInput.hashList if createPostInput.hashList else None
             )
 

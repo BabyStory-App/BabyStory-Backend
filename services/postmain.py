@@ -51,7 +51,7 @@ class PostMainService:
             # (start)어제의 날짜.txt 파일이 존재하면
             else:
                 with open(str(file_name) + '.txt', 'r') as f:
-                    post_id_list = f.readlines()
+                    post_id_list = [int(line.strip('{}\n')) for line in f.readlines()]
 
                 # post_id_list에 있는 post_id를 이용하여 post를 가져옵니다.
                 banner = db.query(PostTable).filter(
@@ -64,11 +64,12 @@ class PostMainService:
             for i in banner:
                 banners.append({
                     'post_id': i.post_id,
-                    'photoId': i.photoId,
+                    #'photoId': i.photoId,
                     'title': i.title,
                     'author_name': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().name,
-                    'desc': i.content[:100]
+                        ParentTable.parent_id == i.parent_id).first().name
+                        #,
+                    #'desc': i.content[:100]
                 })
 
            # post테이블에 제목, 조회수 없음
@@ -92,6 +93,7 @@ class PostMainService:
         db = get_db_session()
         try:
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            end = end - timedelta(days=1)
             
             # size와 page가 -1이면 기본 페이지를 가져온다.
             if createPostMainInput.size == -1 and createPostMainInput.page == -1:
@@ -115,10 +117,11 @@ class PostMainService:
             temp_ids = [friend.parent_id for friend in temp]
 
             friend = db.query(FriendTable).filter(
+                FriendTable.parent_id == createPostMainInput.parent_id,
                 FriendTable.friend.in_(temp_ids)
             ).all()
 
-            friend_ids = [f.parent_id for f in friend]
+            friend_ids = [f.friend for f in friend]
             
             # 오늘 친구가 쓴 게시물 중 page에서 size개 가져오기
             post = db.query(PostTable).filter(
@@ -132,7 +135,7 @@ class PostMainService:
             for i in post:
                 banners.append({
                     'post_id': i.post_id,
-                    'photoId': i.photoId,
+                    #'photoId': i.photoId,
                     'title': i.title,
                     'author_photo': db.query(ParentTable).filter(
                         ParentTable.parent_id == i.parent_id).first().photoId,
@@ -161,6 +164,8 @@ class PostMainService:
         try:
             # 어제 시간
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            # 어제 시간
+            end = end - timedelta(days=1)
 
             
             # size와 page가 -1이면 기본 페이지를 가져온다.
@@ -189,13 +194,14 @@ class PostMainService:
             for i in post:
                 banners.append({
                     'post_id': i.post_id,
-                    'photoId': i.photoId,
+                    #'photoId': i.photoId,
                     'title': i.title,
                     'pHeart': i.pHeart,
                     'comment': i.pComment,
                     'author_name': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().name,
-                    'desc': i.content[:100]
+                        ParentTable.parent_id == i.parent_id).first().name
+                        #,
+                    #'desc': i.content[:100]
                 })
 
             return banners
@@ -215,12 +221,18 @@ class PostMainService:
 
         db = get_db_session()
         try:
+            # 친구로 등록한 목록
+            friend = db.query(FriendTable).filter(
+                FriendTable.parent_id == parent_id
+                ).all()
+            
+            friend_ids = [f.friend for f in friend]
+
             # 친구로 등록되지 않은 이웃목록을 10개 가져오기
             neighbors = db.query(ParentTable).filter(
                 ParentTable.parent_id != parent_id,
-                ParentTable.parent_id not in db.query(FriendTable.friend).filter(
-                    FriendTable.parent_id == parent_id
-                ),
+                ParentTable.parent_id.notin_(friend_ids) # 친구로 등록되지 않은 이웃
+                ,
                 ParentTable.mainAddr == db.query(ParentTable.mainAddr).filter(
                     ParentTable.parent_id == parent_id
                 )
@@ -270,7 +282,7 @@ class PostMainService:
                 ParentTable.parent_id != createPostMainInput.parent_id,
                 ParentTable.mainAddr == db.query(ParentTable.mainAddr).filter(
                     ParentTable.parent_id == createPostMainInput.parent_id
-                )
+                ).scalar()
             ).all()
 
             # 이웃이 쓴 게시물 중 page에서 size개 가져오기
@@ -283,13 +295,14 @@ class PostMainService:
             for i in post:
                 banners.append({
                     'post_id': i.post_id,
-                    'photoId': i.photoId,
+                    #'photoId': i.photoId,
                     'title': i.title,
                     'pHeart': i.pHeart,
                     'comment': i.pComment,
                     'author_name': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().name,
-                    'desc': i.content[:100]
+                        ParentTable.parent_id == i.parent_id).first().name
+                        #,
+                    #'desc': i.content[:100]
                 })
 
             return banners
@@ -315,11 +328,12 @@ class PostMainService:
             for i in post:
                 banners.append({
                     'post_id': i.post_id,
-                    'photoId': i.photoId,
+                    #'photoId': i.photoId,
                     'title': i.title,
                     'author_name': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().name,
-                    'desc': i.content[:100]
+                    ParentTable.parent_id == i.parent_id).first().name
+                    #,
+                    #'desc': i.content[:100]
                 })
 
 
@@ -370,10 +384,10 @@ class PostMainService:
                     ParentTable.parent_id == post.parent_id).first().name
                 banners.append({
                     'post_id': post.post_id,
-                    'photoId': post.photoId,
+                    #'photoId': post.photoId,
                     'title': post.title,
                     'author_name': author_name,
-                    'desc': post.content[:100],
+                    #'desc': post.content[:100],
                     'hash': post.hashList
                 })
 

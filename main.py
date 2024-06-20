@@ -11,6 +11,7 @@ from apis.post.pscript import router as pscript_router
 from apis.post.postmain import router as postmain_router
 from apis.search import router as search_router
 from apis.post.comment import router as comment_router
+from apis.friend import router as friend_router
 
 app = FastAPI()
 app.include_router(main_router)
@@ -21,6 +22,7 @@ app.include_router(raws_router)
 app.include_router(post_router)
 app.include_router(pheart_router)
 app.include_router(pscript_router)
+app.include_router(friend_router)
 app.include_router(postmain_router)
 
 app.include_router(search_router)

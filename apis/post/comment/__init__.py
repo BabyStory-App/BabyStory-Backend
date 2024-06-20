@@ -15,7 +15,7 @@ commentService = CommentService()
 
 # 댓글 생성
 @router.post("/commentCreate", dependencies=[Depends(JWTBearer())])
-async def create_comment(createCommentInput: CreateCommentInput, 
+async def create_comment(createCommentInput: CreatePCommentInput, 
                          parent_id: str = Depends(JWTBearer()))-> PComment:
     """
     댓글 생성
@@ -42,8 +42,8 @@ async def create_comment(createCommentInput: CreateCommentInput,
 
 # 댓글 수정
 @router.put("/commentUpdate", dependencies=[Depends(JWTBearer())])
-async def update_comment(updateCommentInput: UpdateCommentInput,
-                          parent_id: str = Depends(JWTBearer()))-> UpdateCommentOutput:
+async def update_comment(updateCommentInput: UpdatePCommentInput,
+                          parent_id: str = Depends(JWTBearer()))-> UpdatePCommentOutput:
     """
     댓글 수정
     --input
@@ -66,8 +66,8 @@ async def update_comment(updateCommentInput: UpdateCommentInput,
 
 # 댓글 삭제
 @router.delete("/commentDelete", dependencies=[Depends(JWTBearer())])
-async def delete_comment(deleteCommentInput: DeleteCommentInput, 
-                         parent_id: str = Depends(JWTBearer()))-> DeleteCommentOutput:
+async def delete_comment(deleteCommentInput: DeletePCommentInput, 
+                         parent_id: str = Depends(JWTBearer()))-> DeletePCommentOutput:
     """
     댓글 삭제
     --input

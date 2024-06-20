@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -39,7 +39,7 @@ class PHeartTable(DB_Base):
     pheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
-    createTime = Column(datetime, nullable=True)
+    createTime = Column(DateTime, nullable=True)
 
     post = relationship(PostTable, backref='pheart', passive_deletes=True)
     parent = relationship(ParentTable, backref='pheart', passive_deletes=True)

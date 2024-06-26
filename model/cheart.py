@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -18,7 +18,7 @@ from model.parent import ParentTable
 # +------------+--------------+------+-----+---------+----------------+
 
 
-class Cheart(BaseModel):
+class CHeart(BaseModel):
     cheart_id: int
     parent_id: str
     comment_id: int
@@ -33,13 +33,13 @@ class Cheart(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class CheartTable(DB_Base):
+class CHeartTable(DB_Base):
     __tablename__ = 'cheart'
 
     cheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    comment_id = Column(Integer, ForeignKey('comment.comment_id'), nullable=False)
-    createTime = Column(datetime, nullable=False)
+    comment_id = Column(Integer, ForeignKey('pcomment.comment_id'), nullable=True)
+    createTime = Column(DateTime, nullable=True)
     
-    comment = relationship(PCommentTable, back_populates='cheart', passive_deletes=True)
-    parent = relationship(ParentTable, back_populates='cheart', passive_deletes=True)
+    pcomment = relationship(PCommentTable, backref='pcheart', passive_deletes=True)
+    parent = relationship(ParentTable, backref='pcheart', passive_deletes=True)

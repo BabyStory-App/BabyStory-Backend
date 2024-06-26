@@ -16,7 +16,7 @@ pcommentService = PCommentService()
 
 # 댓글 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
-async def create_comment(createCommentInput: CreatePCommentInput,
+async def create_pcomment(createCommentInput: CreatePCommentInput,
                 parent_id: str = Depends(JWTBearer()))-> CreatePCommentOutput:
     
     # 부모 아이디가 없으면 에러
@@ -74,7 +74,7 @@ async def get_reply_comment(comment_id: int) -> List[PComment]:
 
 # 댓글 수정
 @router.put("/update", dependencies=[Depends(JWTBearer())])
-async def update_comment(updateCommentInput: UpdatePCommentInput,
+async def update_comment(updatePCommentInput: UpdatePCommentInput,
                 parent_id: str = Depends(JWTBearer())) -> UpdatePCommentOutput:
     
     # 부모 아이디가 없으면 에러
@@ -82,13 +82,13 @@ async def update_comment(updateCommentInput: UpdatePCommentInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
-    comment = pcommentService.updatePComment(parent_id, updateCommentInput)
+    pcomment = await pcommentService.updatePComment(updatePCommentInput, parent_id)
 
-    if comment is None:
+    if pcomment is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
     
-    return { 'comment': comment }
+    return { "success": 200 if pcomment else 403, 'pcomment': pcomment }
 
 
 
@@ -102,10 +102,10 @@ async def delete_comment(deleteCommentInput: DeletePCommentInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
-    comment = pcommentService.deletePComment(parent_id, deleteCommentInput)
+    pcomment = await pcommentService.deletePComment(deleteCommentInput, parent_id)
 
-    if comment is None:
+    if pcomment is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
     
-    return { 'comment': comment }
+    return { "success": 200 if pcomment else 403, 'pcomment': pcomment }

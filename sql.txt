@@ -339,6 +339,32 @@ END $$
 DELIMITER ;
 
 
+DELIMITER $$
+
+CREATE TRIGGER cheart_insert
+AFTER INSERT ON cheart
+FOR EACH ROW
+BEGIN
+    UPDATE pcomment
+    SET cheart = IFNULL(cheart, 0) + 1
+    WHERE comment_id = NEW.comment_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER cheart_delete
+AFTER DELETE ON cheart
+FOR EACH ROW
+BEGIN
+    UPDATE pcomment
+    SET cheart = IFNULL(cheart, 0) - 1
+    WHERE comment_id = OLD.comment_id;
+END $$
+
+DELIMITER ;
+
 
 SET GLOBAL event_scheduler = ON;
 

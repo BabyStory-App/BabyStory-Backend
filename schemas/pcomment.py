@@ -4,6 +4,7 @@ from datetime import datetime
 
 from model.pcomment import *
 
+# 댓글 생성
 class CreatePCommentInput(BaseModel):
     comment_id: int
     post_id: int
@@ -13,11 +14,9 @@ class CreatePCommentInput(BaseModel):
     cheart: int
 
 class CreatePCommentOutput(BaseModel):
-    comment: Optional[PComment]
+    pcomment: Optional[PComment]
 
-class GetAllPCommentInput(BaseModel):
-    post_id: int
-
+# 댓글 수정
 class UpdatePCommentInput(BaseModel):
     comment_id: int
     content: str
@@ -25,12 +24,13 @@ class UpdatePCommentInput(BaseModel):
 
 class UpdatePCommentOutput(BaseModel):
     success: int
-    comment: Optional[PComment]
+    pcomment: PComment
 
+# 댓글 삭제
 class DeletePCommentInput(BaseModel):
     comment_id: int
     deleteTime: datetime = datetime.now()
 
 class DeletePCommentOutput(BaseModel):
     success: int
-    comment: Optional[PComment]
+    pcomment: Optional[PComment]

@@ -10,7 +10,7 @@
 
 # test_CreatePostInput = {
 #     "post_id": str(uuid4()),
-#     "reveal": 1,
+#     "reveal": 1,m
 #     "title": "test title",
 #     "content": "test post",
 #     "photoId": "test photo",

@@ -99,7 +99,7 @@ async def update_post(updatePostInput: UpdatePostInput,
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
     
     # 게시물 정보 수정
-    post = await postService.updatePost(updatePostInput,parent_id)
+    post = await postService.updatePost(updatePostInput, parent_id)
 
     if post is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
@@ -123,5 +123,4 @@ async def delete_post(deletePostInput: DeletePostInput,
     if success is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
     
-    return{ "success": 200 if success else 403,
-            "post": success}
+    return{ "success": 200 if success else 403, "post": success}

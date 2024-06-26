@@ -45,6 +45,7 @@ class PCommentService:
             db.refresh(pcomment)
 
             return pcomment
+        
         except Exception as e:
             db.rollback()
             raise e
@@ -107,7 +108,9 @@ class PCommentService:
         
 
     # 댓글 수정
-    def updatePComment(self, updatePCommentInput: UpdatePCommentInput) -> PComment:
+    async def updatePComment(self,
+                    updatePCommentInput: UpdatePCommentInput,
+                    parent_id: str) -> Optional[PComment]:
         
         """
         댓글 수정
@@ -123,14 +126,15 @@ class PCommentService:
         
         try:
             pcomment = db.query(PCommentTable).filter(
+                PCommentTable.parent_id == parent_id,
                 PCommentTable.comment_id == updatePCommentInput.comment_id,
                 PCommentTable.deleteTime == None).first()
             
             if pcomment is None:
                 return None
 
-            pcomment.content = updatePCommentInput.content
-            pcomment.modifyTime = updatePCommentInput.modifyTime
+            for key in ['content', 'modifyTime']:
+                setattr(pcomment, key, getattr(updatePCommentInput, key))
 
             db.add(pcomment)
             db.commit()
@@ -140,12 +144,16 @@ class PCommentService:
         
         except Exception as e:
             db.rollback()
-            raise e
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to update comment")
         
 
 
     # 댓글 삭제
-    def deletePComment(self, deletePCommentInput: DeletePCommentInput) -> PComment:
+    async def deletePComment(self, 
+                             deletePCommentInput: DeletePCommentInput,
+                             parent_id: str) -> PComment:
         
         """
         댓글 삭제
@@ -160,13 +168,14 @@ class PCommentService:
         
         try:
             pcomment = db.query(PCommentTable).filter(
+                PCommentTable.parent_id == parent_id,
                 PCommentTable.comment_id == deletePCommentInput.comment_id,
                 PCommentTable.deleteTime == None).first()
             
             if pcomment is None:
                 return None
 
-            pcomment.deleteTime = deletePCommentInput.deleteTime
+            setattr(pcomment, 'deleteTime', deletePCommentInput.deleteTime)
 
             db.add(pcomment)
             db.commit()
@@ -176,4 +185,6 @@ class PCommentService:
         
         except Exception as e:
             db.rollback()
-            raise e
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to delete comment")

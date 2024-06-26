@@ -73,6 +73,8 @@ class PostService:
             #raise Exception(e)
             raise Exception("Failed to create post")
         
+
+        
     # 새로 생성된 post 사진 업로드
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
         
@@ -118,7 +120,7 @@ class PostService:
         
 
     # 모든 게시물 가져오기
-    def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
+    async def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
 
         """
         모든 게시물 가져오기
@@ -146,8 +148,9 @@ class PostService:
                 status_code=400, detail="Failed to get post")
         
 
+
     # 하나의 게시물 가져오기
-    def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
+    async def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
         """
         하나의 게시물 가져오기
         --input
@@ -174,8 +177,10 @@ class PostService:
             raise HTTPException(
                 status_code=400, detail="Failed to get post")
         
+
+        
     # 게시물 수정
-    def updatePost(self, 
+    async def updatePost(self, 
                    updatePostInput: UpdatePostInput, 
                    parent_id: str) -> Optional[Post]:
         
@@ -184,9 +189,9 @@ class PostService:
         --input
             - updatePostInput.post_id: 게시물 아이디
             - updatePostInput.title: 게시물 제목
-            - updatePostInput.post: 게시물 내용
-            - updatePostInput.modify_time: 게시물 수정 시간
-            - updatePostInput.hash: 게시물 해시태그 리스트
+            - updatePostInput.content: 게시물 내용
+            - updatePostInput.modifyTime: 게시물 수정 시간
+            - updatePostInput.hashList: 게시물 해시태그 리스트
         --output
             - Post: 게시물 딕셔너리
         """
@@ -201,22 +206,30 @@ class PostService:
             if post is None:
                 return None
             
-            for key in ['title', 'post', 'modify_time', 'hash']:
+            for key in ['title', 'modifyTime', 'hashList']:
                 setattr(post, key, getattr(updatePostInput, key))
+
+            # content를 txt 파일로 저장
+            file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
+            with open(file_path, 'w', encoding='UTF-8') as f:
+                f.write(updatePostInput.content)
 
             db.add(post)
             db.commit()
             db.refresh(post)
 
             return post
+        
         except Exception as e:
             db.rollback()
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to update post")
         
+
+        
     # 게시물 삭제
-    def deletePost(self, 
+    async def deletePost(self, 
                    deletePostInput: DeletePostInput, 
                    parent_id: str) -> Optional[Post]:
         """

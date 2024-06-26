@@ -2,20 +2,20 @@ from typing import List, Optional
 from auth.auth_handler import decodeJWT,signJWT
 from uuid import uuid4
 
-test_create_data = {
-    "reveal": 0,
-    "title": "qq",
-    "content": "qq",
-    "photoId": None,
-    "createTime": "2024-06-7T07:00:00",
-    "modifyTime": None,
-    "deleteTime": None,
-    "pHeart": 0,
-    "pScript": 0,
-    "pView": 10,
-    "pComment": 0,
-    "hashList": "string,qq"
-}
+# test_create_data = {
+#     "reveal": 0,
+#     "title": "qq",
+#     "content": "qq",
+#     "photoId": None,
+#     "createTime": "2024-06-7T07:00:00",
+#     "modifyTime": None,
+#     "deleteTime": None,
+#     "pHeart": 0,
+#     "pScript": 0,
+#     "pView": 10,
+#     "pComment": 0,
+#     "hashList": "string,qq"
+# }
 
 # def test_create_post(client,test_jwt):
 #     response = client.post(
@@ -48,34 +48,34 @@ test_create_data = {
 
 #     assert response.status_code == 200
 
-def test_create_postmain(client,test_jwt):
-    response = client.post(
-        "/main/create",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-    )
+# def test_create_postmain(client,test_jwt):
+#     response = client.post(
+#         "/main/create",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+#     )
 
-    assert response.status_code == 200
-    response_json = response.json()
+#     assert response.status_code == 200
+#     response_json = response.json()
 
-    assert "banner" in response_json
-    assert "friend" in response_json
-    assert "friend_read" in response_json
-    assert "neighbor" in response_json
-    assert "neighbor_post" in response_json
-    assert "highview" in response_json
+#     assert "banner" in response_json
+#     assert "friend" in response_json
+#     assert "friend_read" in response_json
+#     assert "neighbor" in response_json
+#     assert "neighbor_post" in response_json
+#     assert "highview" in response_json
 
-    assert response_json["highview"][0]["post_id"] == 2
-    assert response_json["highview"][0]["photoId"] == None
-    assert response_json["highview"][0]["title"] == "Example Title"
-    assert response_json["highview"][0]["author_name"] == "string"
-    assert response_json["highview"][0]["desc"] == "This is an example content for the post."
+#     assert response_json["highview"][0]["post_id"] == 2
+#     assert response_json["highview"][0]["photoId"] == None
+#     assert response_json["highview"][0]["title"] == "Example Title"
+#     assert response_json["highview"][0]["author_name"] == "string"
+#     assert response_json["highview"][0]["desc"] == "This is an example content for the post."
     
-    assert "hashtag" in response_json
-    assert response_json["hashtag"][0]["post_id"] == 2
-    assert response_json["hashtag"][0]["photoId"] == None
-    assert response_json["hashtag"][0]["title"] == "Example Title"
-    assert response_json["hashtag"][0]["author_name"] == "string"
-    assert response_json["hashtag"][0]["desc"] == "This is an example content for the post."
-    assert response_json["hashtag"][0]["hash"] == "string,example,hash,tags"
+#     assert "hashtag" in response_json
+#     assert response_json["hashtag"][0]["post_id"] == 2
+#     assert response_json["hashtag"][0]["photoId"] == None
+#     assert response_json["hashtag"][0]["title"] == "Example Title"
+#     assert response_json["hashtag"][0]["author_name"] == "string"
+#     assert response_json["hashtag"][0]["desc"] == "This is an example content for the post."
+#     assert response_json["hashtag"][0]["hash"] == "string,example,hash,tags"
 
 

@@ -14,7 +14,7 @@ router = APIRouter(
 pheartService = PHeartService()
 
 # 하트 생성
-@router.post("/pheartCreate", dependencies=[Depends(JWTBearer())])
+@router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_heart(createPHeartInput: CreatePHeartInput, 
                         parent_id: str = Depends(JWTBearer()))-> PHeart:
     """
@@ -36,7 +36,7 @@ async def create_heart(createPHeartInput: CreatePHeartInput,
     return result
 
 # 하트 삭제
-@router.delete("/pheartDelete", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_heart(deletePHeartInput: DeletePHeartInput, 
                         parent_id: str = Depends(JWTBearer()))-> PHeart:
     """

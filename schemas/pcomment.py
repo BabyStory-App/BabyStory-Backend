@@ -10,8 +10,6 @@ class CreatePCommentInput(BaseModel):
     post_id: int
     reply_id: Optional[int]
     content: str
-    createTime: datetime = datetime.now()
-    cheart: int
 
 class CreatePCommentOutput(BaseModel):
     pcomment: Optional[PComment]

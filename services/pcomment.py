@@ -34,10 +34,10 @@ class PCommentService:
                 post_id=createPCommentInput.post_id,
                 reply_id=None if createPCommentInput.reply_id == 0 else createPCommentInput.reply_id,
                 content=createPCommentInput.content,
-                createTime=createPCommentInput.createTime,
+                createTime=datetime.now(),
                 modifyTime=None,
                 deleteTime=None,
-                cheart=createPCommentInput.cheart
+                cheart=0
             )
 
             db.add(pcomment)

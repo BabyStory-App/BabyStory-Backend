@@ -35,7 +35,7 @@ async def create_pcomment(createCommentInput: CreatePCommentInput,
 
 
 # 모든 댓글 가져오기
-@router.get("/", dependencies=[Depends(JWTBearer())])
+@router.get("/all", dependencies=[Depends(JWTBearer())])
 async def get_all_comment(post_id: int) -> List[PComment]:
 
     # 게시물 아이디가 없으면 에러
@@ -93,7 +93,7 @@ async def update_comment(updatePCommentInput: UpdatePCommentInput,
 
 
 # 댓글 삭제
-@router.delete("/delete", dependencies=[Depends(JWTBearer())])
+@router.put("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_comment(deleteCommentInput: DeletePCommentInput,
                 parent_id: str = Depends(JWTBearer())) -> DeletePCommentOutput:
     

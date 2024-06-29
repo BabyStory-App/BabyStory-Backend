@@ -14,7 +14,7 @@ router = APIRouter(
 cheartService = CHeartService()
 
 # 하트 생성
-@router.post("/pheartCreate", dependencies=[Depends(JWTBearer())])
+@router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_heart(createCHeartInput: CreateCHeartInput, 
                         parent_id: str = Depends(JWTBearer()))-> CHeart:
     """
@@ -36,7 +36,7 @@ async def create_heart(createCHeartInput: CreateCHeartInput,
     return result
 
 # 하트 삭제
-@router.delete("/CheartDelete", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_heart(deleteCHeartInput: DeleteCHeartInput, 
                         parent_id: str = Depends(JWTBearer()))-> CHeart:
     """

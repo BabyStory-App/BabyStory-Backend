@@ -14,7 +14,7 @@ router = APIRouter(
 pscriptService = PScriptService()
 
 # 스크립트 생성
-@router.post("/pscriptCreate", dependencies=[Depends(JWTBearer())])
+@router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pscript(createPScriptInput: CreatePScriptInput, 
                         parent_id: str = Depends(JWTBearer()))-> PScript:
     """
@@ -36,7 +36,7 @@ async def create_pscript(createPScriptInput: CreatePScriptInput,
     return result
 
 # 스크립트 삭제
-@router.delete("/pscriptDelete", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_pscript(deletePScriptInput: DeletePScriptInput, 
                         parent_id: str = Depends(JWTBearer()))-> PScript:
     """

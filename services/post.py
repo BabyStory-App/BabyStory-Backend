@@ -22,37 +22,33 @@ class PostService:
         
         """
         게시물 생성
-        --input
-            - createPostInput.reveal: 게시물 공개 여부
-            - createPostInput.title: 게시물 제목
-            - createPostInput.createTime: 게시물 생성 시간
-            - createPostInput.pHeart: 게시물 하트 수
-            - createPostInput.pScript: 게시물 스크립트
-            - createPostInput.pView: 게시물 조회수
-            - createPostInput.pComment: 게시물 댓글 수
-            - createPostInput.hashList: 게시물 해시태그 리스트
-        --output
-            - Post: 게시물 딕셔너리
+
+        - input
+            - parent_id (str): 부모 아이디
+            - createPostInput (CreatePostInput): 게시물 생성 정보
+
+        - output
+            - post (Post): 게시물 딕셔너리 
         """
                      
         db = get_db_session()
 
         try:
             if createPostInput.reveal not in [0, 1, 2, 3]:
-                raise Exception("Invalid reveal value")
+                raise CustomException("Invalid reveal value")
 
             # print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
                 reveal=createPostInput.reveal,
                 title=createPostInput.title,
-                createTime=createPostInput.createTime,
+                createTime=datetime.now(),
                 modifyTime=None,
                 deleteTime=None,
-                pHeart=createPostInput.pHeart,
-                pScript=createPostInput.pScript,
-                pView=createPostInput.pView,
-                pComment=createPostInput.pComment,
+                pHeart=0,
+                pScript=0,
+                pView=0,
+                pComment=0,
                 hashList=createPostInput.hashList if createPostInput.hashList else None
             )
 
@@ -67,6 +63,9 @@ class PostService:
 
             return post
         
+        except CustomException as e:
+            print("CustomException occurred:", e)  
+
         except Exception as e:
             db.rollback()
             print(e)

@@ -31,7 +31,7 @@ async def create_heart(createPHeartInput: CreatePHeartInput,
 
     if result is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="createheart not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pheart")
 
     return result
 
@@ -53,6 +53,6 @@ async def delete_heart(deletePHeartInput: DeletePHeartInput,
 
     if result is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="deleteheart not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pheart")
 
     return result

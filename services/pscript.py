@@ -25,7 +25,7 @@ class PScriptService:
             pscript = PScriptTable(
                 post_id=createPScriptInput.post_id,
                 parent_id=parent_id,
-                createTime=createPScriptInput.createTime
+                createTime=datetime.now()
             )
 
             db.add(pscript)

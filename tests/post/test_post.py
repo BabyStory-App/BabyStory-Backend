@@ -6,6 +6,7 @@ import pytest
 from fastapi import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
 from main import app  # assuming your FastAPI app is defined in main.py
+from datetime import *
 import json
 
 client = TestClient(router)
@@ -15,7 +16,7 @@ test_CreatePostInput = {
     "reveal": 0,
     "title": "qq",
     "content": "qq",
-    "createTime": "2024-06-07T07:00:00",
+    "createTime": datetime.now(),
     "modifyTime": None,
     "deleteTime": None,
     "pHeart": 0,

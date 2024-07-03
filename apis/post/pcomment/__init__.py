@@ -19,16 +19,11 @@ pcommentService = PCommentService()
 async def create_pcomment(createCommentInput: CreatePCommentInput,
                 parent_id: str = Depends(JWTBearer()))-> CreatePCommentOutput:
     
-    # 부모 아이디가 없으면 에러
-    if parent_id is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
-    
     pcomment = pcommentService.createPComment(parent_id, createCommentInput)
 
     if pcomment is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pcomment")
     
     return { 'pcomment': pcomment }
 
@@ -44,10 +39,6 @@ async def get_all_comment(post_id: int) -> List[PComment]:
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid post_id")
     
     comment = pcommentService.getAllPComment(post_id)
-
-    if comment is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
     
     return comment
 
@@ -63,10 +54,6 @@ async def get_reply_comment(comment_id: int) -> List[PComment]:
                 status_code=HTTP_400_BAD_REQUEST, detail="Invalid comment_id")
         
         comment = pcommentService.getReplyPComment(comment_id)
-    
-        if comment is None:
-            raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
         
         return comment
 

@@ -14,6 +14,8 @@ from schemas.post import *
 
 from db import get_db_session
 
+from error.exception.customerror import *
+
 
 class PostService:
     # 게시물 생성
@@ -144,7 +146,7 @@ class PostService:
         except Exception as e:
             print(e)
             raise HTTPException(
-                status_code=400, detail="Failed to get post")
+                status_code=400, detail="Failed to get all post")
         
 
 

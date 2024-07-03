@@ -133,8 +133,8 @@ class PCommentService:
             if pcomment is None:
                 return None
 
-            for key in ['content', 'modifyTime']:
-                setattr(pcomment, key, getattr(updatePCommentInput, key))
+            pcomment.content = updatePCommentInput.content
+            pcomment.modifyTime = datetime.now()
 
             db.add(pcomment)
             db.commit()
@@ -175,7 +175,7 @@ class PCommentService:
             if pcomment is None:
                 return None
 
-            setattr(pcomment, 'deleteTime', deletePCommentInput.deleteTime)
+            setattr(pcomment, 'deleteTime', datetime.now())
 
             db.add(pcomment)
             db.commit()

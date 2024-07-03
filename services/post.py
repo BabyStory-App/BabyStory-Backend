@@ -138,9 +138,6 @@ class PostService:
                 PostTable.parent_id == parent_id, 
                 PostTable.deleteTime == None).all()
 
-            if post is None:
-                return None
-
             return post
         
         except Exception as e:
@@ -207,8 +204,9 @@ class PostService:
             if post is None:
                 return None
             
-            for key in ['title', 'modifyTime', 'hashList']:
+            for key in ['title', 'hashList']:
                 setattr(post, key, getattr(updatePostInput, key))
+            PostTable.modifyTime = datetime.now()
 
             # content를 txt 파일로 저장
             file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
@@ -252,7 +250,7 @@ class PostService:
             if post is None:
                 return None
             
-            setattr(post, 'deleteTime', deletePostInput.deleteTime)
+            setattr(post, 'deleteTime', datetime.now())
             
             db.add(post)
             db.commit()

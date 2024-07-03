@@ -55,9 +55,6 @@ async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
     
     # 게시물 정보 가져오기
     post = await postService.getAllPost(parent_id)
-
-    if post is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
     
     return post
 

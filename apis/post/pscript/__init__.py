@@ -31,7 +31,7 @@ async def create_pscript(createPScriptInput: CreatePScriptInput,
 
     if result is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="createscript not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pscript")
     
     return result
 
@@ -53,6 +53,6 @@ async def delete_pscript(deletePScriptInput: DeletePScriptInput,
 
     if result is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="deletescript not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pscript")
     
     return result

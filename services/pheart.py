@@ -25,7 +25,7 @@ class PHeartService:
             pheart = PHeartTable(
                 post_id=createPHeartInput.post_id,
                 parent_id = parent_id,
-                createTime = createPHeartInput.createTime
+                createTime = datetime.now()
             )
 
             db.add(pheart)

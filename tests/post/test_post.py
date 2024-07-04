@@ -1,13 +1,9 @@
 from apis.post import router
 from fastapi.testclient import TestClient
-from auth.auth_handler import decodeJWT, signJWT
+from auth.auth_handler import decodeJWT
 from uuid import uuid4
-import pytest
-from fastapi import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST
 from main import app  # assuming your FastAPI app is defined in main.py
 from datetime import *
-import json
 
 client = TestClient(router)
 test_user_jwt = None
@@ -16,12 +12,9 @@ test_CreatePostInput = {
     "reveal": 0,
     "title": "qq",
     "content": "qq",
-    "createTime": datetime.now(),
-    "modifyTime": None,
-    "deleteTime": None,
     "pHeart": 0,
     "pScript": 0,
-    "pView": 10,
+    "pView": 0,
     "pComment": 0,
     "hashList": "string,qq"
 }
@@ -30,7 +23,7 @@ test_UpdatePostInput = {
     "post_id": str(uuid4()),
     "reveal": 2,
     "title": "test title",
-    "modifyTime": "2021-10-01T00:00:00",
+    "modifyTime": "2024-07-03T16:28:37",
     "hashList": "test hash"
 }
 
@@ -45,6 +38,7 @@ def test_create_post(client,test_jwt):
     assert response.status_code == 200
     response_json = response.json()
 
+
     assert "post" in response_json
 
     # post 객체 확인
@@ -52,14 +46,14 @@ def test_create_post(client,test_jwt):
         if key in response_json["post"]:
             assert response_json["post"][key] == test_CreatePostInput[key]
 
-        # jwt 확인
+    #jwt 확인
     jwt = response.json()["x-jwt"]['access_token']
     check_id = decodeJWT(jwt).get('user_id')
     assert check_id == test_CreatePostInput["parent_id"]
 
     test_jwt["access_token"] = response_json["x-jwt"]["access_token"]
 
-# Create post test fail
+# # Create post test fail
 # def test_createPost_fail(test_jwt):
 #     headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
 #     response = client.post("/post/create", headers=headers)

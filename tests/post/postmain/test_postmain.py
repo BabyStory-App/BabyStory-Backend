@@ -1,93 +1,93 @@
-# from typing import Optional
-# from auth.auth_handler import decodeJWT
-# from uuid import uuid4
-# from datetime import datetime, timedelta
+from typing import Optional
+from auth.auth_handler import decodeJWT
+from uuid import uuid4
+from datetime import datetime, timedelta
 
-# test_friend_jwt=None
-# # 친구 생성 json
-# test_friend_data={
-#     "parent_id": str(uuid4()),
-#     "password": "qw",
-#     "email": str(uuid4()),
-#     "name": "qw",
-#     "nickname": "qw",
-#     "gender": 0,
-#     "signInMethod": "qw",
-#     "emailVerified": 1,
-#     "photoId": "qw",
-#     "description": "qw",
-#     "mainAddr": "qq",
-#     "subAddr": "qw",
-#     "hashList": "qw,string"
-# }
-# # 이웃유저 json
-# test_neighbor_data={
-#     "parent_id": str(uuid4()),
-#     "password": "ww",
-#     "email": str(uuid4()),
-#     "name": "ww",
-#     "nickname": "ww",
-#     "gender": 0,
-#     "signInMethod": "ww",
-#     "emailVerified": 1,
-#     "photoId": "ww",
-#     "description": "ww",
-#     "mainAddr": "qq",
-#     "subAddr": "ww",
-#     "hashList": "qw,string"
-# }
-# # 친구 아이디 json
-# json_friend={
-#     "friend": test_friend_data['parent_id']
-# }
-# # 유저 아이디 json
-# json_user={
-#     "friend": None
-# }
+test_friend_jwt=None
+# 친구 생성 json
+test_friend_data={
+    "parent_id": str(uuid4()),
+    "password": "qw",
+    "email": str(uuid4()),
+    "name": "qw",
+    "nickname": "qw",
+    "gender": 0,
+    "signInMethod": "qw",
+    "emailVerified": 1,
+    "photoId": "qw",
+    "description": "qw",
+    "mainAddr": "qq",
+    "subAddr": "qw",
+    "hashList": "qw,string"
+}
+# 이웃유저 json
+test_neighbor_data={
+    "parent_id": str(uuid4()),
+    "password": "ww",
+    "email": str(uuid4()),
+    "name": "ww",
+    "nickname": "ww",
+    "gender": 0,
+    "signInMethod": "ww",
+    "emailVerified": 1,
+    "photoId": "ww",
+    "description": "ww",
+    "mainAddr": "qq",
+    "subAddr": "ww",
+    "hashList": "qw,string"
+}
+# 친구 아이디 json
+json_friend={
+    "friend": test_friend_data['parent_id']
+}
+# 유저 아이디 json
+json_user={
+    "friend": None
+}
 
-# # 게시물 생성 시간
-# test_time = (datetime.now() - timedelta(days=1)).replace(microsecond=0).isoformat()
-# # 게시물 생성 json
-# test_CreatePostInput = {
-#     "reveal": 1,
-#     "title": "test title",
-#     "content": "test post",
-#     "createTime": test_time,
-#     "hashList": "qq"
-# }
-# # 친구 게시물 생성 json
-# test_CreatePostInput_friend = {
-#     "reveal": 0,
-#     "title": "tt tle",
-#     "content": "tt post",
-#     "createTime": test_time,
-#     "hashList": "qw"
-# }
-# # 친구유저생성
-# def test_create_friend(client):
-#     response = client.post(
-#         "/parent",
-#         json=test_friend_data
-#     )
+# 게시물 생성 시간
+test_time = (datetime.now() - timedelta(days=1)).replace(microsecond=0).isoformat()
+# 게시물 생성 json
+test_CreatePostInput = {
+    "reveal": 1,
+    "title": "test title",
+    "content": "test post",
+    "createTime": test_time,
+    "hashList": "qq"
+}
+# 친구 게시물 생성 json
+test_CreatePostInput_friend = {
+    "reveal": 0,
+    "title": "tt tle",
+    "content": "tt post",
+    "createTime": test_time,
+    "hashList": "qw"
+}
+# 친구유저생성
+def test_create_friend(client):
+    response = client.post(
+        "/parent",
+        json=test_friend_data
+    )
     
-#     assert response.status_code == 201
-#     response_json = response.json()
+    assert response.status_code == 201
+    response_json = response.json()
 
-#     assert "x-jwt" in response_json
-#     assert "access_token" in response_json["x-jwt"]
+    assert "x-jwt" in response_json
+    assert "access_token" in response_json["x-jwt"]
 
-#     # jwt 확인
-#     jwt = response.json()["x-jwt"]['access_token']
+    # jwt 확인
+    jwt = response.json()["x-jwt"]['access_token']
 
-#     global test_friend_jwt
-#     test_friend_jwt = jwt
+    global test_friend_jwt
+    test_friend_jwt = jwt
 
-# # 이웃유저생성
-# def test_create_neighbor(client):
-#     client.post(
-#         "/parent",
-#         json=test_neighbor_data
-#     )
+# 이웃유저생성
+def test_create_neighbor(client):
+    client.post(
+        "/parent",
+        json=test_neighbor_data
+    )
 
 # # 유저가 친구를 등록
 # def test_create_friend_relation1(client,test_jwt):

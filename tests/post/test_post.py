@@ -6,24 +6,20 @@ from main import app  # assuming your FastAPI app is defined in main.py
 from datetime import *
 
 client = TestClient(router)
-test_user_jwt = None
+
+test_jwt_tmp = None
 
 test_CreatePostInput = {
     "reveal": 0,
     "title": "qq",
     "content": "qq",
-    "pHeart": 0,
-    "pScript": 0,
-    "pView": 0,
-    "pComment": 0,
     "hashList": "string,qq"
 }
 
 test_UpdatePostInput = {
-    "post_id": str(uuid4()),
+    "post_id": 1,
     "reveal": 2,
     "title": "test title",
-    "modifyTime": "2024-07-03T16:28:37",
     "hashList": "test hash"
 }
 

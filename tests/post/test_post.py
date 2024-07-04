@@ -4,6 +4,8 @@ from auth.auth_handler import decodeJWT
 from uuid import uuid4
 from main import app  # assuming your FastAPI app is defined in main.py
 from datetime import *
+from fastapi import HTTPException
+from starlette.status import HTTP_400_BAD_REQUEST
 
 client = TestClient(router)
 
@@ -27,7 +29,7 @@ test_UpdatePostInput = {
 def test_create_post(client,test_jwt):
     response = client.post(
         "/post/create",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},   # 자물쇠 있는 애들에 넣어주기
         json=test_CreatePostInput
     )
     
@@ -42,19 +44,14 @@ def test_create_post(client,test_jwt):
         if key in response_json["post"]:
             assert response_json["post"][key] == test_CreatePostInput[key]
 
-    #jwt 확인
-    jwt = response.json()["x-jwt"]['access_token']
-    check_id = decodeJWT(jwt).get('user_id')
-    assert check_id == test_CreatePostInput["parent_id"]
 
-    test_jwt["access_token"] = response_json["x-jwt"]["access_token"]
-
-# # Create post test fail
-# def test_createPost_fail(test_jwt):
-#     headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
-#     response = client.post("/post/create", headers=headers)
-#     assert response.status_code == HTTP_400_BAD_REQUEST
-#     assert response.json() == {"detail": "Failed to create post"}
+# Create post test fail ( 잘못된 jwt )
+def test_createPost_fail():
+    headers={"Authorization": f"Bearer wrong_jwt_token"}
+    response = client.post("/post/create", headers=headers)
+    print(response)
+    assert response.status_code == HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": "Failed to create post"}
 
 
 

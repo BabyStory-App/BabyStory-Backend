@@ -173,7 +173,7 @@ class PostService:
         except Exception as e:
             print(e)
             raise HTTPException(
-                status_code=400, detail="Failed to get post")
+                status_code=400, detail="Failed to get one post")
         
 
         

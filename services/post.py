@@ -196,6 +196,9 @@ class PostService:
         db = get_db_session()
 
         try:
+            if updatePostInput.reveal not in [0, 1, 2, 3]:
+                raise CustomException("Invalid reveal value")
+            
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
                 PostTable.post_id == updatePostInput.post_id,

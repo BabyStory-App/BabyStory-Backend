@@ -68,63 +68,101 @@ async def test_createPost_fail():
 
 
 """ Get all post test """
-# def test_get_post():
-#     response = client.get("/")
+# def test_get_post(client,test_jwt):
+#     response = client.get(
+#         "/post/",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+#     )
 #     assert response.status_code == 200
-#     res_json = response.json()
-
-    # parnet_id 확인
-    
-
-
-# # Get post by post_id test
-# def test_get_all_post():
-#     response = client.get("/{post_id}", params={"post_id": test_CreatePostInput["post_id"]})
-#     assert response.status_code == 200
-#     assert response.json()["post_id"] == test_CreatePostInput["post_id"]
-
-# # Get post by post_id test fail
-# def test_get_post_fail():
-#     with pytest.raises(HTTPException) as err:
-#         client.get("/{post_id}")
-#     assert err.value.status_code == HTTP_400_BAD_REQUEST
-#     assert err.value.detail == "Failed to get post"
-
-
-
-# # Update post test
-# def test_update_post():
-#     response = client.put("/{post_id}", json=test_UpdatePostInput)
-#     assert response.status_code == 200
-#     res_json = response.json()
-#     post_json = res_json["post"]
+#     response_json = response.json()
+#     assert "post" in response_json
 
 #     # post 객체 확인
-#     assert post_json["reveal"] == test_CreatePostInput["reveal"]
-#     assert post_json["title"] == test_UpdatePostInput["title"]
-#     assert post_json["content"] == test_UpdatePostInput["content"]
-#     assert post_json["photoId"] == test_UpdatePostInput["photoId"]
-#     assert post_json["modifyTime"] == test_UpdatePostInput["modifyTime"]
-#     assert post_json["hashList"] == test_UpdatePostInput["hashList"]
+#     for key in test_CreatePostInput:
+#         if key in response_json["post"]:
+#             assert response_json["post"][key] == test_CreatePostInput[key]
 
-# # Update post test fail
-# def test_update_post_fail():
-#     with pytest.raises(HTTPException) as err:
-#         client.put("/{post_id}")
-#     assert err.value.status_code == HTTP_400_BAD_REQUEST
-#     assert err.value.detail == "Failed to update post"
+# Get all post test fail ( 잘못된 jwt )
+async def test_getPost_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer wrong_jwt_token"}
+        client.get("/", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get all post"
 
 
 
-# # Delete post test
-# def test_delete_post():
-#     response = client.delete("/{post_id}")
+""" Get post by post_id test """
+# def test_get_all_post(client,test_jwt):
+#     response = client.get(
+#         "/post/{post_id}",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+#     )
 #     assert response.status_code == 200
-#     assert response.json()["success"] == 200
+#     response_json = response.json()
+#     assert "post" in response_json
 
-# # Delete post test fail
-# def test_delete_post_fail():
-#     with pytest.raises(HTTPException) as err:
-#         client.delete("/{post_id}")
-#     assert err.value.status_code == HTTP_400_BAD_REQUEST
-#     assert err.value.detail == "Failed to delete post"
+#     # post 객체 확인
+#     for key in test_CreatePostInput:
+#         if key in response_json["post"]:
+#             assert response_json["post"][key] == test_CreatePostInput[key]   
+
+# Get post by post_id test fail ( 잘못된 jwt )
+async def test_getPost_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer wrong_jwt_token"}
+        client.get("/{post_id}", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get post" 
+
+# Get post by post_id test fail ( 잘못된 post_id )
+async def test_getPost_fail():
+    with pytest.raises(HTTPException) as err:
+        client.get("/{post_id}")
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get post"
+
+
+
+""" Update post test """
+# def test_update_post(client,test_jwt):
+#     response = client.put(
+#         "/post/update/{post_id}",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+#         json=test_UpdatePostInput
+#     )
+    
+#     assert response.status_code == 200
+#     response_json = response.json()
+
+#     assert "post" in response_json
+
+#     # post 객체 확인
+#     for key in test_UpdatePostInput:
+#         if key in response_json["post"]:
+#             assert response_json["post"][key] == test_UpdatePostInput[key]
+
+# Update post test fail ( 잘못된 jwt )
+async def test_updatePost_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer wrong_jwt_token"}
+        client.put("/post/update/{post_id}", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to update post"
+
+# Update post test fail ( 잘못된 post_id )
+async def test_updatePost_fail():
+    with pytest.raises(HTTPException) as err:
+        client.put("/post/update/{post_id}")
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to update post"
+
+# Update post test fail ( reveal 값이 0 ~ 3이 아닌 경우 )
+async def test_updatePost_fail():
+    with pytest.raises(HTTPException) as err:
+        test_UpdatePostInput["reveal"] != 0 or test_UpdatePostInput["reveal"] != 1 or test_UpdatePostInput["reveal"] != 2 or test_UpdatePostInput["reveal"] != 3
+        client.put("/post/update/{post_id}", json=test_UpdatePostInput)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Invalid reveal value"
+
+    

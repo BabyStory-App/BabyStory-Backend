@@ -75,16 +75,20 @@ async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optio
 
 
 # 게시물 수정
-@router.put("/{post_id}", dependencies=[Depends(JWTBearer())])
+@router.put("/update/{post_id}", dependencies=[Depends(JWTBearer())])
 async def update_post(updatePostInput: UpdatePostInput,
                 parent_id:str = Depends(JWTBearer())) -> UpdatePostOutput:
-
-    # 게시물 정보 수정
-    post = await postService.updatePost(updatePostInput, parent_id)
-
-    if post is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
     
+    try:
+        post = await postService.updatePost(updatePostInput, parent_id)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to update post")
+
     return{ "success": 200 if post else 403, "post": post }
 
 

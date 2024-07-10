@@ -184,16 +184,11 @@ def test_delete_post(client,test_jwt):
     response = client.put(
         "/post/delete/{post_id}",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        json={"post_id": 91}
+        json={"post_id": 92}
     )
     assert response.status_code == 200
     response_json = response.json()
     assert "post" in response_json
-
-    # # post 객체 확인
-    # for key in test_UpdatePostInput:
-    #     if key in response_json["post"]:
-    #         assert response_json["post"][key] == test_UpdatePostInput[key]
 
 # Delete post test fail ( 잘못된 jwt )
 async def test_deletePost_fail():

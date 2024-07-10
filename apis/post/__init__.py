@@ -98,10 +98,6 @@ async def update_post(updatePostInput: UpdatePostInput,
 async def delete_post(deletePostInput: DeletePostInput,
                 parent_id:str = Depends(JWTBearer()))-> DeletePostOutput:
     
-    # 부모 아이디가 없으면 에러
-    if parent_id == None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
-    
     # 게시물 삭제
     success = await postService.deletePost(deletePostInput, parent_id)
    

@@ -23,6 +23,7 @@ test_UpdatePostInput = {
     "post_id": 1,
     "reveal": 2,
     "title": "test title",
+    "content": "dfd",
     "hashList": "test hash"
 }
 
@@ -66,7 +67,7 @@ async def test_createPost_fail():
 
 
 """ Get all post test """
-def test_get_post(client,test_jwt):
+def test_get_all_post(client,test_jwt):
     response = client.get(
         "/post/",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
@@ -75,10 +76,10 @@ def test_get_post(client,test_jwt):
     # response_json = response.json()
     # assert "post" in response_json
 
-#     # post 객체 확인
-#     for key in test_CreatePostInput:
-#         if key in response_json["post"]:
-#             assert response_json["post"][key] == test_CreatePostInput[key]
+    # # post 객체 확인
+    # for key in test_CreatePostInput:
+    #     if key in response_json["post"]:
+    #         assert response_json["post"][key] == test_CreatePostInput[key]
 
 # Get all post test fail ( 잘못된 jwt )
 async def test_getPost_fail():
@@ -91,19 +92,20 @@ async def test_getPost_fail():
 
 
 """ Get post by post_id test """
-def test_get_all_post(client,test_jwt):
+def test_get_post(client,test_jwt):
     response = client.get(
         "/post/{post_id}",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        # json={"post_id": 1}
     )
-#     assert response.status_code == 200
-#     response_json = response.json()
-#     assert "post" in response_json
+    # assert response.status_code == 200
+    # response_json = response.json()
+    # assert "post" in response_json
 
-#     # post 객체 확인
-#     for key in test_CreatePostInput:
-#         if key in response_json["post"]:
-#             assert response_json["post"][key] == test_CreatePostInput[key]   
+    # # post 객체 확인
+    # for key in test_CreatePostInput:
+    #     if key in response_json["post"]:
+    #         assert response_json["post"][key] == test_CreatePostInput[key]   
 
 # Get post by post_id test fail ( 잘못된 jwt )
 async def test_getPost_fail():
@@ -130,17 +132,15 @@ async def test_getPost_fail():
 
 
 """ Update post test """
-def test_update_post(client,test_jwt):
-    response = client.put(
-        "/post/update/{post_id}",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},   # 자물쇠 있는 애들에 넣어주기
-        json=test_UpdatePostInput
-    )
-    
-    # assert response.status_code == 200
-    # response_json = response.json()
-
-    # assert "post" in response_json
+# def test_update_post(client,test_jwt):
+#     response = client.put(
+#         "/post/update/{post_id}",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+#         json=test_UpdatePostInput
+#     )
+#     assert response.status_code == 200
+#     response_json = response.json()
+#     assert "post" in response_json
 
 #     # post 객체 확인
 #     for key in test_UpdatePostInput:
@@ -183,11 +183,12 @@ async def test_updatePost_fail():
 def test_delete_post(client,test_jwt):
     response = client.put(
         "/post/delete/{post_id}",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={"post_id": 91}
     )
-    # assert response.status_code == 200
-    # response_json = response.json()
-    # assert "post" in response_json
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "post" in response_json
 
     # # post 객체 확인
     # for key in test_UpdatePostInput:

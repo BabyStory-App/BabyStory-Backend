@@ -56,7 +56,7 @@ async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
     # 게시물 정보 가져오기
     post = await postService.getAllPost(parent_id)
     
-    return { "post": post }
+    return post
 
 
 

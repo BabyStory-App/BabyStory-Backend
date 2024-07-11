@@ -87,15 +87,14 @@ async def test_getPost_fail():
 
 
 """ Get post by post_id test """
-# def test_get_post(client,test_jwt):
-#     response = client.get(
-#         f"/post/{test_jwt['post_id']}",
-#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-#         json={"post_id": test_jwt["post_id"]}
-#     )
-#     assert response.status_code == 200
-#     response_json = response.json()
-#     assert isinstance(response_json, list)
+def test_get_post(client,test_jwt):
+    response = client.get(
+        f"/post/{test_jwt['post_id']}",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "post" in response_json
 
 #     # # post 객체 확인
 #     assert response_json["post"]["post_id"] == test_jwt["post_id"]

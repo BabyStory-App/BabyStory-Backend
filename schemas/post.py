@@ -18,13 +18,6 @@ class CreatePostOutput(BaseModel):
 class UploadPhotoOutput(BaseModel):
     success: bool
 
-# 하나의 게시물 가져오기
-class GetPostOneInput(BaseModel):
-    post_id: int
-
-class GetPostOneOutput(BaseModel):
-    post: Post
-
 # 게시물 수정
 class UpdatePostInput(BaseModel):
     post_id: int

@@ -148,7 +148,9 @@ class PostService:
 
 
     # 하나의 게시물 가져오기
-    async def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
+    async def getPost(self,
+                      getPostOneInput: GetPostOneInput,
+                      parent_id: str) -> Optional[Post]:
         """
         하나의 게시물 가져오기
         --input
@@ -162,7 +164,7 @@ class PostService:
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
-                PostTable.post_id == post_id, 
+                PostTable.post_id == getPostOneInput.post_id, 
                 PostTable.deleteTime == None).first()
 
             if post is None:
@@ -207,9 +209,9 @@ class PostService:
             if post is None:
                 return None
             
-            for key in ['title', 'hashList']:
+            for key in ['reveal', 'title', 'hashList']:
                 setattr(post, key, getattr(updatePostInput, key))
-            PostTable.modifyTime = datetime.now()
+            setattr(post, 'modifyTime', datetime.now())
 
             # content를 txt 파일로 저장
             file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')

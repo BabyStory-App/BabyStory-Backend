@@ -22,7 +22,7 @@ class UploadPhotoOutput(BaseModel):
 class UpdatePostInput(BaseModel):
     post_id: int
     reveal: int
-    title: str 
+    title: str
     content: str
     hashList: Optional[str]
 

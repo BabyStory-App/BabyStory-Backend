@@ -13,77 +13,76 @@ client = TestClient(router)
 
 test_jwt_tmp = None
 
-test_CreatePHeartInput = {
+test_CreatePScriptInput = {
     "post_id": 1
 }
 
-test_DeletePHeartInput = {
+test_DeletePScriptInput = {
     "post_id": 1
 }
 
 
 
-""" Create post heart test """
-def test_create_pheart(client, test_jwt):
+""" Create post script test """
+def test_create_pscript(client, test_jwt):
     response = client.post(
-        "pheart/create",
+        "pscript/create",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        json=test_CreatePHeartInput
+        json=test_CreatePScriptInput
     )
     
     assert response.status_code == 200
     response_json = response.json()
     assert isinstance(response_json, dict)
 
-    # pheart 객체 확인
-    assert response_json["post_id"] == test_CreatePHeartInput["post_id"]
+    # pscript 객체 확인
+    assert response_json["post_id"] == test_CreatePScriptInput["post_id"]
 
-# Create post heart test fail ( 잘못된 jwt )
-async def test_createPHeart_fail():
+# Create post script test fail ( 잘못된 jwt )
+async def test_CreatePScriptInput_fail():
     with pytest.raises(HTTPException) as err:
         headers={"Authorization": f"Bearer wrong_jwt_token"}
-        client.post("pheart/create", headers=headers)
+        client.post("pscript/create", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "Failed to create pheart"
+    assert err.value.detail == "Failed to create pscript"
 
-# Create post heart test fail ( post_id가 없는 경우 )
-async def test_createPHeart_fail():
+# Create post script test fail ( post_id가 없는 경우 )
+async def test_createp_script_fail():
     with pytest.raises(HTTPException) as err:
         headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
-        client.post("pheart/create", headers=headers)
+        client.post("pscript/create", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "Failed to create pheart"
+    assert err.value.detail == "Failed to create pscript"
 
 
 
-""" Delete post heart test """
-def test_delete_pheart(client, test_jwt):
+""" Delete post script test """
+def test_delete_pscript(client, test_jwt):
     response = client.request(
         method="DELETE",
-        url="pheart/delete",
+        url="pscript/delete",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        json=test_DeletePHeartInput
+        json=test_DeletePScriptInput
     )
 
     assert response.status_code == 200
     response_json = response.json()
     assert isinstance(response_json, dict)
 
-    # pheart 객체 확인
-    assert response_json["post_id"] == test_DeletePHeartInput["post_id"]
+    # pscript 객체 확인
+    assert response_json["post_id"] == test_DeletePScriptInput["post_id"]
 
-# Delete post heart test fail ( 잘못된 jwt )
-async def test_deletePHeart_fail():
+# Delete post script test fail ( 잘못된 jwt )
+async def test_DeletePScriptInput_fail():
     with pytest.raises(HTTPException) as err:
         headers={"Authorization": f"Bearer wrong_jwt_token"}
-        client.delete("pheart/delete", headers=headers)
+        client.delete("pscript/delete", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "Failed to delete pheart"
+    assert err.value.detail == "Failed to delete pscript"
 
-# Delete post heart test fail ( post_id가 없는 경우 )
-async def test_deletePHeart_fail():
+# Delete post script test fail ( post_id가 없는 경우 )
+async def test_DeletePScriptInput_fail():
     with pytest.raises(HTTPException) as err:
-        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
-        client.delete("pheart/delete", headers=headers)
+        client.delete("pscript/delete")
     assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "Failed to delete pheart"
+    assert err.value.detail == "Failed to delete pscript"

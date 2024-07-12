@@ -27,6 +27,8 @@ test_UpdatePostInput = {
     "hashList": "test,hash"
 }
 
+
+
 """ Create post test """
 def test_create_post(client,test_jwt):
     response = client.post(
@@ -46,7 +48,6 @@ def test_create_post(client,test_jwt):
     
     test_jwt["post_id"] = response_json["post"]["post_id"]
 
-
 # Create post test fail ( 잘못된 jwt )
 async def test_createPost_fail():
     with pytest.raises(HTTPException) as err:
@@ -54,7 +55,6 @@ async def test_createPost_fail():
         client.post("/post/create", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to create post"
-
 
 # Create post test fail ( reveal 값이 0 ~ 3이 아닌 경우 )
 async def test_createPost_fail():
@@ -94,25 +94,25 @@ def test_get_post(client,test_jwt):
     )
     assert response.status_code == 200
     response_json = response.json()
-    assert "post" in response_json
+    assert isinstance(response_json, dict)
 
-#     # # post 객체 확인
-#     assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    # post 객체 확인
+    assert response_json["post_id"] == test_jwt["post_id"]
 
-# # Get post by post_id test fail ( 잘못된 jwt )
-# async def test_getPost_fail():
-#     with pytest.raises(HTTPException) as err:
-#         headers={"Authorization": f"Bearer wrong_jwt_token"}
-#         client.get("/{post_id}", headers=headers)
-#     assert err.value.status_code == HTTP_400_BAD_REQUEST
-#     assert err.value.detail == "Failed to get post" 
+# Get post by post_id test fail ( 잘못된 jwt )
+async def test_getPost_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer wrong_jwt_token"}
+        client.get("/{post_id}", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get post" 
 
-# # Get post by post_id test fail ( 잘못된 post_id )
-# async def test_getPost_fail():
-#     with pytest.raises(HTTPException) as err:
-#         client.get("/{post_id}")
-#     assert err.value.status_code == HTTP_400_BAD_REQUEST
-#     assert err.value.detail == "post not found"
+# Get post by post_id test fail ( 잘못된 post_id )
+async def test_getPost_fail():
+    with pytest.raises(HTTPException) as err:
+        client.get("/{post_id}")
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "post not found"
 
 # Get post by post_id test fail ( 데이터가 없는 경우 )
 async def test_getPost_fail():

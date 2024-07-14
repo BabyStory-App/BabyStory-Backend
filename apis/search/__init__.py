@@ -1,11 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 
 from services.search import SearchService
 from services.postmain import PostMainService
 from schemas.search import *
 from schemas.postmain import *
+from error.exception.customerror import *
 
 
 router = APIRouter(
@@ -18,7 +19,7 @@ searchService = SearchService()
 postMainService = PostMainService()
 
 # 추천 페이지 생성
-@router.post("/recommend/{type}", dependencies=[Depends(JWTBearer())])
+@router.post("/recommend", dependencies=[Depends(JWTBearer())])
 async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInput, parent_id: str = Depends(JWTBearer())):
     """
     추천 페이지 생성
@@ -49,8 +50,7 @@ async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInp
     if createSearchRecommendInput.page is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid page")
-
-
+    
     # 짝꿍이 쓴 게시물
     if createSearchRecommendInput.type == 'friend':
         result = postMainService.createPostMainFriend(
@@ -85,9 +85,9 @@ async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInp
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="createpostmainneighbor not found")
         
-    if result is None:
+    else:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Recommend not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="input invalid")
 
     # 결과값 리턴
     return {    
@@ -96,7 +96,7 @@ async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInp
 
 
 # 검색결과 페이지 생성
-@router.post("/result/{search}", dependencies=[Depends(JWTBearer())])
+@router.post("/result", dependencies=[Depends(JWTBearer())])
 async def create_result(createSearchInput: CreateSearchInput, parent_id: str = Depends(JWTBearer())):
     """
     검색결과 페이지 생성
@@ -128,32 +128,20 @@ async def create_result(createSearchInput: CreateSearchInput, parent_id: str = D
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid page")
 
-    # 검색 결과 생성
-    result = searchService.createSearch(createSearchInput)
+    try:
+        # 검색 결과 생성
+        result = searchService.createSearch(createSearchInput)
 
-    if result is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="createSearch not found")
+    except CustomException as e:
+        raise HTTPException(status_code=HTTP_406_NOT_ACCEPTABLE, detail=e.message)
+    
+    except Exception as e:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="search not found")
+    
+    
 
     # 검색어와 결과값 리턴
     return {    
         "search" : createSearchInput.search,
         "result" : result
         }
-
-
-
-
-# asnc, schema
-# 주석처리
-# 테스트
-
-# 기존 postmain에서 n과 페이지설정
-
-
-
-
-
-
-
-

@@ -11,6 +11,8 @@ from model.friend import FriendTable
 from schemas.postmain import *
 from db import get_db_session
 
+from error.exception.customerror import *
+
 class PostMainService:
 
     # 메인 페이지 배너 생성
@@ -95,18 +97,27 @@ class PostMainService:
             end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             end = end - timedelta(days=1)
             
+            if createPostMainInput.size != -1 and createPostMainInput.size <0:
+                raise CustomException("size must be -1 or greater than 0")
+            if createPostMainInput.page != -1 and createPostMainInput.page <0:
+                raise CustomException("page must be -1 or greater than 0")
+            
             # size와 page가 -1이면 기본 페이지를 가져온다.
-            if createPostMainInput.size == -1 and createPostMainInput.page == -1:
+            if createPostMainInput.size == -1:
                 size = 10
-                page = 0
             else:
                 size = createPostMainInput.size
-                page = (createPostMainInput.page - 1) * 10
+            
+            if createPostMainInput.page == -1:
+                page = 0
+            else:
+                # 10개씩 보여주는 페이지일 경우 페이지의 시작점을 계산
+                page = (createPostMainInput.page - 1) * size
 
             # # 친구 가져오기
-            friends = db.query(FriendTable).filter(
-                FriendTable.parent_id == createPostMainInput.parent_id
-                ).all()
+            # friends = db.query(FriendTable).filter(
+            #     FriendTable.parent_id == createPostMainInput.parent_id
+            #     ).all()
             
             # 짝꿍 : 친구도 나를 친구로 등록했는지 확인
             # 나를 친구로 등록한 사람 가져오기
@@ -137,14 +148,19 @@ class PostMainService:
                     'post_id': i.post_id,
                     #'photoId': i.photoId,
                     'title': i.title,
-                    'author_photo': db.query(ParentTable).filter(
-                        ParentTable.parent_id == i.parent_id).first().photoId,
+                    'pHeart': i.pHeart,
+                    'comment': i.pComment,
+                    #'author_photo': db.query(ParentTable).filter(
+                        #ParentTable.parent_id == i.parent_id).first().photoId,
                     'author_name': db.query(ParentTable).filter(
                         ParentTable.parent_id == i.parent_id).first().name
+                        #,
+                    #'desc': i.content[:100]
                 })
 
             return banners
-        
+
+
         except Exception as e:
             raise (e)
             #raise Exception("Failed to create friend banner")
@@ -167,14 +183,22 @@ class PostMainService:
             # 어제 시간
             end = end - timedelta(days=1)
 
+            if createPostMainInput.size != -1 and createPostMainInput.size <0:
+                raise CustomException("size must be -1 or greater than 0")
+            if createPostMainInput.page != -1 and createPostMainInput.page <0:
+                raise CustomException("page must be -1 or greater than 0")
             
             # size와 page가 -1이면 기본 페이지를 가져온다.
-            if createPostMainInput.size == -1 and createPostMainInput.page == -1:
+            if createPostMainInput.size == -1:
                 size = 10
-                page = 0
             else:
                 size = createPostMainInput.size
-                page = (createPostMainInput.page - 1) * 10
+            
+            if createPostMainInput.page == -1:
+                page = 0
+            else:
+                # 10개씩 보여주는 페이지일 경우 페이지의 시작점을 계산
+                page = (createPostMainInput.page - 1) * size
 
             # 친구 가져오기
             friend = db.query(FriendTable).filter(
@@ -269,13 +293,22 @@ class PostMainService:
         """
         db = get_db_session()
         try:
+            if createPostMainInput.size != -1 and createPostMainInput.size <0:
+                raise CustomException("size must be -1 or greater than 0")
+            if createPostMainInput.page != -1 and createPostMainInput.page <0:
+                raise CustomException("page must be -1 or greater than 0")
+            
             # size와 page가 -1이면 기본 페이지를 가져온다.
-            if createPostMainInput.size == -1 and createPostMainInput.page == -1:
+            if createPostMainInput.size == -1:
                 size = 10
-                page = 0
             else:
                 size = createPostMainInput.size
-                page = (createPostMainInput.page - 1) * 10
+            
+            if createPostMainInput.page == -1:
+                page = 1
+            else:
+                # 10개씩 보여주는 페이지일 경우 페이지의 시작점을 계산
+                page = (createPostMainInput.page - 1) * size + 1
 
             # 이웃을 가져오기
             neighbors = db.query(ParentTable).filter(

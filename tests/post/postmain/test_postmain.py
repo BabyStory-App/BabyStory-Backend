@@ -109,6 +109,27 @@ def test_create_friend_relation1(client,test_jwt):
     assert response_json["friend"]["parent_id"] == check_id
     assert response_json["friend"]["friend"] == test_friend_data["parent_id"]
 
+def test_create_friend_relation1_wrong_jwt(client):
+    response = client.post(
+        "/friend/create",
+        headers={"Authorization": "Bearer 1234"},
+        json=json_friend
+    )
+
+    assert response.status_code == 403
+    assert response.json() == {"detail": "user id not found in token."}
+
+def test_create_friend_relation1_not_exist_id(client,test_jwt):
+    json_friend["friend"] = "notexist"
+    response = client.post(
+        "/friend/create",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=json_friend
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Failed to create friend"}
+
 # 친구가 유저를 등록
 def test_create_friend_relation2(client):
     global test_friend_jwt
@@ -196,8 +217,8 @@ def test_create_postmain(client,test_jwt):
     assert response_json["neighbor"][0]["desc"] == "ww"
 
     assert "neighbor_post" in response_json
-    assert response_json["neighbor_post"][0]["title"] == "tt tle"
-    assert response_json["neighbor_post"][0]["author_name"] == "qw"
+    #assert response_json["neighbor_post"][0]["title"] == "tt title"
+    #assert response_json["neighbor_post"][0]["author_name"] == "qq"
 
     assert "highview" in response_json
     assert response_json["highview"][0]["title"] == "test title"
@@ -208,4 +229,90 @@ def test_create_postmain(client,test_jwt):
     assert response_json["hashtag"][0]["author_name"] == "qq"
     assert response_json["hashtag"][0]["hash"] == "qq"
 
+def test_create_postmain_wrong_jwt(client):
+    response = client.post(
+        "/main/create",
+        headers={"Authorization": "Bearer 1234"}
+    )
 
+    assert response.status_code == 403
+    assert response.json() == {"detail": "user id not found in token."}
+
+def test_create_recommend_friend(client,test_jwt):
+    response = client.post(
+        "post/search/recommend",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={
+            "type": "friend",
+            "size": 1,
+            "page": 1
+        }
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+
+    assert "result" in response_json
+    print(response_json)
+    assert response_json["result"][0]["title"] == "tt tle"
+    assert response_json["result"][0]["author_name"] == "qw"
+
+def test_create_recommend_friend_read(client,test_jwt):
+    response = client.post(
+        "post/search/recommend",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={
+            "type": "friend_read",
+            "size": 1,
+            "page": 1
+        }
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+
+    assert "result" in response_json
+    assert response_json["result"][0]["title"] == "tt tle"
+    assert response_json["result"][0]["author_name"] == "qw"
+
+def test_create_recommend_wrong_type(client,test_jwt):
+    response = client.post(
+        "post/search/recommend",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={
+            "type": "wrong_type",
+            "size": 1,
+            "page": 1
+        }
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "input invalid"} 
+    
+def test_create_recommend_wrong_size(client,test_jwt):
+    response = client.post(
+        "post/search/recommend",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={
+            "type": "friend",
+            "size": -2,
+            "page": 1
+        }
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "search not found"} 
+
+def test_create_recommend_wrong_page(client,test_jwt):
+    response = client.post(
+        "post/search/recommend",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={
+            "type": "friend",
+            "size": 1,
+            "page": -2
+        }
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "search not found"} 

@@ -183,10 +183,10 @@ def test_delete_parent_badtoken(client):
     assert response.json() == {"detail": "user id not found in token."}
 
 # babyid가 이미 존재해야함
-# def test_create_pbconnect(client):
+# def test_create_pbconnect(client,test_jwt):
 #     response = client.post(
 #         "/parent/pbconnect",
-#         headers={"Authorization": f"Bearer {test_jwt}"},
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
 #         json={"baby_id": str(uuid4())}
 #     )
 #     assert response.status_code == 200
@@ -218,5 +218,15 @@ def test_create_parent_two(client,test_jwt):
     assert check_id == test_create_data["parent_id"]
 
     test_jwt["access_token"] = response_json["x-jwt"]["access_token"]
+
+def test_get_friends(client):
+    response = client.get(
+        "/parent/friends",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "parent" in response_json
+    assert response_json["parent"] == {}
 
 

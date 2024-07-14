@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 from fastapi import HTTPException
 
 from model.parent import ParentTable
@@ -7,7 +7,7 @@ from model.pbconnect import *
 from schemas.parent import *
 
 from db import get_db_session
-
+from error.exception.customerror import *
 
 class ParentService:
 
@@ -106,15 +106,13 @@ class ParentService:
                 status_code=400, detail="Failed to delete parent")
 
     # 이메일리스트를 입력 받아 해당 부모의 특정 정보 가져오기
-    def getFriends(self, emails: Optional[str]) -> GetFriendsByEmailOutput:
+    def getFriends(self, emails: Optional[List[str]]) -> dict:
         db = get_db_session()
         friends_dict = {}
         try:
-            if emails:
+            if emails is not None:
                 for email in emails:
-                    parent = db.query(ParentTable.email, ParentTable.name, ParentTable.nickname, ParentTable.description) \
-                        .filter(ParentTable.email == email) \
-                        .first()
+                    parent = db.query(ParentTable).filter(ParentTable.email == email).first()
                     if parent:
                         friends_dict[email] = {
                             'email': parent.email,

@@ -9,10 +9,11 @@ from schemas.parent import *
 from db import get_db_session
 from error.exception.customerror import *
 
+
 class ParentService:
 
     # 부모 생성
-    def createParent(self, createParentInput: CreateParentInput) :
+    def createParent(self, createParentInput: CreateParentInput):
         db = get_db_session()
         print(createParentInput)
         try:
@@ -47,25 +48,20 @@ class ParentService:
     # 부모 정보 조회
     def getParent(self, parent_id: str) -> Optional[Parent]:
         db = get_db_session()
-        try:
-            parent = db.query(ParentTable).filter(
-                ParentTable.parent_id == parent_id).first()
 
-            return parent
-        
-        except Exception as e:
-            print(e)
-            raise HTTPException(
-                status_code=400, detail="Failed to get parent")
+        parent = db.query(ParentTable).filter(
+            ParentTable.parent_id == parent_id).first()
+
+        return parent
 
     # 부모 정보 수정
-    def updateParent(self, parent_id: str, 
+    def updateParent(self, parent_id: str,
                      updateParentInput: UpdateParentInput) -> Optional[Parent]:
         db = get_db_session()
         try:
             parent = db.query(ParentTable).filter(
                 ParentTable.parent_id == parent_id).first()
-            
+
             if parent is None:
                 return False
 
@@ -77,21 +73,21 @@ class ParentService:
             db.refresh(parent)
 
             return parent
-        
+
         except Exception as e:
             db.rollback()
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to update parent")
-        
 
     # 부모 삭제
+
     def deleteParent(self, parent_id: str) -> bool:
         db = get_db_session()
         try:
             parent = db.query(ParentTable).filter(
                 ParentTable.parent_id == parent_id).first()
-            
+
             if parent is None:
                 return False
 
@@ -112,7 +108,8 @@ class ParentService:
         try:
             if emails is not None:
                 for email in emails:
-                    parent = db.query(ParentTable).filter(ParentTable.email == email).first()
+                    parent = db.query(ParentTable).filter(
+                        ParentTable.email == email).first()
                     if parent:
                         friends_dict[email] = {
                             'email': parent.email,
@@ -137,9 +134,8 @@ class ParentService:
     #         raise HTTPException(
     #             status_code=400, detail="Failed to get parent")
 
-
     # 다른 아기-부모 연결 생성
-    def create_pbconnect(self,  baby_id: str,parent_id: str) -> Optional[PBConnect]:
+    def create_pbconnect(self,  baby_id: str, parent_id: str) -> Optional[PBConnect]:
         db = get_db_session()
         try:
             pbconnect = PBConnectTable(

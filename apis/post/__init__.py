@@ -45,6 +45,9 @@ async def upload_photo(fileList: List[UploadFile],
     
     success = postService.uploadPhoto(fileList, post_id, parent_id)
 
+    if success is None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Failed to upload photo")
+
     return { 'success': success }
     
 

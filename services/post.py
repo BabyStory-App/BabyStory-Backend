@@ -19,60 +19,47 @@ from error.exception.customerror import *
 
 class PostService:
     # 게시물 생성
-    def createPost(self, parent_id: str,
-                   createPostInput: CreatePostInput) -> Post:
+    def createPost(self, parent_id: str, createPostInput: CreatePostInput) -> Post:
         
         """
         게시물 생성
-
         - input
             - parent_id (str): 부모 아이디
             - createPostInput (CreatePostInput): 게시물 생성 정보
-
         - output
             - post (Post): 게시물 딕셔너리 
         """
                      
         db = get_db_session()
 
-        try:
-            if createPostInput.reveal not in [0, 1, 2, 3]:
-                raise CustomException("Invalid reveal value")
-
-            # print(createPostInput)
-            post = PostTable(
-                parent_id=parent_id,
-                reveal=createPostInput.reveal,
-                title=createPostInput.title,
-                createTime=datetime.now(),
-                modifyTime=None,
-                deleteTime=None,
-                pHeart=0,
-                pScript=0,
-                pView=0,
-                pComment=0,
-                hashList=createPostInput.hashList if createPostInput.hashList else None
-            )
-
-            db.add(post)
-            db.commit()
-            db.refresh(post)
-
-            # content를 txt 파일로 저장
-            file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
-            with open(file_path, 'w', encoding='UTF-8') as f:
-                f.write(createPostInput.content)
-
-            return post
+        if createPostInput.reveal not in [0, 1, 2, 3]:
+            raise CustomException("Invalid reveal value")
         
-        except CustomException as e:
-            print("CustomException occurred:", e)  
+        # print(createPostInput)
+        post = PostTable(
+            parent_id=parent_id,
+            reveal=createPostInput.reveal,
+            title=createPostInput.title,
+            createTime=datetime.now(),
+            modifyTime=None,
+            deleteTime=None,
+            pHeart=0,
+            pScript=0,
+            pView=0,
+            pComment=0,
+            hashList=createPostInput.hashList if createPostInput.hashList else None
+        )
 
-        except Exception as e:
-            db.rollback()
-            print(e)
-            #raise Exception(e)
-            raise Exception("Failed to create post")
+        db.add(post)
+        db.commit()
+        db.refresh(post)
+
+        # content를 txt 파일로 저장
+        file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
+        with open(file_path, 'w', encoding='UTF-8') as f:
+            f.write(createPostInput.content)
+
+        return post
         
 
         
@@ -113,10 +100,7 @@ class PostService:
             return True
         
         except Exception as e:
-            print(e)
-            raise HTTPException(
-                status_code=400, detail="Failed to upload photo")
-            return False
+            raise (e)
         
         
 

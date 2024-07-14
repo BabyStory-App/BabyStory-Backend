@@ -7,6 +7,8 @@ from datetime import *
 from fastapi import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
 import pytest
+from utils.os import *
+from constants.path import *
 
 client = TestClient(router)
 
@@ -25,6 +27,11 @@ test_UpdatePostInput = {
     "title": "update title",
     "content": "update content",
     "hashList": "test,hash"
+}
+test_UploadPhoto = {
+    "fileList": [
+        "test1.png", "test2.png", "test3.png"
+    ]
 }
 
 
@@ -45,7 +52,9 @@ def test_create_post(client,test_jwt):
     for key in test_CreatePostInput:
         if key in response_json["post"]:
             assert response_json["post"][key] == test_CreatePostInput[key]
-    
+
+    # content 파일이 있는지 확인
+    assert create_file_exist(os.path.join(POST_CONTENT_DIR, str(response_json["post"]["post_id"]) + '.txt'))
     test_jwt["post_id"] = response_json["post"]["post_id"]
 
 # Create post test fail ( 잘못된 jwt )
@@ -63,6 +72,28 @@ async def test_createPost_fail():
         client.post("/post/create", json=test_CreatePostInput)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Invalid reveal value"
+
+
+
+""" upload post photo test """
+def test_upload_post_photo(client, test_jwt):
+    response = client.post(
+        "/post/upload/photo",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        files={"fileList": [open(os.path.join(TEST_ASSET_DIR, file), "rb") for file in test_UploadPhoto["fileList"]]},
+        data={"postid": test_jwt["post_id"]}
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "post" in response_json
+
+    # post 객체 확인
+    assert response_json["post_id"] == test_jwt["post_id"]
+
+    # photo 파일이 있는지 확인
+    for file in test_UploadPhoto["fileList"]:
+        file_type = file.split('.')[-1]
+        assert create_file_exist(os.path.join(POST_PHOTO_DIR, f"{response_json['post']['post_id']}.{file_type}"))
 
 
 
@@ -210,3 +241,4 @@ async def test_deletePost_fail():
         client.delete("/post/delete/{post_id}")
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to delete post"
+

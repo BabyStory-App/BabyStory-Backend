@@ -14,6 +14,8 @@ from schemas.post import *
 
 from db import get_db_session
 
+from error.exception.customerror import *
+
 
 class PostService:
     # 게시물 생성
@@ -22,31 +24,27 @@ class PostService:
         
         """
         게시물 생성
-        --input
-            - createPostInput.reveal: 게시물 공개 여부
-            - createPostInput.title: 게시물 제목
-            - createPostInput.createTime: 게시물 생성 시간
-            - createPostInput.pHeart: 게시물 하트 수
-            - createPostInput.pScript: 게시물 스크립트
-            - createPostInput.pView: 게시물 조회수
-            - createPostInput.pComment: 게시물 댓글 수
-            - createPostInput.hashList: 게시물 해시태그 리스트
-        --output
-            - Post: 게시물 딕셔너리
+
+        - input
+            - parent_id (str): 부모 아이디
+            - createPostInput (CreatePostInput): 게시물 생성 정보
+
+        - output
+            - post (Post): 게시물 딕셔너리 
         """
                      
         db = get_db_session()
 
         try:
             if createPostInput.reveal not in [0, 1, 2, 3]:
-                raise Exception("Invalid reveal value")
+                raise CustomException("Invalid reveal value")
 
             # print(createPostInput)
             post = PostTable(
                 parent_id=parent_id,
                 reveal=createPostInput.reveal,
                 title=createPostInput.title,
-                createTime=createPostInput.createTime,
+                createTime=datetime.now(),
                 modifyTime=None,
                 deleteTime=None,
                 pHeart=0,
@@ -67,11 +65,16 @@ class PostService:
 
             return post
         
+        except CustomException as e:
+            print("CustomException occurred:", e)  
+
         except Exception as e:
             db.rollback()
             print(e)
             #raise Exception(e)
             raise Exception("Failed to create post")
+        
+
         
     # 새로 생성된 post 사진 업로드
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
@@ -118,7 +121,7 @@ class PostService:
         
 
     # 모든 게시물 가져오기
-    def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
+    async def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
 
         """
         모든 게시물 가져오기
@@ -135,19 +138,17 @@ class PostService:
                 PostTable.parent_id == parent_id, 
                 PostTable.deleteTime == None).all()
 
-            if post is None:
-                return None
-
             return post
         
         except Exception as e:
             print(e)
             raise HTTPException(
-                status_code=400, detail="Failed to get post")
+                status_code=400, detail="Failed to get all post")
         
 
+
     # 하나의 게시물 가져오기
-    def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
+    async def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
         """
         하나의 게시물 가져오기
         --input
@@ -161,7 +162,7 @@ class PostService:
         try:
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
-                PostTable.post_id == post_id, 
+                 PostTable.post_id == post_id, 
                 PostTable.deleteTime == None).first()
 
             if post is None:
@@ -172,10 +173,12 @@ class PostService:
         except Exception as e:
             print(e)
             raise HTTPException(
-                status_code=400, detail="Failed to get post")
+                status_code=400, detail="Failed to get one post")
+        
+
         
     # 게시물 수정
-    def updatePost(self, 
+    async def updatePost(self, 
                    updatePostInput: UpdatePostInput, 
                    parent_id: str) -> Optional[Post]:
         
@@ -184,15 +187,18 @@ class PostService:
         --input
             - updatePostInput.post_id: 게시물 아이디
             - updatePostInput.title: 게시물 제목
-            - updatePostInput.post: 게시물 내용
-            - updatePostInput.modify_time: 게시물 수정 시간
-            - updatePostInput.hash: 게시물 해시태그 리스트
+            - updatePostInput.content: 게시물 내용
+            - updatePostInput.modifyTime: 게시물 수정 시간
+            - updatePostInput.hashList: 게시물 해시태그 리스트
         --output
             - Post: 게시물 딕셔너리
         """
         db = get_db_session()
 
         try:
+            if updatePostInput.reveal not in [0, 1, 2, 3]:
+                raise CustomException("Invalid reveal value")
+            
             post = db.query(PostTable).filter(
                 PostTable.parent_id == parent_id,
                 PostTable.post_id == updatePostInput.post_id,
@@ -201,22 +207,31 @@ class PostService:
             if post is None:
                 return None
             
-            for key in ['title', 'post', 'modify_time', 'hash']:
+            for key in ['reveal', 'title', 'hashList']:
                 setattr(post, key, getattr(updatePostInput, key))
+            setattr(post, 'modifyTime', datetime.now())
+
+            # content를 txt 파일로 저장
+            file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
+            with open(file_path, 'w', encoding='UTF-8') as f:
+                f.write(updatePostInput.content)
 
             db.add(post)
             db.commit()
             db.refresh(post)
 
             return post
+        
         except Exception as e:
             db.rollback()
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to update post")
         
+
+        
     # 게시물 삭제
-    def deletePost(self, 
+    async def deletePost(self, 
                    deletePostInput: DeletePostInput, 
                    parent_id: str) -> Optional[Post]:
         """
@@ -238,7 +253,7 @@ class PostService:
             if post is None:
                 return None
             
-            setattr(post, 'deleteTime', deletePostInput.deleteTime)
+            setattr(post, 'deleteTime', datetime.now())
             
             db.add(post)
             db.commit()

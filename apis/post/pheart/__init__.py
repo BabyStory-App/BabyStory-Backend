@@ -14,7 +14,7 @@ router = APIRouter(
 pheartService = PHeartService()
 
 # 하트 생성
-@router.post("/pheartCreate", dependencies=[Depends(JWTBearer())])
+@router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_heart(createPHeartInput: CreatePHeartInput, 
                         parent_id: str = Depends(JWTBearer()))-> PHeart:
     """
@@ -31,12 +31,12 @@ async def create_heart(createPHeartInput: CreatePHeartInput,
 
     if result is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="createheart not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pheart")
 
     return result
 
 # 하트 삭제
-@router.delete("/pheartDelete", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_heart(deletePHeartInput: DeletePHeartInput, 
                         parent_id: str = Depends(JWTBearer()))-> PHeart:
     """
@@ -53,6 +53,6 @@ async def delete_heart(deletePHeartInput: DeletePHeartInput,
 
     if result is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="deleteheart not found")
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pheart")
 
     return result

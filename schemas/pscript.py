@@ -5,7 +5,6 @@ from model.pscript import *
 
 class CreatePScriptInput(BaseModel):
     post_id: int
-    createTime: datetime = datetime.now()
 
 class CreatePScriptOutput(BaseModel):
     success: int

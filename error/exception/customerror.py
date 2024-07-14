@@ -5,6 +5,6 @@ class CustomException(Exception):
 
     def __str__(self):
         return self.message
-    
+
     def __repr__(self):
         return self.message

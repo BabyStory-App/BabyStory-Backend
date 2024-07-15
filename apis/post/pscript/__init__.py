@@ -24,7 +24,6 @@ async def create_pscript(createPScriptInput: CreatePScriptInput,
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pscript")
-    
     return result
 
 # 스크립트 삭제
@@ -40,5 +39,4 @@ async def delete_pscript(deletePScriptInput: DeletePScriptInput,
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pscript")
-    
     return result

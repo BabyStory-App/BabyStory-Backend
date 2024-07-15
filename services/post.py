@@ -32,6 +32,7 @@ class PostService:
                      
         db = get_db_session()
 
+        # 공개 범위 ( 0 ~ 3 ) 안의 값이 들어왔는지 확인합니다.
         if createPostInput.reveal not in [0, 1, 2, 3]:
             raise CustomException("Invalid reveal value")
         
@@ -54,7 +55,7 @@ class PostService:
         db.commit()
         db.refresh(post)
 
-        # content를 txt 파일로 저장
+        # content를 txt 파일로 저장합니다.
         file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
         with open(file_path, 'w', encoding='UTF-8') as f:
             f.write(createPostInput.content)

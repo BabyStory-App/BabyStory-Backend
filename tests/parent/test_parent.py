@@ -2,6 +2,11 @@ from typing import List, Optional
 from auth.auth_handler import decodeJWT,signJWT
 from uuid import uuid4
 
+from db import get_db_session
+from model.parent import ParentTable
+
+db = get_db_session()
+
 test_jwt_tmp = None
 
 test_create_data={
@@ -70,6 +75,22 @@ def test_create_parent_badtoken(client):
     assert response.status_code == 400
     assert response.json() == {"detail": "Failed to create parent"}
 
+# gender가 100인 경우
+def test_create_parent_badgender(client):
+    test_create_data2 = test_create_data.copy()
+    test_create_data2['parent_id'] = str(uuid4())
+    test_create_data2['email'] = str(uuid4())
+    test_create_data2['gender'] = 100
+    response = client.post(
+        "/parent",
+        json=test_create_data2
+    )
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Gender must be 0, 1, 2"}
+    # db에 저장되지 않았는지 확인
+    assert db.query(ParentTable).filter(
+        ParentTable.parent_id==test_create_data2['parent_id']).first() is None
+
 def test_get_parent(client,test_jwt):
     response = client.get(
         "/parent",
@@ -126,6 +147,23 @@ def test_update_parent_badtoken(client):
     assert response.status_code == 403
     assert response.json() == {"detail": "user id not found in token."}
 
+# gender를 문자열 100으로 수정한 경우
+def test_update_parent_badgender(client,test_jwt):
+    update_data2 = update_data.copy()
+    update_data2['gender'] = '100'
+    response = client.put(
+        "/parent",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=update_data2
+    )
+    
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Gender must be 0, 1, 2"}
+    # db에 적용되지 않았는지 확인
+    assert db.query(ParentTable).filter(
+        ParentTable.parent_id == update_data2['parent_id'],
+        ParentTable.gender == '100').first() is None
+
 
 def test_delete_parent(client,test_jwt):
     response = client.delete(
@@ -145,10 +183,10 @@ def test_delete_parent_badtoken(client):
     assert response.json() == {"detail": "user id not found in token."}
 
 # babyid가 이미 존재해야함
-# def test_create_pbconnect(client):
+# def test_create_pbconnect(client,test_jwt):
 #     response = client.post(
 #         "/parent/pbconnect",
-#         headers={"Authorization": f"Bearer {test_jwt}"},
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
 #         json={"baby_id": str(uuid4())}
 #     )
 #     assert response.status_code == 200
@@ -180,5 +218,15 @@ def test_create_parent_two(client,test_jwt):
     assert check_id == test_create_data["parent_id"]
 
     test_jwt["access_token"] = response_json["x-jwt"]["access_token"]
+
+def test_get_friends(client):
+    response = client.get(
+        "/parent/friends",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "parent" in response_json
+    assert response_json["parent"] == {}
 
 

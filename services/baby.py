@@ -24,6 +24,8 @@ class BabyService:
                 gender=createBabyInput.gender,
                 birthDate=createBabyInput.birthDate,
                 bloodType=createBabyInput.bloodType,
+                cm=createBabyInput.cm,
+                kg=createBabyInput.kg,
                 photoId=createBabyInput.photoId if createBabyInput.photoId else None
             )
 

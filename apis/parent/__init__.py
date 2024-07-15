@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Header
 from fastapi.responses import JSONResponse
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from typing import Union, Optional
 
 from auth.auth_handler import signJWT
@@ -9,6 +9,7 @@ from auth.auth_bearer import JWTBearer
 from services.parent import ParentService
 
 from schemas.parent import *
+from error.exception.customerror import *
 
 
 router = APIRouter(
@@ -22,12 +23,17 @@ parentService = ParentService()
 @router.post("/")
 def create_parent(createParentInput: CreateParentInput)-> CreateParentOutput:
 
+    if createParentInput.gender not in [0, 1, 2]:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Gender must be 0, 1, 2"
+        )
+
     parent = parentService.createParent(createParentInput)
 
     if parent is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
-
+    
     parent_data = {
         'parent_id': parent.parent_id,
         'password': parent.password,
@@ -56,7 +62,7 @@ async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOu
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    parent =  parentService.getParentByEmail(parent_id)
+    parent =  parentService.getParent(parent_id)
 
     if parent is None:
         raise HTTPException(
@@ -87,6 +93,12 @@ async def get_parent(parent_id: str = Depends(JWTBearer()))-> GetParentByEmailOu
 @router.put("/", dependencies=[Depends(JWTBearer())])
 async def update_parent(updateParentInput: UpdateParentInput,
                    parent_id: str = Depends(JWTBearer())) -> UpdateParentOutput:
+    
+    if updateParentInput.gender not in [0, 1, 2]:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Gender must be 0, 1, 2"
+        )
+    
     if parent_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
@@ -117,11 +129,20 @@ async def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOu
 
 # 이메일로 부모 목록 조회
 @router.get("/friends")
-async def get_friends(emails: Optional[str] = None):
+async def get_friends(emails: str = Header(None)):
 
     email_list = emails.split(',') if emails is not None else []
+    print(email_list)
+    try:
+        friends_dict = parentService.getFriends(email_list)
 
-    friends_dict = parentService.getFriends(email_list)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get friends")
 
     return friends_dict
 

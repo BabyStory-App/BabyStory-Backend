@@ -9,7 +9,6 @@ from schemas.post import *
 from error.exception.customerror import *
 
 
-
 router = APIRouter(
     prefix="/post",
     tags=["post"],
@@ -19,6 +18,8 @@ router = APIRouter(
 postService = PostService()
 
 # 게시물 생성
+
+
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_post(createPostInput: CreatePostInput,
                       parent_id: str = Depends(JWTBearer())) -> CreatePostOutput:
@@ -32,9 +33,8 @@ async def create_post(createPostInput: CreatePostInput,
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create post")
-    
-    return {'post': post}
 
+    return {'post': post}
 
 
 # 새로 생성된 post 사진 업로드
@@ -42,46 +42,44 @@ async def create_post(createPostInput: CreatePostInput,
 async def upload_photo(fileList: List[UploadFile],
                        post_id: int = Header(default=None),
                        parent_id: str = Depends(JWTBearer())) -> UploadPhotoOutput:
-    
+
     success = postService.uploadPhoto(fileList, post_id, parent_id)
 
     if success is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Failed to upload photo")
 
     return { 'success': success }
-    
 
 
 # 모든 게시물 가져오기
 @router.get("/", dependencies=[Depends(JWTBearer())])
 async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
-    
+
     # 게시물 정보 가져오기
     post = await postService.getAllPost(parent_id)
-    
-    return post
 
+    return post
 
 
 # 하나의 게시물 가져오기
 @router.get("/{post_id}", dependencies=[Depends(JWTBearer())])
 async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Post]:
-    
+
     # 게시물 정보 가져오기
     post = await postService.getPost(post_id, parent_id)
 
     if post is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
-    
-    return post
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="post not found")
 
+    return post
 
 
 # 게시물 수정
 @router.put("/update/{post_id}", dependencies=[Depends(JWTBearer())])
 async def update_post(updatePostInput: UpdatePostInput,
-                parent_id:str = Depends(JWTBearer())) -> UpdatePostOutput:
-    
+                      parent_id: str = Depends(JWTBearer())) -> UpdatePostOutput:
+
     try:
         post = await postService.updatePost(updatePostInput, parent_id)
     except CustomException as error:
@@ -92,19 +90,19 @@ async def update_post(updatePostInput: UpdatePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to update post")
 
-    return{ "success": 200 if post else 403, "post": post }
-
+    return {"success": 200 if post else 403, "post": post}
 
 
 # 게시물 삭제
 @router.put("/delete/{post_id}", dependencies=[Depends(JWTBearer())])
 async def delete_post(deletePostInput: DeletePostInput,
-                parent_id:str = Depends(JWTBearer()))-> DeletePostOutput:
-    
+                      parent_id: str = Depends(JWTBearer())) -> DeletePostOutput:
+
     # 게시물 삭제
     success = await postService.deletePost(deletePostInput, parent_id)
-   
+
     if success is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="post not found")
-    
-    return{ "success": 200 if success else 403, "post": success}
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="post not found")
+
+    return {"success": 200 if success else 403, "post": success}

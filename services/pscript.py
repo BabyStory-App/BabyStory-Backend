@@ -55,8 +55,9 @@ class PScriptService:
             PScriptTable.parent_id == parent_id
         ).first()
 
+        # pscript가 없을 경우 CustomException을 발생시킵니다.
         if pscript is None:
-            return None
+            raise CustomException("PScript not found")
 
         db.delete(pscript)
         db.commit()

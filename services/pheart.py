@@ -55,7 +55,7 @@ class PHeartService:
 
         # pheart가 없을 경우 CustomException을 발생시킵니다.
         if pheart is None:
-            raise CustomException("Invalid pheart")
+            raise CustomException("PHeart not found")
 
         db.delete(pheart)
         db.commit()

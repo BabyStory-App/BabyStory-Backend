@@ -2,23 +2,18 @@ from fastapi import HTTPException, UploadFile
 from typing import Optional, List
 from sqlalchemy.orm import joinedload
 from constants.path import *
-
 import os
 import shutil
 from uuid import uuid4
-from schemas.post import *
 
+from schemas.post import *
 from model.post import Post
-
 from schemas.post import *
-
 from db import get_db_session
-
 from error.exception.customerror import *
 
 
 class PostService:
-
 
     # 게시물 생성
     def createPost(self, parent_id: str, createPostInput: CreatePostInput) -> Post:

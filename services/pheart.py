@@ -2,11 +2,11 @@ from fastapi import HTTPException
 from typing import Optional, List, Set
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
+from db import get_db_session
 
 from model.pheart import PHeartTable
 from schemas.pheart import *
-
-from db import get_db_session
+from error.exception.customerror import *
 
 class PHeartService:
 
@@ -21,22 +21,20 @@ class PHeartService:
             - PHeart: 하트 딕셔너리
         """
         db = get_db_session()
-        try:
-            pheart = PHeartTable(
-                post_id=createPHeartInput.post_id,
-                parent_id = parent_id,
-                createTime = datetime.now()
-            )
 
-            db.add(pheart)
-            db.commit()
-            db.refresh(pheart)
+        pheart = PHeartTable(
+            post_id=createPHeartInput.post_id,
+            parent_id = parent_id,
+            createTime = datetime.now()
+        )
 
-            return pheart
-        
-        except Exception as e:
-            db.rollback()
-            raise (e)
+        db.add(pheart)
+        db.commit()
+        db.refresh(pheart)
+
+        return pheart
+
+
         
     # 하트 삭제
     def deletePHeart(self, deletePHeartInput: DeletePHeartInput, parent_id: str) -> Optional[PHeart]:
@@ -49,20 +47,17 @@ class PHeartService:
             - PHeart: 하트 딕셔너리
         """
         db = get_db_session()
-        try:
-            pheart = db.query(PHeartTable).filter(
-                PHeartTable.post_id == deletePHeartInput.post_id,
-                PHeartTable.parent_id == parent_id
-            ).first()
 
-            if pheart is None:
-                return None
+        pheart = db.query(PHeartTable).filter(
+            PHeartTable.post_id == deletePHeartInput.post_id,
+            PHeartTable.parent_id == parent_id
+        ).first()
 
-            db.delete(pheart)
-            db.commit()
+        # pheart가 없을 경우 CustomException을 발생시킵니다.
+        if pheart is None:
+            raise CustomException("Invalid pheart")
 
-            return pheart
+        db.delete(pheart)
+        db.commit()
 
-        except Exception as e:
-            db.rollback()
-            raise (e)
+        return pheart

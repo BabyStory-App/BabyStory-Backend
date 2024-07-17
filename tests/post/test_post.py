@@ -57,6 +57,9 @@ def test_create_post(client, test_jwt):
     # content 파일이 있는지 확인
     assert create_file_exist(os.path.join(POST_CONTENT_DIR, str(response_json["post"]["post_id"]) + '.txt'))
 
+    # post_id를 test_jwt에 저장하여 다른곳 에서도 사용 가능하게 합니다.
+    test_jwt["post_id"] = response_json["post"]["post_id"]
+
 
 # Create post test fail ( 잘못된 jwt )
 async def test_createPost_fail():

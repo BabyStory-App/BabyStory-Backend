@@ -29,9 +29,7 @@ test_UpdatePostInput = {
     "hashList": "test,hash"
 }
 test_UploadPhoto = {
-    "fileList": [
-        "test1.png", "test2.png", "test3.png"
-    ]
+    "fileList": ["test1.png", "test2.png", "test3.png"]
 }
 
 
@@ -52,6 +50,8 @@ def test_create_post(client, test_jwt):
     # post 객체 확인
     for key in test_CreatePostInput:
         if key in response_json["post"]:
+            if key == "createTime":
+                assert response_json["post"]["createTime"][:10] == test_CreatePostInput["createTime"][:10]
             assert response_json["post"][key] == test_CreatePostInput[key]
 
     # content 파일이 있는지 확인
@@ -83,7 +83,7 @@ async def test_createPost_fail():
 """ upload post photo test """
 def test_upload_post_photo(client, test_jwt):
     response = client.post(
-        "/post/upload/photo",
+        "/post/photoUpload",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
         files={"fileList": [open(os.path.join(TEST_ASSET_DIR, file), "rb") for file in test_UploadPhoto["fileList"]]},
         data={"postid": test_jwt["post_id"]}

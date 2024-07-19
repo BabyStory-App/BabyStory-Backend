@@ -1,10 +1,10 @@
 from fastapi import APIRouter, UploadFile, HTTPException, Depends, File, Header
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 
 from services.pcomment import PCommentService
-
 from schemas.pcomment import *
+from error.exception.customerror import *
 
 router = APIRouter(
     prefix="/pcomment",
@@ -14,17 +14,18 @@ router = APIRouter(
 
 pcommentService = PCommentService()
 
+
+
 # 댓글 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pcomment(createCommentInput: CreatePCommentInput,
                 parent_id: str = Depends(JWTBearer()))-> CreatePCommentOutput:
-    
-    pcomment = pcommentService.createPComment(parent_id, createCommentInput)
-
-    if pcomment is None:
+    try:
+        pcomment = pcommentService.createPComment(parent_id, createCommentInput)
+    except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pcomment")
-    
     return { 'pcomment': pcomment }
 
 
@@ -32,14 +33,16 @@ async def create_pcomment(createCommentInput: CreatePCommentInput,
 # 모든 댓글 가져오기
 @router.get("/all", dependencies=[Depends(JWTBearer())])
 async def get_all_comment(post_id: int) -> List[PComment]:
-
-    # 게시물 아이디가 없으면 에러
-    if post_id == None:
+    try:
+        comment = pcommentService.getAllPComment(post_id)
+    except CustomException as e:
+        print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid post_id")
-    
-    comment = pcommentService.getAllPComment(post_id)
-    
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all comment")
     return comment
 
 
@@ -47,15 +50,17 @@ async def get_all_comment(post_id: int) -> List[PComment]:
 # 댓글에 대댓글이 있는 경우 대댓글 가져오기
 @router.get("/reply", dependencies=[Depends(JWTBearer())])
 async def get_reply_comment(comment_id: int) -> List[PComment]:
-    
-        # 댓글 아이디가 없으면 에러
-        if comment_id == None:
-            raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail="Invalid comment_id")
-        
+    try:
         comment = pcommentService.getReplyPComment(comment_id)
-        
-        return comment
+    except CustomException as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all reply comment")
+    return comment
 
 
 
@@ -63,18 +68,16 @@ async def get_reply_comment(comment_id: int) -> List[PComment]:
 @router.put("/update", dependencies=[Depends(JWTBearer())])
 async def update_comment(updatePCommentInput: UpdatePCommentInput,
                 parent_id: str = Depends(JWTBearer())) -> UpdatePCommentOutput:
-    
-    # 부모 아이디가 없으면 에러
-    if parent_id == None:
+    try:
+        pcomment = await pcommentService.updatePComment(updatePCommentInput, parent_id)
+    except CustomException as e:
+        print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
-    
-    pcomment = await pcommentService.updatePComment(updatePCommentInput, parent_id)
-
-    if pcomment is None:
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
+    except Exception as e:
+        print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
-    
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to update comment")
     return { "success": 200 if pcomment else 403, 'pcomment': pcomment }
 
 
@@ -83,16 +86,14 @@ async def update_comment(updatePCommentInput: UpdatePCommentInput,
 @router.put("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_comment(deleteCommentInput: DeletePCommentInput,
                 parent_id: str = Depends(JWTBearer())) -> DeletePCommentOutput:
-    
-    # 부모 아이디가 없으면 에러
-    if parent_id == None:
+    try:
+        pcomment = await pcommentService.deletePComment(deleteCommentInput, parent_id)
+    except CustomException as e:
+        print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
-    
-    pcomment = await pcommentService.deletePComment(deleteCommentInput, parent_id)
-
-    if pcomment is None:
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
+    except Exception as e:
+        print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Comment not found")
-    
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete comment")
     return { "success": 200 if pcomment else 403, 'pcomment': pcomment }

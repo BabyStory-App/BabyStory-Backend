@@ -395,5 +395,4 @@ class PostMainService:
                 # 'desc': post.content[:100],
                 'hash': post.hashList
             })
-
         return banners

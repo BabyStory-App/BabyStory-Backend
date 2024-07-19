@@ -29,7 +29,7 @@ class Parent(BaseModel):
     parent_id: str
     password: str
     email: str
-    name: str
+    name: Optional[str]
     nickname: str
     gender: Optional[int]
     signInMethod: str
@@ -55,7 +55,7 @@ class ParentTable(DB_Base):
     parent_id = Column(String(255), primary_key=True, nullable=False)
     password = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False, unique=True)
-    name = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=True)
     nickname = Column(String(255), nullable=False)
     gender = Column(Integer, nullable=True)
     signInMethod = Column(String(50), nullable=False)

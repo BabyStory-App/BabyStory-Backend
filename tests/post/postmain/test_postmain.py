@@ -4,11 +4,20 @@ from uuid import uuid4
 from datetime import datetime, timedelta
 
 test_friend_jwt = None
+test_neighbor_jwt = None
 # 친구 생성 json
 test_friend_data = {
     "parent_id": str(uuid4()),
     "password": "qw",
     "email": str(uuid4()),
+    "nickname": "qw",
+    "signInMethod": "qw",
+    "emailVerified": 1
+}
+# 친구 수정 json
+test_friend_data_update = {
+    "password": "qw",
+    "email": test_friend_data['email'],
     "name": "qw",
     "nickname": "qw",
     "gender": 0,
@@ -25,17 +34,26 @@ test_neighbor_data = {
     "parent_id": str(uuid4()),
     "password": "ww",
     "email": str(uuid4()),
-    "name": "ww",
     "nickname": "ww",
-    "gender": 0,
     "signInMethod": "ww",
+    "emailVerified": 1
+}
+# 이웃유저 수정 json
+test_neighbor_data_update = {
+    "password": "qw",
+    "email": test_neighbor_data['email'],
+    "name": "qw",
+    "nickname": "qw",
+    "gender": 0,
+    "signInMethod": "qw",
     "emailVerified": 1,
-    "photoId": "ww",
-    "description": "ww",
+    "photoId": "qw",
+    "description": "qw",
     "mainAddr": "qq",
-    "subAddr": "ww",
+    "subAddr": "qw",
     "hashList": "qw,string"
 }
+
 # 친구 아이디 json
 json_friend = {
     "friend": test_friend_data['parent_id']
@@ -48,6 +66,7 @@ json_user = {
 # 게시물 생성 시간
 test_time = (datetime.now() - timedelta(days=1)
              ).replace(microsecond=0).isoformat()
+
 # 게시물 생성 json
 test_CreatePostInput = {
     "reveal": 1,
@@ -58,7 +77,7 @@ test_CreatePostInput = {
 }
 # 친구 게시물 생성 json
 test_CreatePostInput_friend = {
-    "reveal": 0,
+    "reveal": 1,
     "title": "tt tle",
     "content": "tt post",
     "createTime": test_time,
@@ -85,14 +104,49 @@ def test_create_friend(client):
     global test_friend_jwt
     test_friend_jwt = jwt
 
+
+def test_update_friend(client):
+    response = client.put(
+        "/parent",
+        headers={"Authorization": f"Bearer {test_friend_jwt}"},
+        json=test_friend_data_update
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["success"] == 200
+    assert "parent" in response_json
+
+    assert response_json["parent"]["mainAddr"] == test_friend_data_update["mainAddr"]
+
 # 이웃유저생성
 
 
 def test_create_neighbor(client):
-    client.post(
+    response = client.post(
         "/parent",
         json=test_neighbor_data
     )
+
+    assert response.status_code == 201
+    jwt = response.json()["x-jwt"]['access_token']
+
+    global test_neighbor_jwt
+    test_neighbor_jwt = jwt
+
+
+def test_update_neighbor(client):
+    response = client.put(
+        "/parent",
+        headers={
+            "Authorization": f"Bearer {test_neighbor_jwt}"},
+        json=test_neighbor_data_update
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["success"] == 200
+    assert "parent" in response_json
+
+    assert response_json["parent"]["mainAddr"] == test_neighbor_data_update["mainAddr"]
 
 # 유저가 친구를 등록
 
@@ -177,7 +231,6 @@ def test_create_post(client, test_jwt):
     # post 객체 확인
     assert response_json["post"]["reveal"] == test_CreatePostInput["reveal"]
     assert response_json["post"]["title"] == test_CreatePostInput["title"]
-    assert response_json["post"]["createTime"] == test_CreatePostInput["createTime"]
     assert response_json["post"]["hashList"] == test_CreatePostInput["hashList"]
 
 # 친구 게시물 생성
@@ -199,7 +252,6 @@ def test_create_post_friend(client):
     # post 객체 확인
     assert response_json["post"]["reveal"] == test_CreatePostInput_friend["reveal"]
     assert response_json["post"]["title"] == test_CreatePostInput_friend["title"]
-    assert response_json["post"]["createTime"] == test_CreatePostInput_friend["createTime"]
     assert response_json["post"]["hashList"] == test_CreatePostInput_friend["hashList"]
 
 # 메인페이지 생성
@@ -211,13 +263,14 @@ def test_create_postmain(client, test_jwt):
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
     )
 
-#     assert "friend" in response_json
-#     assert response_json["friend"][0]["title"] == "tt tle"
-#     assert response_json["friend"][0]["author_name"] == "qw"
+    assert response.status_code == 200
+    response_json = response.json()
 
-    assert "banner" in response_json
-    assert response_json["banner"][0]["title"] == "test title"
-    assert response_json["banner"][0]["author_name"] == "qq"
+    # create time을 전날로 설정 후에 테스트했었는데 service에서 create time을 현재
+    # 시간으로 강제 설정했기 때문에 코드 사용 불가
+    # assert "banner" in response_json
+    # assert response_json["banner"][0]["title"] == "test title"
+    # assert response_json["banner"][0]["author_name"] == "qq"
 
     assert "friend" in response_json
     assert response_json["friend"][0]["title"] == "tt tle"
@@ -228,22 +281,22 @@ def test_create_postmain(client, test_jwt):
     assert response_json["friend_read"][0]["author_name"] == "qw"
 
     assert "neighbor" in response_json
-    assert response_json["neighbor"][0]["name"] == "ww"
+    assert response_json["neighbor"][0]["name"] == "qw"
     assert response_json["neighbor"][0]["mainAddr"] == "qq"
-    assert response_json["neighbor"][0]["desc"] == "ww"
+    assert response_json["neighbor"][0]["desc"] == "qw"
 
     assert "neighbor_post" in response_json
-    # assert response_json["neighbor_post"][0]["title"] == "tt title"
-    # assert response_json["neighbor_post"][0]["author_name"] == "qq"
+    assert response_json["neighbor_post"][0]["title"] == "test title"
+    assert response_json["neighbor_post"][0]["author_name"] == "qw"
 
     assert "highview" in response_json
     assert response_json["highview"][0]["title"] == "test title"
-    assert response_json["highview"][0]["author_name"] == "qq"
+    assert response_json["highview"][0]["author_name"] == "qw"
 
     assert "hashtag" in response_json
-    assert response_json["hashtag"][0]["title"] == "test title"
-    assert response_json["hashtag"][0]["author_name"] == "qq"
-    assert response_json["hashtag"][0]["hash"] == "qq"
+    assert response_json["hashtag"][0]["title"] == "tt tle"
+    assert response_json["hashtag"][0]["author_name"] == "qw"
+    assert response_json["hashtag"][0]["hash"] == "qw"
 
 
 def test_create_postmain_wrong_jwt(client):
@@ -307,7 +360,7 @@ def test_create_recommend_wrong_type(client, test_jwt):
     )
 
     assert response.status_code == 400
-    assert response.json() == {"detail": "input invalid"}
+    assert response.json() == {"detail": "recommend not found"}
 
 
 def test_create_recommend_wrong_size(client, test_jwt):
@@ -321,8 +374,8 @@ def test_create_recommend_wrong_size(client, test_jwt):
         }
     )
 
-    assert response.status_code == 400
-    assert response.json() == {"detail": "search not found"}
+    assert response.status_code == 406
+    assert response.json() == {"detail": "size must be -1 or greater than 0"}
 
 
 def test_create_recommend_wrong_page(client, test_jwt):
@@ -336,5 +389,5 @@ def test_create_recommend_wrong_page(client, test_jwt):
         }
     )
 
-    assert response.status_code == 400
-    assert response.json() == {"detail": "search not found"}
+    assert response.status_code == 406
+    assert response.json() == {"detail": "page must be -1 or greater than 0"}

@@ -90,8 +90,8 @@ def test_create_parent_badtoken(client):
         "/parent",
         json=test_create_data
     )
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Failed to create parent"}
+    assert response.status_code == 406
+    assert response.json() == {"detail": "parent_id already exists"}
 
 
 def test_get_parent(client, test_jwt):

@@ -82,23 +82,25 @@ async def test_createPost_fail():
 
 """ upload post photo test """
 def test_upload_post_photo(client, test_jwt):
+    # 파일을 열기 전에 경로가 유효한지 확인
+    files = [("fileList", (file, open(os.path.join(TEST_ASSET_DIR, file), "rb")))
+             for file in test_UploadPhoto["fileList"]]
+
     response = client.post(
         "/post/photoUpload",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        files={"fileList": [open(os.path.join(TEST_ASSET_DIR, file), "rb") for file in test_UploadPhoto["fileList"]]},
-        data={"postid": test_jwt["post_id"]}
+        headers={
+            "Authorization": f"Bearer {test_jwt['access_token']}"},
+        files=files,
+        data={"post_id": str(test_jwt["post_id"])}
     )
     assert response.status_code == 200
     response_json = response.json()
-    assert "post" in response_json
+    assert response_json["success"] == True
 
-    # post 객체 확인
-    assert response_json["post_id"] == test_jwt["post_id"]
-
-    # photo 파일이 있는지 확인
-    for file in test_UploadPhoto["fileList"]:
-        file_type = file.split('.')[-1]
-        assert create_file_exist(os.path.join(POST_PHOTO_DIR, f"{response_json['post']['post_id']}.{file_type}"))
+    for i in range(len(test_UploadPhoto["fileList"])):
+        file_type = test_UploadPhoto["fileList"][i].split('.')[-1]
+        assert create_file_exist(os.path.join(
+            POST_PHOTO_DIR, str(test_jwt['post_id']), f"{test_jwt['post_id']}_{i+1}.{file_type}"))
 
 
 

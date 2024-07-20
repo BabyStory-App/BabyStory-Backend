@@ -1,12 +1,11 @@
-from fastapi import APIRouter, UploadFile, HTTPException, Depends, File, Header
+from fastapi import APIRouter, UploadFile, HTTPException, Depends, File, Header, Form
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 
 from services.post import PostService
-
 from schemas.post import *
-
 from error.exception.customerror import *
+
 
 
 router = APIRouter(
@@ -39,8 +38,8 @@ async def create_post(createPostInput: CreatePostInput,
 # 새로 생성된 post 사진 업로드
 @router.post("/photoUpload", dependencies=[Depends(JWTBearer())])
 async def upload_post_photo(fileList: List[UploadFile],
-                       post_id: int = Header(default=None),
-                       parent_id: str = Depends(JWTBearer())) -> UploadPhotoOutput:
+                            post_id: int = Form(...),
+                            parent_id: str = Depends(JWTBearer())) -> UploadPhotoOutput:
     try:
         success = postService.uploadPhoto(fileList, post_id, parent_id)
     except CustomException as error:
@@ -50,7 +49,7 @@ async def upload_post_photo(fileList: List[UploadFile],
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to upload photo")
-    return { 'success': success }
+    return {'success': success}
 
 
 

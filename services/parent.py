@@ -8,29 +8,56 @@ from schemas.parent import *
 
 from db import get_db_session
 from error.exception.customerror import *
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 
 
 class ParentService:
 
     # 부모 생성
     def createParent(self, createParentInput: CreateParentInput):
+        '''
+        부모 생성
+        --input
+            - createParentInput.parent_id: 부모 아이디
+            - createParentInput.email: 이메일
+            - createParentInput.password: 비밀번호
+            - createParentInput.nickname: 닉네임
+            - createParentInput.signInMethod: 로그인 방식
+            - createParentInput.emailVerified: 이메일 인증 여부
+        --output
+            - parent: 부모 정보
+        '''
         db = get_db_session()
-        print(createParentInput)
+
+        # 부모 아이디 중복 확인
+        error = db.query(ParentTable).filter(
+            ParentTable.parent_id == createParentInput.parent_id).first()
+
+        if error:
+            raise CustomException("parent_id already exists")
+
+        # 이메일 중복 확인
+        error = db.query(ParentTable).filter(
+            ParentTable.email == createParentInput.email).first()
+
+        if error:
+            raise CustomException("email already exists")
+
         try:
             parent = ParentTable(
                 parent_id=createParentInput.parent_id,
                 password=createParentInput.password,
                 email=createParentInput.email,
-                name=createParentInput.name,
+                name=None,
                 nickname=createParentInput.nickname,
-                gender=createParentInput.gender,
+                gender=None,
                 signInMethod=createParentInput.signInMethod,
                 emailVerified=createParentInput.emailVerified,
-                photoId=createParentInput.photoId if createParentInput.photoId else None,
-                description=createParentInput.description if createParentInput.description else None,
-                mainAddr=createParentInput.mainAddr if createParentInput.mainAddr else None,
-                subAddr=createParentInput.subAddr if createParentInput.subAddr else None,
-                hashList=createParentInput.hashList if createParentInput.hashList else None
+                photoId=None,
+                description=None,
+                mainAddr=None,
+                subAddr=None,
+                hashList=None
             )
 
             db.add(parent)
@@ -47,6 +74,13 @@ class ParentService:
 
     # 부모 정보 조회
     def getParent(self, parent_id: str) -> Optional[Parent]:
+        '''
+        부모 정보 조회
+        --input
+            - parent_id: 부모 아이디
+        --output
+            - parent: 부모 정보
+        '''
         db = get_db_session()
 
         parent = db.query(ParentTable).filter(
@@ -57,6 +91,26 @@ class ParentService:
     # 부모 정보 수정
     def updateParent(self, parent_id: str,
                      updateParentInput: UpdateParentInput) -> Optional[Parent]:
+        '''
+        부모 정보 수정
+        --input\
+            - parent_id: 부모 아이디
+            - updateParentInput.password: 비밀번호
+            - updateParentInput.email: 이메일
+            - updateParentInput.name: 이름
+            - updateParentInput.nickname: 닉네임
+            - updateParentInput.gender: 성별 (0: 남성, 1: 여성, 2: 기타)
+            - updateParentInput.signInMethod: 로그인 방식
+            - updateParentInput.emailVerified: 이메일 인증 여부
+            - updateParentInput.photoId: 사진 아이디
+            - updateParentInput.description: 설명
+            - updateParentInput.mainAddr: 주소
+            - updateParentInput.subAddr: 상세 주소
+            - updateParentInput.hashList: 해시 리스트
+        --output
+            - parent: 부모 정보
+        '''
+
         db = get_db_session()
         try:
             parent = db.query(ParentTable).filter(
@@ -83,6 +137,13 @@ class ParentService:
     # 부모 삭제
 
     def deleteParent(self, parent_id: str) -> bool:
+        '''
+        부모 삭제
+        --input
+            - parent_id: 부모 아이디
+        --output
+            - bool 성공 여부
+        '''
         db = get_db_session()
         try:
             parent = db.query(ParentTable).filter(
@@ -103,6 +164,13 @@ class ParentService:
 
     # 이메일리스트를 입력 받아 해당 부모의 특정 정보 가져오기
     def getFriends(self, emails: Optional[List[str]]) -> dict:
+        '''
+        이메일로 부모의 대략적인 정보 조회
+        --input
+            - emails: 이메일 (각 이메일을 ,로 구분하는 문자열)
+        --output
+            - friends_dict: 부모 정보
+        '''
         db = get_db_session()
         friends_dict = {}
         try:
@@ -136,6 +204,14 @@ class ParentService:
 
     # 다른 아기-부모 연결 생성
     def create_pbconnect(self,  baby_id: str, parent_id: str) -> Optional[PBConnect]:
+        '''
+        부모에게 다른 아기 연결 요청 (부부끼리 아기를 공유할 수 있음)
+        --input
+            - baby_id: 아기 아이디
+            - parent_id: 부모 아이디
+        --output
+            - pbconnect: 부모-아기 연결 정보
+        '''
         db = get_db_session()
         try:
             pbconnect = PBConnectTable(
@@ -156,3 +232,32 @@ class ParentService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to create pbconnect")
+
+    # 부모 로그인
+    def createLogin(self, createLoginInput: CreateLoginInput) -> Optional[Parent]:
+        '''
+        부모 로그인
+        --input
+            - createLoginInput.email: 이메일
+            - createLoginInput.password: 비밀번호
+        --output
+            - parent: 부모 정보
+        '''
+        db = get_db_session()
+
+        # 이메일이 존재하지 않으면 에러
+        parent = db.query(ParentTable).filter(
+            ParentTable.email == createLoginInput.email).first()
+
+        if parent is None:
+            raise CustomException("Email not found")
+
+        # 패스워드가 일치하지 않으면 에러
+        parent = db.query(ParentTable).filter(
+            ParentTable.email == createLoginInput.email,
+            ParentTable.password == createLoginInput.password).first()
+
+        if parent is None:
+            raise CustomException("wrong password")
+
+        return parent

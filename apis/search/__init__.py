@@ -19,8 +19,10 @@ searchService = SearchService()
 postMainService = PostMainService()
 
 # 추천 페이지 생성
+
+
 @router.post("/recommend", dependencies=[Depends(JWTBearer())])
-async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInput, parent_id: str = Depends(JWTBearer())):
+async def create_recommend(createSearchRecommendInput: CreateSearchRecommendInput, parent_id: str = Depends(JWTBearer())):
     """
     추천 페이지 생성
     --input
@@ -50,49 +52,59 @@ async def create_recommend( createSearchRecommendInput: CreateSearchRecommendInp
     if createSearchRecommendInput.page is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid page")
-    
-    # 짝꿍이 쓴 게시물
-    if createSearchRecommendInput.type == 'friend':
-        result = postMainService.createPostMainFriend(
-            CreatePostMainInput(parent_id=parent_id,
-                                size=createSearchRecommendInput.size,
-                                page=createSearchRecommendInput.page
-                                ))
 
-        if result is None:
-            raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail="createpostmainfriend not found")
+    try:
 
-    # 친구가 쓴 게시물
-    elif createSearchRecommendInput.type == 'friend_read':
-        result = postMainService.createPostMainFriendRead(
-            CreatePostMainInput(parent_id=parent_id,
-                                size=createSearchRecommendInput.size,
-                                page=createSearchRecommendInput.page
-                                ))
-        if result is None:
+        # 짝꿍이 쓴 게시물
+        if createSearchRecommendInput.type == 'friend':
+            result = postMainService.createPostMainFriend(
+                CreatePostMainInput(parent_id=parent_id,
+                                    size=createSearchRecommendInput.size,
+                                    page=createSearchRecommendInput.page
+                                    ))
+
+            if result is None:
+                raise HTTPException(
+                    status_code=HTTP_400_BAD_REQUEST, detail="createpostmainfriend not found")
+
+        # 친구가 쓴 게시물
+        elif createSearchRecommendInput.type == 'friend_read':
+            result = postMainService.createPostMainFriendRead(
+                CreatePostMainInput(parent_id=parent_id,
+                                    size=createSearchRecommendInput.size,
+                                    page=createSearchRecommendInput.page
+                                    ))
+            if result is None:
+                raise HTTPException(
+                    status_code=HTTP_400_BAD_REQUEST, detail="createpostmainfriendread not found")
+
+        # 이웃들이 쓴 게시물
+        elif createSearchRecommendInput.type == 'neighbor':
+            result = postMainService.createPostMainNeighbor(
+                CreatePostMainInput(parent_id=parent_id,
+                                    size=createSearchRecommendInput.size,
+                                    page=createSearchRecommendInput.page
+                                    ))
+            if result is None:
+                raise HTTPException(
+                    status_code=HTTP_400_BAD_REQUEST, detail="createpostmainneighbor not found")
+
+        else:
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail="createpostmainfriendread not found")
-                
-    # 이웃들이 쓴 게시물
-    elif createSearchRecommendInput.type == 'neighbor':
-        result = postMainService.createPostMainNeighbor(
-            CreatePostMainInput(parent_id=parent_id,
-                                size=createSearchRecommendInput.size,
-                                page=createSearchRecommendInput.page
-                                ))
-        if result is None:
-            raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail="createpostmainneighbor not found")
-        
-    else:
+                status_code=HTTP_400_BAD_REQUEST, detail="input invalid")
+
+    except CustomException as e:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="input invalid")
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=e.message)
+
+    except Exception as e:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="recommend not found")
 
     # 결과값 리턴
-    return {    
-        "result" : result
-        }
+    return {
+        "result": result
+    }
 
 
 # 검색결과 페이지 생성
@@ -133,15 +145,15 @@ async def create_result(createSearchInput: CreateSearchInput, parent_id: str = D
         result = searchService.createSearch(createSearchInput)
 
     except CustomException as e:
-        raise HTTPException(status_code=HTTP_406_NOT_ACCEPTABLE, detail=e.message)
-    
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=e.message)
+
     except Exception as e:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="search not found")
-    
-    
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="search not found")
 
     # 검색어와 결과값 리턴
-    return {    
-        "search" : createSearchInput.search,
-        "result" : result
-        }
+    return {
+        "search": createSearchInput.search,
+        "result": result
+    }

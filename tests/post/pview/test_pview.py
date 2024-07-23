@@ -22,7 +22,6 @@ test_DeletePViewInput = {
 }
 
 
-
 """ Create post view test """
 def test_create_pview(client, test_jwt):
     response = client.post(

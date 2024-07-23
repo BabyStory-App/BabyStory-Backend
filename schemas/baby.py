@@ -9,9 +9,11 @@ class CreateBabyInput(BaseModel):
     baby_id: str
     obn: str
     name: str
-    gender: str
+    gender: int
     birthDate: datetime
     bloodType: str
+    cm: float
+    kg: float
     photoId: Optional[str]
 
 
@@ -25,9 +27,11 @@ class UpdateBabyInput(BaseModel):
     baby_id: str
     obn: str
     name: str
-    gender: str
+    gender: int
     birthDate: datetime
     bloodType: str
+    cm: float
+    kg: float
     photoId: Optional[str]
 
 

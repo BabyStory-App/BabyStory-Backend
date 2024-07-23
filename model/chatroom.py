@@ -2,24 +2,27 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from model.post import PostTable
+from typing import Optional
 from model.parent import ParentTable
+from model.chat import ChatTable
 
 
-# 게시물 스트립트 테이블
+# 채팅방 테이블
 # +-----------+--------------+------+-----+---------+----------------+
 # | Field     | Type         | Null | Key | Default | Extra          |
 # +-----------+--------------+------+-----+---------+----------------+
-# | script_id | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | room_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | post_id   | int(11)      | NO   | MUL | NULL    |                |
+# | lastChat  | int(11)      | NO   | MUL | NULL    |                |
+# | name      | varchar(100) | NO   |     | NULL    |                |
 # +-----------+--------------+------+-----+---------+----------------+
 
 
-class Script(BaseModel):
-    script_id: int
+class Chat(BaseModel):
+    room_id: int
     parent_id: str
-    post_id: int
+    lastChat: int
+    name: str
 
     class Config:
         orm_mode = True
@@ -30,12 +33,13 @@ class Script(BaseModel):
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
-class ScriptTable(DB_Base):
-    __tablename__ = 'script'
+class ChatRoomTable(DB_Base):
+    __tablename__ = 'chat'
 
-    script_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
-
-    post = relationship(PostTable, backref='script', passive_deletes=True)
-    parent = relationship(ParentTable, backref='script', passive_deletes=True)
+    lastChat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
+    name = Column(String(100), nullable=False)
+    
+    chat = relationship(ChatTable, back_populates='chat', passive_deletes=True)
+    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

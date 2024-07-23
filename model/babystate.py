@@ -7,21 +7,21 @@ from model.baby import BabyTable
 
 
 # 아기 상태 테이블
-# +----------+--------------+------+-----+---------+----------------+
-# | Field    | Type         | Null | Key | Default | Extra          |
-# +----------+--------------+------+-----+---------+----------------+
-# | graph_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | baby_id  | varchar(255) | NO   | MUL | NULL    |                |
-# | date     | datetime     | NO   |     | NULL    |                |
-# | cm       | float        | YES  |     | NULL    |                |
-# | kg       | float        | YES  |     | NULL    |                |
-# +----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | state_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | baby_id    | varchar(255) | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | cm         | float        | YES  |     | NULL    |                |
+# | kg         | float        | YES  |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Babystate(BaseModel):
-    graph_id: int
+    state_id: int
     baby_id: str
-    date: datetime
+    createTime: datetime
     cm: float
     kg: float
 
@@ -37,9 +37,9 @@ class Babystate(BaseModel):
 class BabystateTable(DB_Base):
     __tablename__ = 'babystate'
 
-    graph_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    state_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     baby_id = Column(String(255), nullable=False)
-    date = Column(DateTime, nullable=False)
+    createTime = Column(DateTime, nullable=False)
     cm = Column(Float, nullable=True)
     kg = Column(Float, nullable=True)
 

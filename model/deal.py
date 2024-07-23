@@ -8,29 +8,31 @@ from model.parent import ParentTable
 
 
 # 중고거래 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | deal_id   | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | title     | varchar(20)  | NO   |     | NULL    |                |
-# | post      | text         | YES  |     | NULL    |                |
-# | img       | varchar(255) | NO   |     | NULL    |                |
-# | price     | int(11)      | NO   |     | NULL    |                |
-# | time      | datetime     | NO   |     | NULL    |                |
-# | dheart    | int(11)      | YES  |     | 0       |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | deal_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | title      | varchar(20)  | NO   |     | NULL    |                |
+# | content    | text         | NO   |     | NULL    |                |
+# | photoId    | varchar(255) | NO   |     | NULL    |                |
+# | price      | int(11)      | NO   |     | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | dheart     | int(11)      | YES  |     | 0       |                |
+# | dview      | int(11)      | YES  |     | 0       |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Deal(BaseModel):
     deal_id: int
     parent_id: str
     title: str
-    post: Optional[str]
-    img: str
+    content: Optional[str]
+    photoId: str
     price: int
-    time: datetime
+    createTime: datetime
     dheart: int
+    dview: int
 
     class Config:
         orm_mode = True
@@ -47,10 +49,11 @@ class DealTable(DB_Base):
     deal_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
-    post = Column(TEXT, nullable=True)
-    img = Column(String(255), nullable=False)
+    content = Column(TEXT, nullable=True)
+    photoId = Column(String(255), nullable=False)
     price = Column(Integer, nullable=False)
-    time = Column(DateTime, nullable=False)
+    createTime = Column(DateTime, nullable=False)
     dheart = Column(Integer, nullable=True)
+    dview = Column(Integer, nullable=True)
 
     parent = relationship(ParentTable, back_populates='deal', passive_deletes=True)

@@ -1,3 +1,4 @@
+drop database babystory;
 create database babystory;
 
 use babystory;
@@ -314,6 +315,32 @@ DELIMITER ;
 
 DELIMITER $$
 
+CREATE TRIGGER pview_insert
+AFTER INSERT ON pview
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET pview = IFNULL(pview, 0) + 1
+    WHERE post_id = NEW.post_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER pview_delete
+AFTER DELETE ON pview
+FOR EACH ROW
+BEGIN
+    UPDATE post
+    SET pview = IFNULL(pview, 0) - 1
+    WHERE post_id = OLD.post_id;
+END $$  
+
+DELIMITER ;
+
+DELIMITER $$
+
 CREATE TRIGGER pcomment_insert
 AFTER INSERT ON pcomment
 FOR EACH ROW
@@ -339,6 +366,7 @@ END $$
 DELIMITER ;
 
 
+
 DELIMITER $$
 
 CREATE TRIGGER cheart_insert
@@ -362,25 +390,5 @@ BEGIN
     SET cheart = IFNULL(cheart, 0) - 1
     WHERE comment_id = OLD.comment_id;
 END $$
-
-DELIMITER ;
-
-
-SET GLOBAL event_scheduler = ON;
-
-DELIMITER //
-
-CREATE EVENT update_post_views
-ON SCHEDULE EVERY 30 SECOND
-DO
-BEGIN
-    UPDATE post p
-    JOIN (
-        SELECT post_id, COUNT(*) AS pview_count
-        FROM pview
-        GROUP BY post_id
-    ) v ON p.post_id = v.post_id
-    SET p.view = v.pview_count;
-END//
 
 DELIMITER ;

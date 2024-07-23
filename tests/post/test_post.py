@@ -51,11 +51,13 @@ def test_create_post(client, test_jwt):
     for key in test_CreatePostInput:
         if key in response_json["post"]:
             if key == "createTime":
-                assert response_json["post"]["createTime"][:10] == test_CreatePostInput["createTime"][:10]
+                assert response_json["post"]["createTime"][:
+                                                           10] == test_CreatePostInput["createTime"][:10]
             assert response_json["post"][key] == test_CreatePostInput[key]
 
     # content 파일이 있는지 확인
-    assert create_file_exist(os.path.join(POST_CONTENT_DIR, str(response_json["post"]["post_id"]) + '.txt'))
+    assert create_file_exist(os.path.join(
+        POST_CONTENT_DIR, str(response_json["post"]["post_id"]) + '.txt'))
 
     # post_id를 test_jwt에 저장하여 다른곳 에서도 사용 가능하게 합니다.
     test_jwt["post_id"] = response_json["post"]["post_id"]
@@ -89,7 +91,8 @@ def test_upload_post_photo(client, test_jwt):
     response = client.post(
         "/post/photoUpload",
         headers={
-            "Authorization": f"Bearer {test_jwt['access_token']}"},
+            "Authorization": f"Bearer {test_jwt['access_token']}"
+        },
         files=files,
         data={"post_id": str(test_jwt["post_id"])}
     )

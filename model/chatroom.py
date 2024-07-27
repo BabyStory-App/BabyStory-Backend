@@ -4,8 +4,6 @@ from pydantic import BaseModel
 from db import DB_Base
 from typing import Optional
 from model.parent import ParentTable
-from model.chat import ChatTable
-
 
 # 채팅방 테이블
 # +-----------+--------------+------+-----+---------+----------------+
@@ -18,7 +16,7 @@ from model.chat import ChatTable
 # +-----------+--------------+------+-----+---------+----------------+
 
 
-class Chat(BaseModel):
+class ChatRoom(BaseModel):
     room_id: int
     parent_id: str
     lastChat: int
@@ -34,12 +32,13 @@ class Chat(BaseModel):
         super().__init__(**kwargs)
 
 class ChatRoomTable(DB_Base):
-    __tablename__ = 'chat'
+    __tablename__ = 'chatroom'
 
     room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    lastChat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
+    #lastChat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
+    lastChat = Column(Integer, nullable=False)
     name = Column(String(100), nullable=False)
-    
-    chat = relationship(ChatTable, back_populates='chat', passive_deletes=True)
-    parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)
+
+    #chat = relationship("ChatTable", back_populates='chat', passive_deletes=True)
+    #parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

@@ -13,6 +13,7 @@ from apis.post.postmain import router as postmain_router
 from apis.search import router as search_router
 from apis.post.pcomment import router as pcomment_router
 from apis.friend import router as friend_router
+from apis.setting import router as setting_router
 
 app = FastAPI()
 app.include_router(main_router)
@@ -29,6 +30,7 @@ app.include_router(postmain_router)
 
 app.include_router(search_router)
 app.include_router(pcomment_router)
+app.include_router(setting_router)
 
 # if __name__ == "__main__":
 #     import uvicorn

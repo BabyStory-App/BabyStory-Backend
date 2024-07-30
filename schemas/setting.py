@@ -33,7 +33,7 @@ class Post(BaseModel):
     createTime: datetime
     heart: int
     comment: int
-    script: str
+    script: int
     view: int
     hashList: str
     contentPreview: str

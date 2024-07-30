@@ -6,6 +6,7 @@ from constants.path import *
 import os
 import shutil
 from uuid import uuid4
+from sqlalchemy import text
 from sqlalchemy.orm import aliased
 
 from schemas.setting import *
@@ -21,6 +22,17 @@ from model.pscript import PScriptTable
 from model.pheart import PHeartTable
 
 class SettingService:
+
+    # def mate(self, parent_id: str):
+    #     db = get_db_session()
+
+    #     # 나를 친구로 등록한 부모 수
+    #     friendCount = db.query(FriendTable).filter(FriendTable.friend == parent_id).count()
+
+    #     # 짝꿍 수
+    #     mateCount = int(db.execute(text(f"select count(0) from friend p inner join friend f on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
+
+    #     return mateCount
     
     # 짝꿍, 친구들, 이야기 수 가져오기
     def getOverview(self, parent_id: str) -> Optional[SettingOverviewOutputData]:
@@ -33,29 +45,18 @@ class SettingService:
         """
         db = get_db_session()
 
-        # 짝꿍 수 & 친구 수
-        # FriendTable을 두 개의 별칭으로 참조
-        FriendAlias1 = aliased(FriendTable)
-        FriendAlias2 = aliased(FriendTable)
+        # 나를 친구로 등록한 부모 수
+        friendCount = db.query(FriendTable).filter(FriendTable.friend == parent_id).count()
 
-        # 주어진 parent_id의 친구 수를 구하는 쿼리
-        friendCount = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).count()
-
-        # 주어진 parent_id의 모든 친구를 찾는 서브쿼리
-        subquery = db.query(FriendAlias1.friend).filter(FriendAlias1.parent_id == parent_id).subquery()
-
-        # 상호 친구 관계의 수를 구하는 쿼리
-        mateCount = db.query(FriendAlias2).filter(
-            FriendAlias2.parent_id_(subquery),
-            FriendAlias2.friend == parent_id
-        ).count()
-
+        # 짝꿍 수
+        mateCount = int(db.execute(text(f"select count(0) from friend p inner join friend f on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
         # 이야기 수
         myStoryCount = db.query(PostTable).filter(
-            PostTable.parent_id == parent_id).count()
+            PostTable.parent_id == parent_id, 
+            PostTable.deleteTime == None).count()
         
-        return {'mateCount': mateCount, 'friendCount': friendCount, 'myStoryCount': myStoryCount}
+        return {'friendCount': friendCount, 'mateCount': mateCount, 'myStoryCount': myStoryCount}
     
 
 
@@ -72,7 +73,6 @@ class SettingService:
         db = get_db_session()
 
         # 친구들
-        
 
         # 페이징
         if page != -1 and page < 0:
@@ -115,11 +115,12 @@ class SettingService:
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
-        myViews = db.query(PostTable).filter(PViewTable.parent_id == parent_id,
-                                             PostTable.post_id == PViewTable.post_id).limit(take).offset(page).all()
-        total = db.query(FriendTable).filter(PViewTable.parent_id == parent_id, 
-                                             PostTable.post_id == PViewTable.post_id).count()
+        myViews = db.query(PostTable).join(PViewTable, PostTable.post_id == PViewTable.post_id).filter(PViewTable.parent_id == parent_id).offset(page * take).all()
+        total = db.query(FriendTable).join(PViewTable, PostTable.post_id == PViewTable.post_id).filter(PViewTable.parent_id == parent_id).offset(page * take).count()
         paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        if not myViews:
+            return []
 
         # 유저가 조회한 post 데이터
         post = []

@@ -49,7 +49,9 @@ class SettingService:
         friendCount = db.query(FriendTable).filter(FriendTable.friend == parent_id).count()
 
         # 짝꿍 수
-        mateCount = int(db.execute(text(f"select count(0) from friend p inner join friend f on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
+        mateCount = int(db.execute(text(
+            f"select count(0) from friend p inner join friend f \
+                on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
         # 이야기 수
         myStoryCount = db.query(PostTable).filter(
@@ -78,7 +80,7 @@ class SettingService:
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
-        myFriends = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).limit(take).offset(page).all()
+        myFriends = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).limit(page * take).offset(page).all()
         total = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).count()
         
         paginationInfo = {'page': page, 'take': take, 'total': total}

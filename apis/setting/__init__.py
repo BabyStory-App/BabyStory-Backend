@@ -51,7 +51,7 @@ async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyVi
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my views")
-    return {'status': 'success', 'message': 'Successfully get my views', 'paginationInfo': myViews['paginationInfo'], 'post': myViews['post']}
+    return {'status': 'success', 'message': 'Successfully get my views', 'paginationInfo': myViews[0], 'post': myViews[1]}
 
 
 
@@ -64,7 +64,7 @@ async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyVie
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get scripts")
-    return {'status': 'success', 'message': 'Successfully get scripts', 'paginationInfo': scripts['paginationInfo'], 'post': scripts['post']}
+    return {'status': 'success', 'message': 'Successfully get scripts', 'paginationInfo': scripts[0], 'post': scripts[1]}
 
 
 
@@ -77,7 +77,7 @@ async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyViews
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get likes")
-    return {'status': 'success', 'message': 'Successfully get likes', 'paginationInfo': likes['paginationInfo'], 'post': likes['post']}
+    return {'status': 'success', 'message': 'Successfully get likes', 'paginationInfo': likes[0], 'post': likes[1]}
 
 
 

@@ -41,7 +41,7 @@ class SettingService:
         # 짝꿍 수
         mateCount = int(db.execute(text(
             f"select count(0) from friend p inner join friend f \
-                on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
+            on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
         # 이야기 수
         myStoryCount = db.query(PostTable).filter(
@@ -69,16 +69,19 @@ class SettingService:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
 
-        # 내가 친구로 등록한 부모
-        myFriends = db.execute(text(
-        f"select p.* from friend f inner join parent p on p.parent_id = f.friend where f.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
-        {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall()
         total = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).count()
         
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
-        # 짝꿍 아이디
-        mate = db.execute(text(f"select f.parent_id from friend p inner join friend f \
+        # 내가 친구로 등록한 부모
+        myFriends = db.execute(text(
+            f"select p.* from friend f inner join parent p on p.parent_id = f.friend \
+                where f.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
+                {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall()
+        
+        # 짝꿍
+        mate = db.execute(text(
+            f"select f.parent_id from friend p inner join friend f \
             on f.parent_id = p.friend where p.parent_id = \"{parent_id}\"")).fetchall()
 
         ismate = []
@@ -117,39 +120,37 @@ class SettingService:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
 
-        myView = str(db.execute(text(
-        f"select p.* from post p inner join pview v \
-            on p.post_id = v.post_id where v.parent_id = \"{parent_id}\"")).fetchall())
-        myViews = ast.literal_eval(myView)
-
         total = str(db.execute(text(
         f"select count(0) from post p inner join pview v \
             on p.post_id = v.post_id where v.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
+        myViews = db.execute(text(
+        f"select p.* from post p inner join pview v on p.post_id = v.post_id \
+            where v.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
+        {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall()
+        
         if not myViews:
             return []
 
         # 유저가 조회한 post 데이터
-        post = []
-        for myView in myViews:
+        posts = []
+        for i in myViews:
+            posts.append({
+                'post_id': i[0],
+                'title': i[3],
+                'createTime': i[4],
+                'heart': i[7],
+                'script': i[8],
+                'view': i[9],
+                'comment': i[10],
+                'hashList': i[11],
+                'contentPreview': str(i[0]) + '_1',
+                'photo_id': str(i[0])
+            })
 
-            posts = {
-                'post_id': myView.post_id,
-                'title': PostTable.title,
-                'createTime': PostTable.createTime,
-                'heart': PostTable.pHeart,
-                'comment': PostTable.pComment,
-                'script': PostTable.pScript,
-                'view': PostTable.pView,
-                'hashList': PostTable.hashList,
-                'contentPreview': myView.post_id + '_1',
-                'photo_id': myView.post_id
-            }
-            post.append(posts)
-
-        return {'paginationInfo': paginationInfo, 'post': post}
+        return [paginationInfo, posts]
     
 
 
@@ -170,41 +171,37 @@ class SettingService:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
 
-        script = str(db.execute(text(
-        f"select * from post p inner join pscript s \
-            on p.post_id = s.post_id where s.parent_id = \"{parent_id}\"")).fetchall())
-        scripts = ast.literal_eval(script)
-
         total = str(db.execute(text(
         f"select count(0) from post p inner join pscript s \
             on p.post_id = s.post_id where s.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
+        scripts = db.execute(text(
+        f"select * from post p inner join pscript s on p.post_id = s.post_id \
+            where s.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
+            {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall()
+
         if not scripts:
             return []
-
-        # post 사진 가져오기
         
-
         # 유저가 script한 post 데이터
-        post = []
-        for script in scripts:
-            posts = {
-                'post_id': script.post_id,
-                'title': PostTable.title,
-                'createTime': PostTable.createTime,
-                'heart': PostTable.pHeart,
-                'comment': PostTable.pComment,
-                'script': PostTable.pScript,
-                'view': PostTable.pView,
-                'hashList': PostTable.hashList,
-                'contentPreview': script.post_id + '_1',
-                'photo_id': script.post_id
-            }
-            post.append(posts)
+        posts = []
+        for i in scripts:
+            posts.append({
+                'post_id': i[0],
+                'title': i[3],
+                'createTime': i[4],
+                'heart': i[7],
+                'script': i[8],
+                'view': i[9],
+                'comment': i[10],
+                'hashList': i[11],
+                'contentPreview': str(i[0]) + '_1',
+                'photo_id': str(i[0])
+            })
 
-        return {'paginationInfo': paginationInfo, 'post': post}
+        return [paginationInfo, posts]
     
 
 
@@ -225,38 +222,32 @@ class SettingService:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
 
-        like = str(db.execute(text(
-        f"select * from post p inner join pheart h \
-            on p.post_id = h.post_id where h.parent_id = \"{parent_id}\"")).fetchall())
-        likes = ast.literal_eval(like)
-
-        likes = db.query(PostTable).filter(PHeartTable.parent_id == parent_id, 
-                                             PostTable.post_id == PHeartTable.post_id).limit(take).offset(page).all()
         total = db.query(FriendTable).filter(PHeartTable.parent_id == parent_id, 
                                              PostTable.post_id == PHeartTable.post_id).count()
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
-        # post 사진 가져오기
-        
+        likes = db.execute(text(
+        f"select * from post p inner join pheart h on p.post_id = h.post_id \
+            where h.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
+            {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall() 
 
-        # 유저가 좋아요한 post 데이터
-        post = []
-        for like in likes:
-            posts = {
-                'post_id': like.post_id,
-                'title': PostTable.title,
-                'createTime': PostTable.createTime,
-                'heart': PostTable.pHeart,
-                'comment': PostTable.pComment,
-                'script': PostTable.pScript,
-                'view': PostTable.pView,
-                'hashList': PostTable.hashList,
-                'contentPreview': like.post_id + '_1',
-                'photo_id': like.post_id
-            }
-            post.append(posts)
+        # 유저가 script한 post 데이터
+        posts = []
+        for i in likes:
+            posts.append({
+                'post_id': i[0],
+                'title': i[3],
+                'createTime': i[4],
+                'heart': i[7],
+                'script': i[8],
+                'view': i[9],
+                'comment': i[10],
+                'hashList': i[11],
+                'contentPreview': str(i[0]) + '_1',
+                'photo_id': str(i[0])
+            })
 
-        return {'paginationInfo': paginationInfo, 'post': post}
+        return [paginationInfo, posts]
     
 
 

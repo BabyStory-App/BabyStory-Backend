@@ -28,7 +28,7 @@ class MyFriendsOutput(BaseModel):
     parents: List[FriendsParent]
 
 class Post(BaseModel):
-    post_id: str
+    post_id: int
     title: str
     createTime: datetime
     heart: int
@@ -43,25 +43,25 @@ class MyViewsPostOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
 
 class MyScriptsPostOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
 
 class MyLikesPostOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
 
 class MyStoriesOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
 
 class MatesParent(BaseModel):
     parent_id: str

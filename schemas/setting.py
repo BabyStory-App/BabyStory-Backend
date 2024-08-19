@@ -17,15 +17,15 @@ class SettingOverviewOutput(BaseModel):
 class FriendsParent(BaseModel):
     parent_id: str
     nickname: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
     isMate: bool
 
 class MyFriendsOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    parents: FriendsParent
+    parents: List[FriendsParent]
 
 class Post(BaseModel):
     post_id: str

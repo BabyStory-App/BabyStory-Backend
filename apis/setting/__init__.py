@@ -38,7 +38,7 @@ async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> My
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my friends")
-    return {'status': 'success', 'message': 'Successfully get my friends', 'paginationInfo': myFriends['paginationInfo'], 'parents': myFriends['parents']}
+    return {'status': 'success', 'message': 'Successfully get my friends', 'paginationInfo': myFriends[0], 'parents': myFriends[1]}
 
 
 

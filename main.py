@@ -32,7 +32,7 @@ app.include_router(search_router)
 app.include_router(pcomment_router)
 app.include_router(setting_router)
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=7701)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7701)
 # uvicorn main:app --host 0.0.0.0 --port 7701 --reload

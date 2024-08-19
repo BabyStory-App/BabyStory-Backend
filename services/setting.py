@@ -8,6 +8,7 @@ import shutil
 from uuid import uuid4
 from sqlalchemy import text
 from sqlalchemy.orm import aliased
+import ast
 
 from schemas.setting import *
 from schemas.setting import *
@@ -22,17 +23,6 @@ from model.pscript import PScriptTable
 from model.pheart import PHeartTable
 
 class SettingService:
-
-    # def mate(self, parent_id: str):
-    #     db = get_db_session()
-
-    #     # 나를 친구로 등록한 부모 수
-    #     friendCount = db.query(FriendTable).filter(FriendTable.friend == parent_id).count()
-
-    #     # 짝꿍 수
-    #     mateCount = int(db.execute(text(f"select count(0) from friend p inner join friend f on p.parent_id = f.friend where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
-
-    #     return mateCount
     
     # 짝꿍, 친구들, 이야기 수 가져오기
     def getOverview(self, parent_id: str) -> Optional[SettingOverviewOutputData]:
@@ -45,8 +35,8 @@ class SettingService:
         """
         db = get_db_session()
 
-        # 나를 친구로 등록한 부모 수
-        friendCount = db.query(FriendTable).filter(FriendTable.friend == parent_id).count()
+        # 내가 친구로 등록한 부모 수
+        friendCount = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).count()
 
         # 짝꿍 수
         mateCount = int(db.execute(text(
@@ -62,7 +52,7 @@ class SettingService:
     
 
 
-    # 친구들 불러오기
+    # 내가 친구로 등록한 부모 불러오기
     def getMyFriends(self, page: int, parent_id: str) -> Optional[MyFriendsOutput]:
         """
         친구들 불러오기
@@ -74,30 +64,39 @@ class SettingService:
         """
         db = get_db_session()
 
-        # 친구들
-
         # 페이징
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
-        myFriends = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).limit(page * take).offset(page).all()
+
+        # 내가 친구로 등록한 부모
+        myFriends = db.execute(text(
+        f"select p.* from friend f inner join parent p on p.parent_id = f.friend where f.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
+        {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall()
         total = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).count()
         
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
+        # 짝꿍 아이디
+        mate = db.execute(text(f"select f.parent_id from friend p inner join friend f \
+            on f.parent_id = p.friend where p.parent_id = \"{parent_id}\"")).fetchall()
+
+        ismate = []
+        for i in mate:
+            ismate.append(i[0])
+
         # 친구들 데이터
         parents = []
-        for myFriend in myFriends:
-            parent = {
-                'parent_id': myFriend.friend,
-                'nickname': ParentTable.nickname,
-                'photoId': ParentTable.photoId,
-                'description': ParentTable.description,
-                'isMate': ParentTable.isMate
-            }
-            parents.append(parent)
+        for i in myFriends:
+            parents.append({
+                'parent_id': i[0],
+                'nickname': i[4],
+                'photoId': i[8],
+                'description': i[9],
+                'isMate': True if i[0] in ismate else False
+            })
 
-        return {'paginationInfo': paginationInfo, 'parents': parents}
+        return [paginationInfo, parents]
     
 
 
@@ -117,8 +116,16 @@ class SettingService:
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
-        myViews = db.query(PostTable).join(PViewTable, PostTable.post_id == PViewTable.post_id).filter(PViewTable.parent_id == parent_id).offset(page * take).all()
-        total = db.query(FriendTable).join(PViewTable, PostTable.post_id == PViewTable.post_id).filter(PViewTable.parent_id == parent_id).offset(page * take).count()
+
+        myView = str(db.execute(text(
+        f"select p.* from post p inner join pview v \
+            on p.post_id = v.post_id where v.parent_id = \"{parent_id}\"")).fetchall())
+        myViews = ast.literal_eval(myView)
+
+        total = str(db.execute(text(
+        f"select count(0) from post p inner join pview v \
+            on p.post_id = v.post_id where v.parent_id = \"{parent_id}\"")).fetchall()[0][0])
+
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
         if not myViews:
@@ -162,11 +169,20 @@ class SettingService:
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
-        scripts = db.query(PostTable).filter(PScriptTable.parent_id == parent_id, 
-                                             PostTable.post_id == PScriptTable.post_id).limit(take).offset(page).all()
-        total = db.query(FriendTable).filter(PScriptTable.parent_id == parent_id, 
-                                             PostTable.post_id == PScriptTable.post_id).count()
+
+        script = str(db.execute(text(
+        f"select * from post p inner join pscript s \
+            on p.post_id = s.post_id where s.parent_id = \"{parent_id}\"")).fetchall())
+        scripts = ast.literal_eval(script)
+
+        total = str(db.execute(text(
+        f"select count(0) from post p inner join pscript s \
+            on p.post_id = s.post_id where s.parent_id = \"{parent_id}\"")).fetchall()[0][0])
+
         paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        if not scripts:
+            return []
 
         # post 사진 가져오기
         
@@ -208,6 +224,12 @@ class SettingService:
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
+
+        like = str(db.execute(text(
+        f"select * from post p inner join pheart h \
+            on p.post_id = h.post_id where h.parent_id = \"{parent_id}\"")).fetchall())
+        likes = ast.literal_eval(like)
+
         likes = db.query(PostTable).filter(PHeartTable.parent_id == parent_id, 
                                              PostTable.post_id == PHeartTable.post_id).limit(take).offset(page).all()
         total = db.query(FriendTable).filter(PHeartTable.parent_id == parent_id, 

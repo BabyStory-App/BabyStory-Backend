@@ -66,11 +66,11 @@ class MyStoriesOutput(BaseModel):
 class MatesParent(BaseModel):
     parent_id: str
     nickname: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
 
 class MyMatesOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    parents: MatesParent
+    parents: list[MatesParent]

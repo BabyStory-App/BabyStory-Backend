@@ -90,7 +90,7 @@ async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> My
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my stories")
-    return {'status': 'success', 'message': 'Successfully get my stories', 'paginationInfo': myStories['paginationInfo'], 'post': myStories['post']}
+    return {'status': 'success', 'message': 'Successfully get my stories', 'paginationInfo': myStories[0], 'post': myStories[1]}
 
 
 
@@ -103,4 +103,4 @@ async def get_my_mates(page: int, parent_id: str = Depends(JWTBearer())) -> MyMa
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my mates")
-    return {'status': 'success', 'message': 'Successfully get my mates', 'paginationInfo': myMates['paginationInfo'], 'parents': myMates['parents']}
+    return {'status': 'success', 'message': 'Successfully get my mates', 'paginationInfo': myMates[0], 'parents': myMates[1]}

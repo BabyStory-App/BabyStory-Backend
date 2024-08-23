@@ -33,12 +33,18 @@ async def get_overview(parent_id: str = Depends(JWTBearer())) -> SettingOverview
 @router.get("/myfriends/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> MyFriendsOutput:
     try:
-        myFriends = settingService.getMyFriends(page, parent_id)
+        result = settingService.getMyFriends(page, parent_id)
+        if(result == None):
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my friends")
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my friends")
-    return {'status': 'success', 'message': 'Successfully get my friends', 'paginationInfo': myFriends[0], 'parents': myFriends[1]}
+    return {'status': 'success', 'message': 'Successfully get my friends', 'paginationInfo': result['paginationInfo'], 'parents': result['parents']}
 
 
 
@@ -80,7 +86,6 @@ async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyViews
     return {'status': 'success', 'message': 'Successfully get likes', 'paginationInfo': likes[0], 'post': likes[1]}
 
 
-
 # 유저 post
 @router.get("/mystories/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> MyStoriesOutput:
@@ -91,7 +96,6 @@ async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> My
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my stories")
     return {'status': 'success', 'message': 'Successfully get my stories', 'paginationInfo': myStories[0], 'post': myStories[1]}
-
 
 
 # 유저의 짝꿍 불러오기

@@ -21,6 +21,10 @@ class FriendsParent(BaseModel):
     description: Optional[str]
     isMate: bool
 
+class MyFriendsOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    parents: List[FriendsParent]
+
 class MyFriendsOutput(BaseModel):
     status: str
     message: str

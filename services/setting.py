@@ -1,5 +1,3 @@
-from fastapi import HTTPException, UploadFile
-from fastapi.responses import JSONResponse, FileResponse
 from typing import Optional, List
 from sqlalchemy.orm import joinedload
 from constants.path import *
@@ -54,14 +52,14 @@ class SettingService:
 
 
     # 내가 친구로 등록한 부모 불러오기
-    def getMyFriends(self, page: int, parent_id: str) -> Optional[MyFriendsOutput]:
+    def getMyFriends(self, page: int, parent_id: str) -> Optional[MyFriendsOutputService]:
         """
         친구들 불러오기
         - input
             - page (int): 페이지
             - parent_id (str): 부모 아이디
         - output
-            - MyFriendsOutput: 친구들
+            - MyFriendsOutputService: 내가 친구로 등록한 부모와 페이지 정보.
         """
         db = get_db_session()
 
@@ -72,8 +70,6 @@ class SettingService:
 
         total = db.query(FriendTable).filter(FriendTable.parent_id == parent_id).count()
 
-        paginationInfo = {'page': page, 'take': take, 'total': total}
-
         # 내가 친구로 등록한 부모 찾기
         myFriends = db.execute(text(
             f"select p.* from friend f inner join parent p on p.parent_id = f.friend \
@@ -81,7 +77,7 @@ class SettingService:
                 {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall()
         
         if not myFriends:
-            return []
+            return None
 
         # 짝꿍
         mate = db.execute(text(
@@ -104,7 +100,12 @@ class SettingService:
                 'isMate': True if i[0] in ismate else False
             })
 
-        return [paginationInfo, parents]
+        paginationInfo = {'page': page, 'take': take, 'total': total}
+        
+        return {
+            'paginationInfo': paginationInfo,
+            'parents': parents
+        }
     
 
 

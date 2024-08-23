@@ -19,8 +19,8 @@ from model.parent import ParentTable
 class ChatRoom(BaseModel):
     room_id: int
     parent_id: str
-    lastChat: int
     name: str
+    memberCount: int = 0
 
     class Config:
         orm_mode = True
@@ -36,9 +36,8 @@ class ChatRoomTable(DB_Base):
 
     room_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    #lastChat = Column(Integer, ForeignKey('chat.chat_id'), nullable=False)
-    lastChat = Column(Integer, nullable=False)
     name = Column(String(100), nullable=False)
+    memberCount = Column(Integer, nullable=False)
 
     #chat = relationship("ChatTable", back_populates='chat', passive_deletes=True)
     #parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

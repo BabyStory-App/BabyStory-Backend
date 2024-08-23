@@ -198,7 +198,7 @@ class ChatRoomService:
             raise HTTPException(status_code=400, detail="Failed to update chatroom")
         
     # 채팅 내용 가져오기
-    def getChat(self, room_id: str, parent_id: str, chat_id: str) -> List[Chat]:
+    def getChat(self, room_id: int, chat_id: str ,parent_id: str) -> List[Chat]:
         """
         채팅 내용 가져오기
         --input
@@ -216,9 +216,8 @@ class ChatRoomService:
 
         # 부모가 채팅방에 속해있는지 확인
         if parent_id not in parent_ids:
-            raise CustomException("Not a member")
+            raise CustomException("Not authorized to get chat list from {chatroom_id}r")
         
-
         # chat_id가 unknown인 경우 최근 20개의 채팅 내용 조회
         if chat_id == "unknown":
             chat = db.query(ChatTable).filter(ChatTable.room_id == room_id
@@ -232,7 +231,6 @@ class ChatRoomService:
         
         else:
             # chat_id 이전 20개의 채팅 내용 조회
-            chat_id = int(chat_id)
             chat = db.query(ChatTable).filter(ChatTable.room_id == room_id, ChatTable.chat_id < chat_id
                                             ).order_by(ChatTable.chat_id.desc()).limit(20).all()
 

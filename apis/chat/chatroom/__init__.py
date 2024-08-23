@@ -131,8 +131,8 @@ async def update_chatroom(room_id: str, name: str, parent_id: str = Depends(JWTB
     return { 'success': 200 if chatroom else 403 }
 
 # 채팅방 채팅 내용 조회
-@router.get("/chat/{chatroom_id}/{chat_id}", dependencies=[Depends(JWTBearer())])
-async def get_chatroom_chat(chatroom_id: str, chat_id: str, parent_id: str = Depends(JWTBearer())):
+@router.get("/{chatroom_id}/{chat_id}", dependencies=[Depends(JWTBearer())])
+async def get_chatroom_chat(chatroom_id: int, chat_id: str, parent_id: str = Depends(JWTBearer())):
     '''
     채팅방 채팅 내용 조회
     --input
@@ -143,7 +143,8 @@ async def get_chatroom_chat(chatroom_id: str, chat_id: str, parent_id: str = Dep
         - chat: 채팅 내용
     '''
     try:
-        chat = chatRoomService.getChatRoomChat(chatroom_id, chat_id, parent_id)
+        print(chatroom_id, chat_id, parent_id)
+        chat = chatRoomService.getChat(chatroom_id, chat_id, parent_id)
     
     except CustomException as e:
         raise HTTPException(

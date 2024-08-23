@@ -17,6 +17,7 @@ from apis.chat import router as chat_router
 from apis.chat.chatroom import router as chatroom_router
 
 from fastapi.staticfiles import StaticFiles
+from apis.setting import router as setting_router
 
 app = FastAPI()
 
@@ -31,12 +32,13 @@ app.include_router(pscript_router)
 app.include_router(pview_router)
 app.include_router(friend_router)
 app.include_router(postmain_router)
-
 app.include_router(search_router)
 app.include_router(pcomment_router)
+app.include_router(setting_router)
 app.include_router(chat_router)
 app.include_router(chatroom_router)
 app.mount("/qq", StaticFiles(directory="static", html=True), name="static")
+
 
 # if __name__ == "__main__":
 #     import uvicorn

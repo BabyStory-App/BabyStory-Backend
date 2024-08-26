@@ -130,8 +130,6 @@ class SettingService:
         f"select count(0) from post p inner join pview v \
             on p.post_id = v.post_id where v.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
-        paginationInfo = {'page': page, 'take': take, 'total': total}
-
         # 유저가 조회한 post 찾기
         myViews = db.execute(text(
         f"select p.* from post p inner join pview v on p.post_id = v.post_id \
@@ -142,9 +140,9 @@ class SettingService:
             return []
 
         # 유저가 조회한 post 데이터
-        posts = []
+        post = []
         for i in myViews:
-            posts.append({
+            post.append({
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
@@ -157,7 +155,12 @@ class SettingService:
                 'photo_id': str(i[0])
             })
 
-        return [paginationInfo, posts]
+        paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        return {
+            'paginationInfo': paginationInfo,
+            'post': post
+        }
     
 
 
@@ -182,8 +185,6 @@ class SettingService:
         f"select count(0) from post p inner join pscript s \
             on p.post_id = s.post_id where s.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
-        paginationInfo = {'page': page, 'take': take, 'total': total}
-
         # 유저가 스크립트한 post 찾기
         scripts = db.execute(text(
         f"select * from post p inner join pscript s on p.post_id = s.post_id \
@@ -194,9 +195,9 @@ class SettingService:
             return []
         
         # 유저가 script한 post 데이터
-        posts = []
+        post = []
         for i in scripts:
-            posts.append({
+            post.append({
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
@@ -209,7 +210,12 @@ class SettingService:
                 'photo_id': str(i[0])
             })
 
-        return [paginationInfo, posts]
+        paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        return {
+            'paginationInfo': paginationInfo,
+            'post': post
+        }
     
 
 
@@ -232,8 +238,6 @@ class SettingService:
 
         total = db.query(FriendTable).filter(PHeartTable.parent_id == parent_id, 
                                              PostTable.post_id == PHeartTable.post_id).count()
-        
-        paginationInfo = {'page': page, 'take': take, 'total': total}
 
         # 유저가 좋아요 누른 post 찾기
         likes = db.execute(text(
@@ -245,9 +249,9 @@ class SettingService:
             return []
 
         # 유저가 script한 post 데이터
-        posts = []
+        post = []
         for i in likes:
-            posts.append({
+            post.append({
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
@@ -260,7 +264,12 @@ class SettingService:
                 'photo_id': str(i[0])
             })
 
-        return [paginationInfo, posts]
+        paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        return {
+            'paginationInfo': paginationInfo,
+            'post': post
+        }
     
 
 
@@ -288,17 +297,15 @@ class SettingService:
             PostTable.parent_id == parent_id,
             PostTable.deleteTime == None).count()
 
-        paginationInfo = {'page': page, 'take': take, 'total': total}
-
         # 유저의 post 찾기
         myStories = db.execute(text(
         f"SELECT * FROM post WHERE parent_id = :parent_id AND deleteTime IS NULL LIMIT :limit OFFSET :offset"),
             {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall() 
 
         # 유저 post 데이터
-        posts = []
+        post = []
         for i in myStories:
-            posts.append({
+            post.append({
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
@@ -311,7 +318,12 @@ class SettingService:
                 'photo_id': str(i[0])
             })
 
-        return [paginationInfo, posts]
+        paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        return {
+            'paginationInfo': paginationInfo,
+            'post': post
+        }
     
 
 
@@ -337,8 +349,6 @@ class SettingService:
             f"select count(0) from friend p inner join friend f \
             ON p.parent_id = f.friend AND p.friend = f.parent_id \
             where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
-        
-        paginationInfo = {'page': page, 'take': take, 'total': total}
 
         # 짝꿍 정보 가져오기
         myMates = db.execute(text(
@@ -361,4 +371,9 @@ class SettingService:
                 'description': i[9]
             })
 
-        return [paginationInfo, parents]
+        paginationInfo = {'page': page, 'take': take, 'total': total}
+
+        return {
+            'paginationInfo': paginationInfo,
+            'parents': parents
+        }

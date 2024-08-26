@@ -52,12 +52,18 @@ async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> My
 @router.get("/myviews/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutput:
     try:
-        myViews = settingService.getMyViews(page, parent_id)
+        result = settingService.getMyViews(page, parent_id)
+        if(result == None):
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get view post")
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
         print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my views")
-    return {'status': 'success', 'message': 'Successfully get my views', 'paginationInfo': myViews[0], 'post': myViews[1]}
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my view post")
+    return {'status': 'success', 'message': 'Successfully get my views', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 
 
@@ -65,12 +71,18 @@ async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyVi
 @router.get("/scripts/{page}", dependencies=[Depends(JWTBearer())])
 async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutput:
     try:
-        scripts = settingService.getScripts(page, parent_id)
+        result = settingService.getScripts(page, parent_id)
+        if(result == None):
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get script post")
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
         print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get scripts")
-    return {'status': 'success', 'message': 'Successfully get scripts', 'paginationInfo': scripts[0], 'post': scripts[1]}
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get script post")
+    return {'status': 'success', 'message': 'Successfully get scripts', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 
 
@@ -78,33 +90,48 @@ async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyVie
 @router.get("/likes/{page}", dependencies=[Depends(JWTBearer())])
 async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutput:
     try:
-        likes = settingService.getLikes(page, parent_id)
+        result = settingService.getLikes(page, parent_id)
+        if(result == None):
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get like post")
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
         print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get likes")
-    return {'status': 'success', 'message': 'Successfully get likes', 'paginationInfo': likes[0], 'post': likes[1]}
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get like post")
+    return {'status': 'success', 'message': 'Successfully get likes', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 
 # 유저 post
 @router.get("/mystories/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> MyStoriesOutput:
     try:
-        myStories = settingService.getMyStories(page, parent_id)
+        result = settingService.getMyStories(page, parent_id)
+        if(result == None):
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my post")
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
         print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my stories")
-    return {'status': 'success', 'message': 'Successfully get my stories', 'paginationInfo': myStories[0], 'post': myStories[1]}
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my post")
+    return {'status': 'success', 'message': 'Successfully get my stories', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 
 # 유저의 짝꿍 불러오기
 @router.get("/mymates/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_mates(page: int, parent_id: str = Depends(JWTBearer())) -> MyMatesOutput:
     try:
-        myMates = settingService.getMyMates(page, parent_id)
+        result = settingService.getMyMates(page, parent_id)
+        if(result == None):
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my mates")
     except Exception as e:
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my mates")
-    return {'status': 'success', 'message': 'Successfully get my mates', 'paginationInfo': myMates[0], 'parents': myMates[1]}
+    return {'status': 'success', 'message': 'Successfully get my mates', 'paginationInfo': result['paginationInfo'], 'parents': result['parents']}

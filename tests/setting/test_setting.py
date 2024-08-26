@@ -64,8 +64,18 @@ def test_get_my_views(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
-    assert "post" in response_json
+    print("Response JSON:", response_json)
+    assert isinstance(response_json, dict)
+    assert isinstance(response_json["post"], list)
     assert "paginationInfo" in response_json
+
+    if response_json["post"]:
+        first_post = response_json["post"][0]
+        assert isinstance(first_post, dict)
+
+        post = ["post_id", "title", "createTime", "heart", "comment", "script", "view", "hashList", "contentPreview", "photo_id"]
+        for i in post:
+            assert i in first_post
 
 # test_get_my_views ( 잘못된 jwt )
 async def test_get_my_views_fail():

@@ -1,12 +1,6 @@
-from typing import Optional, List
-from sqlalchemy.orm import joinedload
+from typing import Optional
 from constants.path import *
-import os
-import shutil
-from uuid import uuid4
 from sqlalchemy import text
-from sqlalchemy.orm import aliased
-import ast
 
 from schemas.setting import *
 from schemas.setting import *
@@ -14,11 +8,7 @@ from db import get_db_session
 from error.exception.customerror import *
 
 from model.friend import FriendTable
-from model.parent import ParentTable
 from model.post import PostTable
-from model.pview import PViewTable
-from model.pscript import PScriptTable
-from model.pheart import PHeartTable
 
 class SettingService:
     
@@ -110,7 +100,7 @@ class SettingService:
 
 
     # 유저가 조회한 post
-    def getMyViews(self, page: int, parent_id: str) -> Optional[MyViewsPostOutput]:
+    def getMyViews(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 조회한 post
         - input
@@ -165,7 +155,7 @@ class SettingService:
 
 
     # 유저가 script한 post
-    def getScripts(self, page: int, parent_id: str) -> Optional[MyViewsPostOutput]:
+    def getScripts(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 script한 post
         - input
@@ -220,7 +210,7 @@ class SettingService:
 
 
     # 유저가 좋아요한 post
-    def getLikes(self, page: int, parent_id: str) -> Optional[MyViewsPostOutput]:
+    def getLikes(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 좋아요한 post
         - input
@@ -236,8 +226,9 @@ class SettingService:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
 
-        total = db.query(FriendTable).filter(PHeartTable.parent_id == parent_id, 
-                                             PostTable.post_id == PHeartTable.post_id).count()
+        total = str(db.execute(text(
+        f"select count(0) from post p inner join pheart h \
+            on p.post_id = h.post_id where h.parent_id = \"{parent_id}\"")).fetchall()[0][0])
 
         # 유저가 좋아요 누른 post 찾기
         likes = db.execute(text(
@@ -274,7 +265,7 @@ class SettingService:
 
 
     # 유저 post
-    def getMyStories(self, page: int, parent_id: str) -> Optional[MyStoriesOutput]:
+    def getMyStories(self, page: int, parent_id: str) -> Optional[MyStoriesOutputService]:
         """
         유저 post
         - input
@@ -328,7 +319,7 @@ class SettingService:
 
 
     # 짝꿍 불러오기
-    def getMyMates(self, page: int, parent_id: str) -> Optional[MyMatesOutput]:
+    def getMyMates(self, page: int, parent_id: str) -> Optional[MyMatesOutputService]:
         """
         짝꿍 불러오기
         - input

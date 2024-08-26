@@ -30,3 +30,135 @@ async def test_get_overview_fail():
         client.get("/overview", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to get overview"
+
+
+
+""" Get my friends """
+def test_get_my_friends(client, test_jwt):
+    response = client.get(
+        "/setting/myfriends/0",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "parents" in response_json
+    assert "paginationInfo" in response_json
+
+# test_get_my_friends ( 잘못된 jwt )
+async def test_get_my_friends_fail():
+    with pytest.raises(HTTPException) as err:
+        headers = {"Authorization": f"Bearer wrong_jwt_token"}
+        client.get("/myfriends/0", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get my friends"
+
+
+
+""" Get my views """
+def test_get_my_views(client, test_jwt):
+    response = client.get(
+        "/setting/myviews/0",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "post" in response_json
+    assert "paginationInfo" in response_json
+
+# test_get_my_views ( 잘못된 jwt )
+async def test_get_my_views_fail():
+    with pytest.raises(HTTPException) as err:
+        headers = {"Authorization": f"Bearer wrong_jwt_token"}
+        client.get("/myviews/0", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get view post"
+
+
+
+# """ Get my scripts """
+# def test_get_scripts(client, test_jwt):
+#     response = client.get(
+#         "/setting/scripts/0",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+#     )
+
+#     assert response.status_code == 200
+#     response_json = response.json()
+#     assert "post" in response_json
+#     assert "paginationInfo" in response_json
+
+# # test_get_scripts ( 잘못된 jwt )
+# async def test_get_scripts_fail():
+#     with pytest.raises(HTTPException) as err:
+#         headers = {"Authorization": f"Bearer wrong_jwt_token"}
+#         client.get("/scripts/0", headers=headers)
+#     assert err.value.status_code == HTTP_400_BAD_REQUEST
+#     assert err.value.detail == "Failed to get script post"
+
+
+
+# """ Get my likes """
+# def test_get_likes(client, test_jwt):
+#     response = client.get(
+#         "/setting/likes/0",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+#     )
+
+#     assert response.status_code == 200
+#     response_json = response.json()
+#     assert "post" in response_json
+#     assert "paginationInfo" in response_json
+
+# # test_get_likes ( 잘못된 jwt )
+# async def test_get_likes_fail():
+#     with pytest.raises(HTTPException) as err:
+#         headers = {"Authorization": f"Bearer wrong_jwt_token"}
+#         client.get("/likes/0", headers=headers)
+#     assert err.value.status_code == HTTP_400_BAD_REQUEST
+#     assert err.value.detail == "Failed to get like post"
+
+
+
+# """ Get my post """
+# def test_get_my_post(client, test_jwt):
+#     response = client.get(
+#         "/setting/mypost/0",
+#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+#     )
+
+#     assert response.status_code == 200
+#     response_json = response.json()
+#     assert "post" in response_json
+#     assert "paginationInfo" in response_json
+
+# # test_get_my_post ( 잘못된 jwt )
+# async def test_get_my_post_fail():
+#     with pytest.raises(HTTPException) as err:
+#         headers = {"Authorization": f"Bearer wrong_jwt_token"}
+#         client.get("/mypost/0", headers=headers)
+#     assert err.value.status_code == HTTP_400_BAD_REQUEST
+#     assert err.value.detail == "Failed to get my post"
+
+
+
+""" Get my mates """
+def test_get_my_mates(client, test_jwt):
+    response = client.get(
+        "/setting/mymates/0",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "parents" in response_json
+    assert "paginationInfo" in response_json
+
+# test_get_my_mates ( 잘못된 jwt )
+async def test_get_my_mates_fail():
+    with pytest.raises(HTTPException) as err:
+        headers = {"Authorization": f"Bearer wrong_jwt_token"}
+        client.get("/mymates/0", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to get my mates"

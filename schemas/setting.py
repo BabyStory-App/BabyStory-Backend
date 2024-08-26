@@ -9,9 +9,7 @@ class SettingOverviewOutputData(BaseModel):
     friendCount: int
     myStoryCount: int
 
-class SettingOverviewOutput(BaseModel):
-    status: str
-    message: str
+class SettingOverviewOutputService(BaseModel):
     data: SettingOverviewOutputData
 
 class FriendsParent(BaseModel):
@@ -25,9 +23,7 @@ class MyFriendsOutputService(BaseModel):
     paginationInfo: PaginationInfo
     parents: List[FriendsParent]
 
-class MyFriendsOutput(BaseModel):
-    status: str
-    message: str
+class MyFriendsOutputService(BaseModel):
     paginationInfo: PaginationInfo
     parents: List[FriendsParent]
 
@@ -43,27 +39,19 @@ class Post(BaseModel):
     contentPreview: str
     photo_id: Optional[str]
 
-class MyViewsPostOutput(BaseModel):
-    status: str
-    message: str
+class MyViewsPostOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
 
-class MyScriptsPostOutput(BaseModel):
-    status: str
-    message: str
+class MyScriptsPostOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
 
-class MyLikesPostOutput(BaseModel):
-    status: str
-    message: str
+class MyLikesPostOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
 
-class MyStoriesOutput(BaseModel):
-    status: str
-    message: str
+class MyStoriesOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
 
@@ -73,8 +61,6 @@ class MatesParent(BaseModel):
     photoId: Optional[str]
     description: Optional[str]
 
-class MyMatesOutput(BaseModel):
-    status: str
-    message: str
+class MyMatesOutputService(BaseModel):
     paginationInfo: PaginationInfo
     parents: list[MatesParent]

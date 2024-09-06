@@ -31,7 +31,7 @@ async def get_overview(parent_id: str = Depends(JWTBearer())) -> SettingOverview
 
 # 친구들 불러오기
 @router.get("/myfriends/{page}", dependencies=[Depends(JWTBearer())])
-async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> MyFriendsOutputService:
+async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> MyFriendsOutput:
     try:
         result = settingService.getMyFriends(page, parent_id)
         if(result == None):
@@ -50,9 +50,11 @@ async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> My
 
 # 유저가 조회한 post
 @router.get("/myviews/{page}", dependencies=[Depends(JWTBearer())])
-async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutputService:
+async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutput:
     try:
+        print("------------------a1")
         result = settingService.getMyViews(page, parent_id)
+        print("result: ", result)
         if(result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get view post")
@@ -69,7 +71,7 @@ async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyVi
 
 # 유저가 script한 post
 @router.get("/scripts/{page}", dependencies=[Depends(JWTBearer())])
-async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutputService:
+async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyScriptsPostOutput:
     try:
         result = settingService.getScripts(page, parent_id)
         if(result == None):
@@ -88,7 +90,7 @@ async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyVie
 
 # 유저가 좋아요한 post
 @router.get("/likes/{page}", dependencies=[Depends(JWTBearer())])
-async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutputService:
+async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyLikesPostOutput:
     try:
         result = settingService.getLikes(page, parent_id)
         if(result == None):
@@ -106,12 +108,15 @@ async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyViews
 
 # 유저 post
 @router.get("/mystories/{page}", dependencies=[Depends(JWTBearer())])
-async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> MyStoriesOutputService:
+async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> MyStoriesOutput:
     try:
+        print("a-------------------------")
         result = settingService.getMyStories(page, parent_id)
         if(result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my post")
+        print("result : ", result)
+        print("post", result['post'])
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
@@ -124,7 +129,7 @@ async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> My
 
 # 유저의 짝꿍 불러오기
 @router.get("/mymates/{page}", dependencies=[Depends(JWTBearer())])
-async def get_my_mates(page: int, parent_id: str = Depends(JWTBearer())) -> MyMatesOutputService:
+async def get_my_mates(page: int, parent_id: str = Depends(JWTBearer())) -> MyMatesOutput:
     try:
         result = settingService.getMyMates(page, parent_id)
         if(result == None):

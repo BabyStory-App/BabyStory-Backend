@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 
 from services.pview import PViewService

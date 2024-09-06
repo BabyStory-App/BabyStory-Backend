@@ -32,9 +32,9 @@ async def delete_view(deletePViewInput: DeletePViewInput,
                         parent_id: str = Depends(JWTBearer()))-> PView:
     try:
         result = pviewService.deletePView(deletePViewInput, parent_id)
-    except CustomException as e:
+    except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=str(e))
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
     except Exception as e:
         print(e)
         raise HTTPException(

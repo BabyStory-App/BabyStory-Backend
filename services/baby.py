@@ -35,13 +35,13 @@ class BabyService:
         db.add(baby)
         db.commit()
         db.refresh(baby)
-
+        
         if baby is None:
             raise CustomException("baby is not created")
 
         return baby
     
-    
+
     # 아기-부모 관계 생성
     def createPbconnect(self, parent_id: str, baby_id: str) -> Optional[PBConnect]:
         """
@@ -79,9 +79,15 @@ class BabyService:
         """
         db = get_db_session()
 
-        baby = (db.execute(text(
-            f"select b.* from pbconnect p inner join baby b \
-            ON b.parent_id = p.parent_id where p.parent_id = \"{parent_id}\"")).fetchall()[0])
+        # 부모 아이디로 아기-부모 연결 정보 가져오기
+        has = db.query(PBConnectTable).filter(PBConnectTable.parent_id == parent_id).all()
+
+        # 부모 아이디에 연결된 모든 아기의 아이디를 가져옴
+        baby_ids = [i.baby_id for i in has]
+
+        # has에 해당하는 아기정보와 일치하는 아기정보를 가져옴
+        baby = db.query(BabyTable).filter(BabyTable.baby_id.in_(baby_ids)).all()
+        
         if baby is None:
             raise CustomException("baby is not found")
 

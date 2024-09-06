@@ -15,13 +15,13 @@ babyService = BabyService()
 
 # 아기 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
-def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends(JWTBearer()))-> CreateBabyOutput:
+async def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends(JWTBearer()))-> CreateBabyOutput:
     try:
         # 아기 생성
-        baby = babyService.createBaby(createBabyInput,parent_id)
-
+        baby = babyService.createBaby(createBabyInput)
         # 아기-부모 연결 생성
-        pbconnect = babyService.createPbconnect(parent_id,createBabyInput.baby_id)
+        pbconnect = babyService.createPbconnect(parent_id, createBabyInput.baby_id)
+
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
@@ -33,7 +33,7 @@ def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends(JWTBe
 
 # 아기 정보 가져오기
 @router.get("/", dependencies=[Depends(JWTBearer())])
-def get_baby(parent_id: str = Depends(JWTBearer())):
+async def get_baby(parent_id: str = Depends(JWTBearer())):
     try:
         baby = babyService.getBaby(parent_id)
     except CustomException as error:
@@ -47,7 +47,7 @@ def get_baby(parent_id: str = Depends(JWTBearer())):
 
 # 아기 정보 수정
 @router.put("/", dependencies=[Depends(JWTBearer())])
-def update_baby(updateBabyInput: UpdateBabyInput, parent_id:str = Depends(JWTBearer())) -> UpdateBabyOutput:
+async def update_baby(updateBabyInput: UpdateBabyInput, parent_id:str = Depends(JWTBearer())) -> UpdateBabyOutput:
     try:
         baby = babyService.updateBaby(updateBabyInput,parent_id)
     except CustomException as error:
@@ -61,9 +61,9 @@ def update_baby(updateBabyInput: UpdateBabyInput, parent_id:str = Depends(JWTBea
 
 # 아기 삭제
 @router.delete("/", dependencies=[Depends(JWTBearer())])
-def delete_baby(baby_id: str, parent_id: str = Depends(JWTBearer())) -> DeleteBabyOutput:
+async def delete_baby(baby_id: str, parent_id: str = Depends(JWTBearer())) -> DeleteBabyOutput:
     try:
-        success = babyService.deleteBaby(baby_id,parent_id)
+        success = babyService.deleteBaby(baby_id, parent_id)
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
@@ -75,6 +75,6 @@ def delete_baby(baby_id: str, parent_id: str = Depends(JWTBearer())) -> DeleteBa
 
 # 아기 정보 가져오기 (확인용 임시 코드)
 @router.get("/all")
-def get_babies():
+async def get_babies():
     babies = babyService.getBabies()
     return babies

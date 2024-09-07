@@ -32,9 +32,9 @@ async def delete_heart(deletePHeartInput: DeletePHeartInput,
                         parent_id: str = Depends(JWTBearer()))-> PHeart:
     try:
         result = pheartService.deletePHeart(deletePHeartInput, parent_id)
-    except CustomException as e:
+    except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
     except Exception as e:
         print(e)
         raise HTTPException(

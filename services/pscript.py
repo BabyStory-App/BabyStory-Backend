@@ -17,8 +17,7 @@ class PScriptService:
         """
         스크립트 생성
         --input
-            - createScriptInput.post_id: 게시물 아이디
-            - createScriptInput.parent_id: 스크립트한 부모 아이디
+            - createScriptInput: 게시물 스크립트 생성 정보
         --output
             - Script: 스크립트 딕셔너리
         """
@@ -29,7 +28,6 @@ class PScriptService:
             parent_id=parent_id,
             createTime=datetime.now()
         )
-
         db.add(pscript)
         db.commit()
         db.refresh(pscript)
@@ -43,8 +41,7 @@ class PScriptService:
         """
         스크립트 삭제
         --input
-            - deletePScriptInput.post_id: 게시물 아이디
-            - deletePScriptInput.parent_id: 스크립트한 부모 아이디
+            - deletePScriptInput: 게시물 스크립트 삭제 정보
         --output
             - PScript: 스크립트 딕셔너리
         """
@@ -54,12 +51,11 @@ class PScriptService:
             PScriptTable.post_id == deletePScriptInput.post_id,
             PScriptTable.parent_id == parent_id
         ).first()
+        db.delete(pscript)
+        db.commit()
 
         # pscript가 없을 경우 CustomException을 발생시킵니다.
         if pscript is None:
             raise CustomException("PScript not found")
-
-        db.delete(pscript)
-        db.commit()
 
         return pscript

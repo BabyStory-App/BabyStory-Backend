@@ -129,7 +129,7 @@ class PostService:
 
         post = db.query(PostTable).filter(
             PostTable.parent_id == parent_id,
-                PostTable.post_id == post_id, 
+            PostTable.post_id == post_id, 
             PostTable.deleteTime == None).first()
 
         # post가 없을 경우 CustomException을 발생시킵니다.

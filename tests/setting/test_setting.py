@@ -49,11 +49,12 @@ def test_get_my_friends(client, test_jwt):
     assert "parents" in response_json
     assert "paginationInfo" in response_json
     
-    # assert response_json["status"] == "success"
-    # assert response_json["message"] == "Successfully get my friends"
-    # assert response_json['paginationInfo']['page'] == 0
-    # assert response_json['paginationInfo']['take'] == 10
-    # assert response_json['paginationInfo']['total'] == 1
+    assert response_json["status"] == "success"
+    assert response_json["message"] == "Successfully get my friends"
+    assert response_json['paginationInfo']['page'] == 0
+    assert response_json['paginationInfo']['take'] == 10
+    assert response_json['paginationInfo']['total'] == 1
+    assert response_json['parents'][0]['parent_id'] == test_jwt['friend']
 
 
 # test_get_my_friends ( 잘못된 jwt )
@@ -77,6 +78,15 @@ def test_get_my_views(client, test_jwt):
     response_json = response.json()
     assert "post" in response_json
     assert "paginationInfo" in response_json
+    print("a---------------------")
+    print(response_json)
+
+    assert response_json["status"] == "success"
+    assert response_json["message"] == "Successfully get my views"
+    assert response_json['paginationInfo']['page'] == 0
+    assert response_json['paginationInfo']['take'] == 10
+    assert response_json['paginationInfo']['total'] == 0
+    assert response_json['post'] == []
 
 # test_get_my_views ( 잘못된 jwt )
 async def test_get_my_views_fail():
@@ -100,6 +110,13 @@ def test_get_scripts(client, test_jwt):
     assert "post" in response_json
     assert "paginationInfo" in response_json
 
+    assert response_json["status"] == "success"
+    assert response_json["message"] == "Successfully get scripts"
+    assert response_json['paginationInfo']['page'] == 0
+    assert response_json['paginationInfo']['take'] == 10
+    assert response_json['paginationInfo']['total'] == 0
+    assert response_json['post'] == []
+
 # test_get_scripts ( 잘못된 jwt )
 async def test_get_scripts_fail():
     with pytest.raises(HTTPException) as err:
@@ -121,6 +138,13 @@ def test_get_likes(client, test_jwt):
     response_json = response.json()
     assert "post" in response_json
     assert "paginationInfo" in response_json
+
+    assert response_json["status"] == "success"
+    assert response_json["message"] == "Successfully get likes"
+    assert response_json['paginationInfo']['page'] == 0
+    assert response_json['paginationInfo']['take'] == 10
+    assert response_json['paginationInfo']['total'] == 0
+    assert response_json['post'] == []
 
 # test_get_likes ( 잘못된 jwt )
 async def test_get_likes_fail():
@@ -144,6 +168,13 @@ def test_get_my_post(client, test_jwt):
     assert "post" in response_json
     assert "paginationInfo" in response_json
 
+    assert response_json["status"] == "success"
+    assert response_json["message"] == "Successfully get my stories"
+    assert response_json['paginationInfo']['page'] == 0
+    assert response_json['paginationInfo']['take'] == 10
+    assert response_json['paginationInfo']['total'] == 1
+    assert response_json['post'][0]['post_id'] == test_jwt['testpost']
+
 # test_get_my_post ( 잘못된 jwt )
 async def test_get_my_post_fail():
     with pytest.raises(HTTPException) as err:
@@ -165,6 +196,13 @@ def test_get_my_mates(client, test_jwt):
     response_json = response.json()
     assert "parents" in response_json
     assert "paginationInfo" in response_json
+
+    assert response_json["status"] == "success"
+    assert response_json["message"] == "Successfully get my mates"
+    assert response_json['paginationInfo']['page'] == 0
+    assert response_json['paginationInfo']['take'] == 10
+    assert response_json['paginationInfo']['total'] == 1
+    assert response_json['parents'][0]['parent_id'] == test_jwt['friend']
 
 # test_get_my_mates ( 잘못된 jwt )
 async def test_get_my_mates_fail():

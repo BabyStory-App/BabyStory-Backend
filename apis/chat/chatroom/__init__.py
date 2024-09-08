@@ -18,7 +18,7 @@ chatRoomService = ChatRoomService()
 
 # 채팅방 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
-async def create_chatroom(name: str, parent_id: str = Depends(JWTBearer()))-> CreateChatRoomOutput:
+async def create_chatroom(createChatRoomInput: CreateChatRoomInput, parent_id: str = Depends(JWTBearer()))-> CreateChatRoomOutput:
     '''
     채팅방 생성
     --input
@@ -28,7 +28,7 @@ async def create_chatroom(name: str, parent_id: str = Depends(JWTBearer()))-> Cr
         - chatroom: 채팅방
     '''
     try:
-        chatroom = chatRoomService.createChatRoom(parent_id, name)
+        chatroom = chatRoomService.createChatRoom(parent_id, createChatRoomInput.name)
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create chatroom")
@@ -37,7 +37,7 @@ async def create_chatroom(name: str, parent_id: str = Depends(JWTBearer()))-> Cr
 
 # 채팅방 목록 조회
 @router.get("/list", dependencies=[Depends(JWTBearer())])
-async def get_chatroom_list(parent_id: str = Depends(JWTBearer())):
+async def get_chatroom_list(parent_id: str = Depends(JWTBearer()))-> GetChatRoomListOutput:
     '''
     채팅방 목록 조회
     --input
@@ -58,7 +58,7 @@ async def get_chatroom_list(parent_id: str = Depends(JWTBearer())):
 
 # 채팅방 초대
 @router.post("/invite", dependencies=[Depends(JWTBearer())])
-async def invite_chatroom(invite_id: str, room_id: str, parent_id: str = Depends(JWTBearer())) -> CreateInviteOutput:
+async def invite_chatroom(createInviteInput:CreateInviteInput, parent_id: str = Depends(JWTBearer())) -> CreateInviteOutput:
     '''
     채팅방 초대
     --input
@@ -69,7 +69,7 @@ async def invite_chatroom(invite_id: str, room_id: str, parent_id: str = Depends
         - success: 성공 여부
     '''
     try:
-        chatroom = chatRoomService.inviteChatRoom(invite_id, room_id, parent_id)
+        chatroom = chatRoomService.inviteChatRoom(createInviteInput.invite_id, createInviteInput.room_id, parent_id)
     
     except CustomException as e:
         raise HTTPException(
@@ -83,7 +83,7 @@ async def invite_chatroom(invite_id: str, room_id: str, parent_id: str = Depends
 
 # 채팅방 나가기
 @router.post("/exit", dependencies=[Depends(JWTBearer())])
-async def exit_chatroom(room_id: int, parent_id: str = Depends(JWTBearer())):
+async def exit_chatroom(createExitInput: CreateExitInput, parent_id: str = Depends(JWTBearer()))->CreateExitOutput:
     '''
     채팅방 나가기
     --input
@@ -93,7 +93,7 @@ async def exit_chatroom(room_id: int, parent_id: str = Depends(JWTBearer())):
         - success: 성공 여부
     '''
     try:
-        chatroom = chatRoomService.exitChatRoom(room_id, parent_id)
+        chatroom = chatRoomService.exitChatRoom(createExitInput.room_id, parent_id)
     
     except CustomException as e:
         raise HTTPException(
@@ -107,7 +107,7 @@ async def exit_chatroom(room_id: int, parent_id: str = Depends(JWTBearer())):
 
 # 채팅방 수정
 @router.post("/update", dependencies=[Depends(JWTBearer())])
-async def update_chatroom(room_id: str, name: str, parent_id: str = Depends(JWTBearer())):
+async def update_chatroom(updateChatRoomInput:UpdateChatRoomInput, parent_id: str = Depends(JWTBearer()))->UpdateChatRoomOutput:
     '''
     채팅방 수정
     --input
@@ -118,7 +118,7 @@ async def update_chatroom(room_id: str, name: str, parent_id: str = Depends(JWTB
         - success: 성공 여부
     '''
     try:
-        chatroom = chatRoomService.updateChatRoom(room_id, name, parent_id)
+        chatroom = chatRoomService.updateChatRoom(updateChatRoomInput.room_id, updateChatRoomInput.name, parent_id)
     
     except CustomException as e:
         raise HTTPException(
@@ -143,7 +143,6 @@ async def get_chatroom_chat(chatroom_id: int, chat_id: str, parent_id: str = Dep
         - chat: 채팅 내용
     '''
     try:
-        print(chatroom_id, chat_id, parent_id)
         chat = chatRoomService.getChat(chatroom_id, chat_id, parent_id)
     
     except CustomException as e:

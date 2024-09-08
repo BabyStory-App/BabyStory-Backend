@@ -99,4 +99,4 @@ class ChatService:
         # parent_id를 key로 하는 websocket이 존재하는지 확인
         connections = [self.active_connections.get(parent_id)]
         client_ids = [self.client_info.get(conn, "Unknown") for conn in connections]
-        return f"Total clients: {len(connections)}\nClients: {', '.join(client_ids)}"
+        return f"{self.active_connections},{self.client_info}Total clients: {len(connections)}\nClients: {', '.join(client_ids)}"

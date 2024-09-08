@@ -5,7 +5,6 @@ from model.cheart import *
 
 class CreateCHeartInput(BaseModel):
     comment_id: int
-    createTime: datetime = datetime.now()
 
 class CreateCHeartOutput(BaseModel):
     success: int

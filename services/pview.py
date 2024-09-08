@@ -28,7 +28,6 @@ class PViewService:
                     parent_id=parent_id,
                     createTime = datetime.now()
                 )
-    
             db.add(view)
             db.commit()
             db.refresh(view)
@@ -52,12 +51,11 @@ class PViewService:
                     PViewTable.post_id == deletePViewInput.post_id,
                     PViewTable.parent_id == parent_id
                 ).first()
-    
+            db.delete(view)
+            db.commit()
+            
             # pview가 없을 경우 CustomException을 발생시킵니다.
             if view is None:
                 raise CustomException("PView not found")
-
-            db.delete(view)
-            db.commit()
 
             return view

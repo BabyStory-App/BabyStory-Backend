@@ -9,68 +9,102 @@ class SettingOverviewOutputData(BaseModel):
     friendCount: int
     myStoryCount: int
 
-class SettingOverviewOutput(BaseModel):
-    status: str
-    message: str
+class SettingOverviewOutputService(BaseModel):
     data: SettingOverviewOutputData
 
 class FriendsParent(BaseModel):
     parent_id: str
     nickname: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
     isMate: bool
+
+class MyFriendsOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    parents: List[FriendsParent]
 
 class MyFriendsOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    parents: FriendsParent
+    parents: List[FriendsParent]
 
 class Post(BaseModel):
-    post_id: str
+    post_id: int
     title: str
-    createTime: datetime
-    heart: int
-    comment: int
-    script: int
-    view: int
-    hashList: str
+    createTime: Optional[datetime]
+    pHeart: Optional[int]
+    pScript: Optional[int]
+    pView: Optional[int]
+    pComment: Optional[int]
+    hashList: Optional[str]
     contentPreview: str
     photo_id: Optional[str]
+
+class MyViewsPostOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    post: list[Post]
 
 class MyViewsPostOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
+
+class MyScriptsPostOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    post: list[Post]
 
 class MyScriptsPostOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
+
+class MyLikesPostOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    post: list[Post]
 
 class MyLikesPostOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[Post]
+
+class MyStoriesPost(BaseModel):
+    post_id: int
+    title: str
+    createTime: Optional[datetime]
+    pHeart: Optional[int]
+    pScript: Optional[int]
+    pView: Optional[int]
+    pComment: Optional[int]
+    hashList: Optional[str]
+    contentPreview: str
+    photo_id: Optional[str]
+
+class MyStoriesOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    post: list[MyStoriesPost]
 
 class MyStoriesOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: Post
+    post: list[MyStoriesPost]
 
 class MatesParent(BaseModel):
     parent_id: str
     nickname: str
-    photoId: str
-    description: str
+    photoId: Optional[str]
+    description: Optional[str]
+
+class MyMatesOutputService(BaseModel):
+    paginationInfo: PaginationInfo
+    parents: list[MatesParent]
 
 class MyMatesOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    parents: MatesParent
+    parents: list[MatesParent]

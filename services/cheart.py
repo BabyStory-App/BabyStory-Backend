@@ -1,12 +1,10 @@
-from fastapi import HTTPException
-from typing import Optional, List, Set
+from typing import Optional
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
-
 from model.cheart import CHeartTable
 from schemas.cheart import *
-
 from db import get_db_session
+from error.exception.customerror import *
 
 class CHeartService:
 
@@ -17,54 +15,43 @@ class CHeartService:
         """
         하트 생성
         --input
-            - createCHeartInput.comment_id: 댓글 아이디
-            - createCHeartInput.parent_id: 하트 누른 부모 아이디
+            - createCHeartInput: 댓글 하트 생성 정보
         --output
             - CHeart: 하트 딕셔너리
         """
         db = get_db_session()
-        try:
-            Cheart = CHeartTable(
-                comment_id=createCHeartInput.comment_id,
-                parent_id = parent_id,
-                createTime = createCHeartInput.createTime
-            )
 
-            db.add(Cheart)
-            db.commit()
-            db.refresh(Cheart)
+        Cheart = CHeartTable(
+            comment_id=createCHeartInput.comment_id,
+            parent_id = parent_id,
+            createTime = datetime.now()
+        )
+        db.add(Cheart)
+        db.commit()
+        db.refresh(Cheart)
 
-            return Cheart
-        
-        except Exception as e:
-            db.rollback()
-            raise (e)
+        return Cheart
+
         
     # 하트 삭제
     def deleteCHeart(self, deleteCHeartInput: DeleteCHeartInput, parent_id: str) -> Optional[CHeart]:
         """
         하트 삭제
         --input
-            - deleteCHeartInput.comment_id: 댓글 아이디
-            - deleteCHeartInput.parent_id: 하트 누른 부모 아이디
+            - deleteCHeartInput: 댓글 하트 삭제 정보
         --output
             - CHeart: 하트 딕셔너리
         """
         db = get_db_session()
-        try:
-            Cheart = db.query(CHeartTable).filter(
-                CHeartTable.comment_id == deleteCHeartInput.comment_id,
-                CHeartTable.parent_id == parent_id
-            ).first()
 
-            if Cheart is None:
-                return None
+        Cheart = db.query(CHeartTable).filter(
+            CHeartTable.comment_id == deleteCHeartInput.comment_id,
+            CHeartTable.parent_id == parent_id
+        ).first()
+        db.delete(Cheart)
+        db.commit()
 
-            db.delete(Cheart)
-            db.commit()
-
-            return Cheart
-
-        except Exception as e:
-            db.rollback()
-            raise (e)
+        if Cheart is None:
+            raise CustomException("CHeart not found")
+        
+        return Cheart

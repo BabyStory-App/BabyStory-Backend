@@ -23,6 +23,10 @@ def test_get_overview(client, test_jwt):
     response_json = response.json()
     assert "data" in response_json
 
+    assert response_json["data"]["mateCount"] == 1
+    assert response_json["data"]["friendCount"] == 1
+    assert response_json["data"]["myStoryCount"] == 1
+
 # test_get_overview ( 잘못된 jwt )
 async def test_get_overview_fail():
     with pytest.raises(HTTPException) as err:
@@ -44,6 +48,13 @@ def test_get_my_friends(client, test_jwt):
     response_json = response.json()
     assert "parents" in response_json
     assert "paginationInfo" in response_json
+    
+    # assert response_json["status"] == "success"
+    # assert response_json["message"] == "Successfully get my friends"
+    # assert response_json['paginationInfo']['page'] == 0
+    # assert response_json['paginationInfo']['take'] == 10
+    # assert response_json['paginationInfo']['total'] == 1
+
 
 # test_get_my_friends ( 잘못된 jwt )
 async def test_get_my_friends_fail():

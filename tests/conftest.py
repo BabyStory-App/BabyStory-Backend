@@ -20,7 +20,6 @@ def client():
 def test_jwt():
     return {"access_token": None}
 
-
 def pytest_collection_modifyitems(session, config, items):
     # 원하는 테스트 폴더 순서 지정 (절대 경로로 변환)
     folder_order = [

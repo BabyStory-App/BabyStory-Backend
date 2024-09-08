@@ -63,8 +63,8 @@ CREATE TABLE pbconnect(
 CREATE TABLE chatroom(
     room_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    lastChat INT NOT NULL,
     name VARCHAR(100) NOT NULL,
+    memberCount INT NOT NULL,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
@@ -79,9 +79,11 @@ CREATE TABLE chat(
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
+/*
 ALTER TABLE chatroom
 ADD CONSTRAINT fk_lastChat
 FOREIGN KEY (lastChat) REFERENCES chat(chat_id);
+*/
 
 CREATE TABLE pcconnect(
     pcc_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -252,7 +254,7 @@ CREATE TABLE alert (
     parent_id VARCHAR(255) NOT NULL,
     target VARCHAR(255),
     message TEXT NOT NULL,
-    click boolean,
+    click boolean NOT NULL,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
     FOREIGN KEY (target) REFERENCES parent(parent_id)
 );

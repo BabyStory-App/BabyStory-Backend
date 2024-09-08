@@ -33,7 +33,7 @@ class Parent(BaseModel):
     nickname: str
     gender: Optional[int]
     signInMethod: str
-    emailVerified: int
+    emailVerified: bool
     photoId: Optional[str]
     description: Optional[str]
     mainAddr: Optional[str]

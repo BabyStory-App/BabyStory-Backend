@@ -38,4 +38,4 @@ class PCConnectTable(DB_Base):
     room_id = Column(Integer, ForeignKey('chatroom.room_id'), nullable=False)
 
     parent = relationship(ParentTable, backref='pcconnect', passive_deletes=True)
-    chat = relationship(ChatTable, backref='pcconnect', passive_deletes=True)
+    chat = relationship(ChatRoomTable, backref='pcconnect', passive_deletes=True)

@@ -86,7 +86,7 @@ test_CreatePostInput_friend = {
 # 친구유저생성
 
 
-def test_create_friend(client):
+def test_create_friend(client, test_jwt):
     response = client.post(
         "/parent",
         json=test_friend_data
@@ -103,6 +103,8 @@ def test_create_friend(client):
 
     global test_friend_jwt
     test_friend_jwt = jwt
+
+    test_jwt["friend"] = decodeJWT(test_friend_jwt).get('user_id')
 
 
 def test_update_friend(client):
@@ -233,6 +235,8 @@ def test_create_post(client, test_jwt):
     assert response_json["post"]["title"] == test_CreatePostInput["title"]
     assert response_json["post"]["hashList"] == test_CreatePostInput["hashList"]
 
+    test_jwt["testpost"] = response_json["post"]["post_id"]
+
 # 친구 게시물 생성
 
 
@@ -253,6 +257,7 @@ def test_create_post_friend(client):
     assert response_json["post"]["reveal"] == test_CreatePostInput_friend["reveal"]
     assert response_json["post"]["title"] == test_CreatePostInput_friend["title"]
     assert response_json["post"]["hashList"] == test_CreatePostInput_friend["hashList"]
+
 
 # 메인페이지 생성
 
@@ -391,3 +396,4 @@ def test_create_recommend_wrong_page(client, test_jwt):
 
     assert response.status_code == 406
     assert response.json() == {"detail": "page must be -1 or greater than 0"}
+

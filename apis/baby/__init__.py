@@ -68,13 +68,7 @@ async def delete_baby(baby_id: str, parent_id: str = Depends(JWTBearer())) -> De
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete baby")
     return {"success": 200 if success else 403}
-
-
-# 아기 정보 가져오기 (확인용 임시 코드)
-@router.get("/all")
-async def get_babies():
-    babies = babyService.getBabies()
-    return babies

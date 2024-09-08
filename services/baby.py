@@ -146,6 +146,9 @@ class BabyService:
         pbconnect = db.query(PBConnectTable).filter(
             PBConnectTable.parent_id == parent_id,
             PBConnectTable.baby_id == baby_id).first()
+        db.delete(pbconnect)
+        db.commit()
+
         if pbconnect is None:
             raise CustomException("pbconnect is not found")
 

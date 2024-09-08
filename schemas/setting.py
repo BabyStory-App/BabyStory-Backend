@@ -71,27 +71,15 @@ class MyLikesPostOutput(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
 
-class MyStoriesPost(BaseModel):
-    post_id: int
-    title: str
-    createTime: Optional[datetime]
-    pHeart: Optional[int]
-    pScript: Optional[int]
-    pView: Optional[int]
-    pComment: Optional[int]
-    hashList: Optional[str]
-    contentPreview: str
-    photo_id: Optional[str]
-
 class MyStoriesOutputService(BaseModel):
     paginationInfo: PaginationInfo
-    post: list[MyStoriesPost]
+    post: list[Post]
 
 class MyStoriesOutput(BaseModel):
     status: str
     message: str
     paginationInfo: PaginationInfo
-    post: list[MyStoriesPost]
+    post: list[Post]
 
 class MatesParent(BaseModel):
     parent_id: str

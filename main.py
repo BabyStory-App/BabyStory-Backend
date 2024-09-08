@@ -9,9 +9,10 @@ from apis.post import router as post_router
 from apis.post.pheart import router as pheart_router
 from apis.post.pscript import router as pscript_router
 from apis.post.pview import router as pview_router
+from apis.post.pcomment import router as pcomment_router
+from apis.post.pcomment.cheart import router as cheart_router
 from apis.post.postmain import router as postmain_router
 from apis.search import router as search_router
-from apis.post.pcomment import router as pcomment_router
 from apis.friend import router as friend_router
 from apis.setting import router as setting_router
 
@@ -25,11 +26,12 @@ app.include_router(post_router)
 app.include_router(pheart_router)
 app.include_router(pscript_router)
 app.include_router(pview_router)
+app.include_router(pcomment_router)
+app.include_router(cheart_router)
 app.include_router(friend_router)
 app.include_router(postmain_router)
 
 app.include_router(search_router)
-app.include_router(pcomment_router)
 app.include_router(setting_router)
 
 if __name__ == "__main__":

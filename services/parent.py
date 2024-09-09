@@ -266,11 +266,8 @@ class ParentService:
         # signInMethod가 'email'인 경우 비밀번호를 해싱해서 확인
         if parent.signInMethod == 'email':
             # 입력된 비밀번호를 해싱
-            hashed_password = bcrypt.hashpw(
-                createLoginInput.password.encode('utf-8'), bcrypt.gensalt())
-
-            # 해시된 비밀번호와 DB의 비밀번호가 일치하지 않으면 에러
-            if parent.password != hashed_password:
-                raise CustomException("Wrong password")
+            if not bcrypt.checkpw(createLoginInput.password.encode('utf-8'), parent.password.encode('utf-8')):
+                raise CustomException("wrong password")
+ 
 
         return parent

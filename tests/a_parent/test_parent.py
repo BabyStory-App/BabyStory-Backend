@@ -1,6 +1,7 @@
 from typing import List, Optional
 from auth.auth_handler import decodeJWT, signJWT
 from uuid import uuid4
+import bcrypt
 
 from db import get_db_session
 from model.parent import ParentTable
@@ -16,7 +17,7 @@ test_create_data = {
     "name": "qq",
     "nickname": "qq",
     "gender": 0,
-    "signInMethod": "qq",
+    "signInMethod": "email",
     "emailVerified": 1,
     "photoId": "qq",
     "description": "qq",
@@ -32,7 +33,7 @@ update_data = {
     "name": "qw",
     "nickname": "qw",
     "gender": 1,
-    "signInMethod": "qw",
+    "signInMethod": "email",
     "emailVerified": 0,
     "photoId": "qw",
     "description": "qw",
@@ -47,7 +48,7 @@ update_data2 = {
     "name": "qw",
     "nickname": "qw",
     "gender": 0,
-    "signInMethod": "qw",
+    "signInMethod": "email",
     "emailVerified": 1,
     "photoId": "qw",
     "description": "qw",
@@ -68,7 +69,7 @@ def test_create_parent(client, test_jwt):
     assert "parent" in response_json
 
     assert response_json["parent"]["parent_id"] == test_create_data["parent_id"]
-    assert response_json["parent"]["password"] == test_create_data["password"]
+    assert bcrypt.checkpw(test_create_data["password"].encode('utf-8'), response_json["parent"]["password"].encode('utf-8'))
     assert response_json["parent"]["email"] == test_create_data["email"]
     assert response_json["parent"]["nickname"] == test_create_data["nickname"]
     assert response_json["parent"]["signInMethod"] == test_create_data["signInMethod"]
@@ -104,7 +105,7 @@ def test_get_parent(client, test_jwt):
     assert "parent" in response_json
 
     assert response_json["parent"]["parent_id"] == test_create_data["parent_id"]
-    assert response_json["parent"]["password"] == test_create_data["password"]
+    assert bcrypt.checkpw(test_create_data["password"].encode('utf-8'), response_json["parent"]["password"].encode('utf-8'))
     assert response_json["parent"]["email"] == test_create_data["email"]
     assert response_json["parent"]["nickname"] == test_create_data["nickname"]
     assert response_json["parent"]["signInMethod"] == test_create_data["signInMethod"]
@@ -145,7 +146,7 @@ def test_login_parent(client):
     assert "parent" in response_json
 
     assert response_json["parent"]["parent_id"] == test_create_data["parent_id"]
-    assert response_json["parent"]["password"] == test_create_data["password"]
+    assert bcrypt.checkpw(test_create_data["password"].encode('utf-8'), response_json["parent"]["password"].encode('utf-8'))
     assert response_json["parent"]["email"] == test_create_data["email"]
     assert response_json["parent"]["nickname"] == test_create_data["nickname"]
     assert response_json["parent"]["signInMethod"] == test_create_data["signInMethod"]
@@ -194,6 +195,11 @@ def test_update_parent(client, test_jwt):
     response_json = response.json()
     assert response_json["success"] == 200
     assert "parent" in response_json
+
+
+    assert bcrypt.checkpw(update_data["password"].encode('utf-8'), response_json["parent"]["password"].encode('utf-8'))
+    response_json["parent"].pop("password")
+    update_data.pop("password")
 
     # json과 동일한지 확인
     for key in response_json["parent"]:
@@ -271,7 +277,7 @@ def test_create_parent_two(client, test_jwt):
     assert "parent" in response_json
 
     assert response_json["parent"]["parent_id"] == test_create_data["parent_id"]
-    assert response_json["parent"]["password"] == test_create_data["password"]
+    assert bcrypt.checkpw(test_create_data["password"].encode('utf-8'), response_json["parent"]["password"].encode('utf-8'))
     assert response_json["parent"]["email"] == test_create_data["email"]
     assert response_json["parent"]["nickname"] == test_create_data["nickname"]
     assert response_json["parent"]["signInMethod"] == test_create_data["signInMethod"]

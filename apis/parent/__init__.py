@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Header
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from typing import Union, Optional
+import bcrypt
 
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer

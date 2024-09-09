@@ -1,5 +1,6 @@
 from typing import Optional, Union, List
 from fastapi import HTTPException
+import bcrypt
 
 from model.parent import ParentTable
 from model.pbconnect import *
@@ -35,6 +36,11 @@ class ParentService:
 
         if error:
             raise CustomException("parent_id already exists")
+        
+        # 패스워드 암호화
+        if createParentInput.signInMethod == 'email':
+            createParentInput.password = bcrypt.hashpw(
+                createParentInput.password.encode('utf-8'), bcrypt.gensalt())
 
         # 이메일 중복 확인
         error = db.query(ParentTable).filter(
@@ -118,6 +124,11 @@ class ParentService:
 
             if parent is None:
                 return False
+            
+            # 패스워드 암호화
+            if updateParentInput.signInMethod == 'email':
+                updateParentInput.password = bcrypt.hashpw(
+                    updateParentInput.password.encode('utf-8'), bcrypt.gensalt())
 
             for key in updateParentInput.dict().keys():
                 setattr(parent, key, updateParentInput.dict()[key])
@@ -251,13 +262,15 @@ class ParentService:
 
         if parent is None:
             raise CustomException("Email not found")
+        
+        # signInMethod가 'email'인 경우 비밀번호를 해싱해서 확인
+        if parent.signInMethod == 'email':
+            # 입력된 비밀번호를 해싱
+            hashed_password = bcrypt.hashpw(
+                createLoginInput.password.encode('utf-8'), bcrypt.gensalt())
 
-        # 패스워드가 일치하지 않으면 에러
-        parent = db.query(ParentTable).filter(
-            ParentTable.email == createLoginInput.email,
-            ParentTable.password == createLoginInput.password).first()
-
-        if parent is None:
-            raise CustomException("wrong password")
+            # 해시된 비밀번호와 DB의 비밀번호가 일치하지 않으면 에러
+            if parent.password != hashed_password:
+                raise CustomException("Wrong password")
 
         return parent

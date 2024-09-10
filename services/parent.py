@@ -1,9 +1,13 @@
 from typing import Optional, Union, List
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 import bcrypt
+import os
+import shutil
+from PIL import Image
 
 from model.parent import ParentTable
 from model.pbconnect import *
+from constants.path import *
 
 from schemas.parent import *
 
@@ -36,11 +40,11 @@ class ParentService:
 
         if error:
             raise CustomException("parent_id already exists")
-        
+
         # 패스워드 암호화
-        if createParentInput.signInMethod == 'email':
-            createParentInput.password = bcrypt.hashpw(
-                createParentInput.password.encode('utf-8'), bcrypt.gensalt())
+        # if createParentInput.signInMethod == 'email':
+        #     createParentInput.password = bcrypt.hashpw(
+        #         createParentInput.password.encode('utf-8'), bcrypt.gensalt())
 
         # 이메일 중복 확인
         error = db.query(ParentTable).filter(
@@ -123,15 +127,22 @@ class ParentService:
                 ParentTable.parent_id == parent_id).first()
 
             if parent is None:
-                return False
-            
+                return None
+
             # 패스워드 암호화
-            if updateParentInput.signInMethod == 'email':
+            if parent.signInMethod == 'email' and updateParentInput.password:
                 updateParentInput.password = bcrypt.hashpw(
                     updateParentInput.password.encode('utf-8'), bcrypt.gensalt())
 
             for key in updateParentInput.dict().keys():
-                setattr(parent, key, updateParentInput.dict()[key])
+                value = updateParentInput.dict()[key]
+                if value != None:
+                    if key == 'password' and parent.signInMethod != 'email':
+                        raise CustomException(
+                            "signInMethod이 email이 아닌 경우 password를 수정할 수 없습니다.")
+                    if key == 'photoId' and value == 'remove_photoId':
+                        value = None
+                    setattr(parent, key, value)
 
             db.add(parent)
             db.commit()
@@ -144,6 +155,49 @@ class ParentService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to update parent")
+
+    def uploadProfileImage(self, file: UploadFile, parent_id: str) -> bool:
+        """
+        생성된 post에 대한 사진 업로드
+        --input
+            - file: 업로드할 파일 리스트
+            - parent_id: 부모 아이디
+        --output
+            - bool: 사진 업로드 성공 여부
+        """
+        db = get_db_session()
+
+        parent = db.query(ParentTable).filter(
+            ParentTable.parent_id == parent_id).first()
+
+        if parent is None:
+            raise CustomException("Parent not found")
+
+        # 파일 확장자를 file.filename에서 추출
+        filename = file.filename
+        if "." in filename:
+            file_extension = filename.split(".")[-1].lower()
+        else:
+            raise CustomException("Invalid file format")
+
+        # 이미지 파일 확장자만 허용 (jpg, jpeg, png, tiff, webp, heif, heic)
+        allowed_extensions = ['jpg', 'jpeg',
+                              'png', 'tiff', 'webp', 'heif', 'heic']
+        if file_extension not in allowed_extensions:
+            raise CustomException("이미지만 받을 수 있습니다.")
+
+        # 파일 저장 경로 설정 (항상 .jpeg로 저장)
+        file_path = os.path.join(PROFILE_IMAGE_DIR, f"{parent_id}.jpeg")
+
+        # 파일을 jpeg로 변환 후 저장
+        try:
+            image = Image.open(file.file)
+            rgb_image = image.convert("RGB")  # PNG, TIFF, HEIC 등은 RGB로 변환
+            rgb_image.save(file_path, format="JPEG")
+        except Exception as e:
+            raise CustomException(f"이미지 처리 중 오류가 발생했습니다: {str(e)}")
+
+        return True
 
     # 부모 삭제
 
@@ -214,7 +268,7 @@ class ParentService:
     #             status_code=400, detail="Failed to get parent")
 
     # 다른 아기-부모 연결 생성
-    def create_pbconnect(self,  baby_id: str, parent_id: str) -> Optional[PBConnect]:
+    def create_pbconnect(self, baby_id: str, parent_id: str) -> Optional[PBConnect]:
         '''
         부모에게 다른 아기 연결 요청 (부부끼리 아기를 공유할 수 있음)
         --input
@@ -262,12 +316,11 @@ class ParentService:
 
         if parent is None:
             raise CustomException("Email not found")
-        
+
         # signInMethod가 'email'인 경우 비밀번호를 해싱해서 확인
-        if parent.signInMethod == 'email':
-            # 입력된 비밀번호를 해싱
-            if not bcrypt.checkpw(createLoginInput.password.encode('utf-8'), parent.password.encode('utf-8')):
-                raise CustomException("wrong password")
- 
+        # if parent.signInMethod == 'email':
+        #     # 입력된 비밀번호를 해싱
+        #     if not bcrypt.checkpw(createLoginInput.password.encode('utf-8'), parent.password.encode('utf-8')):
+        #         raise CustomException("wrong password")
 
         return parent

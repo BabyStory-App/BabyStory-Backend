@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from typing import Union, Optional
@@ -80,16 +80,11 @@ def create_parent(createParentInput: CreateParentInput) -> CreateParentOutput:
 async def get_parent(parent_id: str = Depends(JWTBearer())) -> GetParentByEmailOutput:
     '''
     부모 정보 조회
-    --input
-        - parent_id: 부모 아이디
+    --input: None
     --output
         - parent: 부모 정보
         - x-jwt: JWT 토큰
     '''
-
-    if parent_id is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
     parent = parentService.getParent(parent_id)
 
@@ -126,7 +121,7 @@ async def update_parent(updateParentInput: UpdateParentInput,
                         parent_id: str = Depends(JWTBearer())) -> UpdateParentOutput:
     '''
     부모 정보 수정
-    --input\
+    --input
         - updateParentInput.password: 비밀번호
         - updateParentInput.email: 이메일
         - updateParentInput.name: 이름
@@ -143,29 +138,54 @@ async def update_parent(updateParentInput: UpdateParentInput,
         - success: 성공 여부
         - parent: 부모 정보
     '''
-    if updateParentInput.gender not in [0, 1, 2]:
+    if updateParentInput.gender != None and updateParentInput.gender not in [0, 1, 2]:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Gender must be 0, 1, 2"
         )
-
-    if parent_id is None:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
 
     parent = parentService.updateParent(parent_id, updateParentInput)
 
     if parent is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Update failed")
-
     return {
         "success": 200 if parent else 403,
         "parent": parent
     }
 
+
+@router.post("/upload/profile", dependencies=[Depends(JWTBearer())])
+async def upload_profile_image(file: Optional[UploadFile] = None, parent_id: str = Depends(JWTBearer())) -> UploadProfileImageOutput:
+    '''
+    프로필 이미지 업로드
+    --input
+        - file: 이미지 파일
+    --output
+        - success: 성공 여부
+        - photoId: 사진 아이디
+    '''
+    try:
+        success = parentService.uploadProfileImage(file, parent_id)
+
+        if success == False:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
+
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Upload failed")
+
+    return {
+        "success": 200 if success else 403,
+        "photoId": parent_id
+    }
+
+
 # 부모 삭제
-
-
 @router.delete("/", dependencies=[Depends(JWTBearer())])
 async def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOutput:
     '''
@@ -260,6 +280,21 @@ async def login_parent(createLoginInput: CreateLoginInput) -> CreateLoginOutput:
     '''
     try:
         parent = parentService.createLogin(createLoginInput)
+        parent_data = {
+            'parent_id': parent.parent_id,
+            'password': parent.password,
+            'email': parent.email,
+            'name': parent.name,
+            'nickname': parent.nickname,
+            'gender': parent.gender,
+            'signInMethod': parent.signInMethod,
+            'emailVerified': parent.emailVerified,
+            'photoId': parent.photoId,
+            'description': parent.description,
+            'mainAddr': parent.mainAddr,
+            'subAddr': parent.subAddr,
+            'hashList': parent.hashList
+        }
 
     except CustomException as error:
         raise HTTPException(
@@ -268,22 +303,6 @@ async def login_parent(createLoginInput: CreateLoginInput) -> CreateLoginOutput:
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to login")
-
-    parent_data = {
-        'parent_id': parent.parent_id,
-        'password': parent.password,
-        'email': parent.email,
-        'name': parent.name,
-        'nickname': parent.nickname,
-        'gender': parent.gender,
-        'signInMethod': parent.signInMethod,
-        'emailVerified': parent.emailVerified,
-        'photoId': parent.photoId,
-        'description': parent.description,
-        'mainAddr': parent.mainAddr,
-        'subAddr': parent.subAddr,
-        'hashList': parent.hashList
-    }
 
     return JSONResponse(status_code=200, content={
         'parent': parent_data,

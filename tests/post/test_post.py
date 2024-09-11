@@ -219,8 +219,9 @@ async def test_updatePost_fail():
 
 """ Delete post test """
 def test_delete_post(client, test_jwt):
-    response = client.put(
-        f"/post/delete/{test_jwt['post_id']}",
+    response = client.request(
+        method="DELETE",
+        url=f"/post/delete/{test_jwt['post_id']}",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
         json={"post_id": test_jwt["post_id"]}
     )

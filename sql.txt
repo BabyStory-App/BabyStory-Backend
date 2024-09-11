@@ -392,3 +392,63 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+INSERT INTO parent (parent_id, password, email, name, nickname, gender, signInMethod, emailVerified, photoId, description, mainAddr, subAddr, hashList)
+VALUES 
+('P001', 'hash_password1', 'parent1@gmail.com', 'John Doe', 'JohnD', 1, 'email', 1, 'photo1.jpg', 'Loving father of two', 'Seoul', 'Gangnam-gu', 'family,parenting'),
+('P002', 'hash_password2', 'parent2@gmail.com', 'Jane Smith', 'JaneS', 0, 'google', 1, 'photo2.jpg', 'Working mom with a toddler', 'Busan', 'Haeundae-gu', 'workingmom,toddler'),
+('P003', 'hash_password3', 'parent3@gmail.com', 'Mike Johnson', 'MikeJ', 1, 'facebook', 1, 'photo3.jpg', 'Stay-at-home dad', 'Incheon', 'Yeonsu-gu', 'stayathomedad,cooking'),
+('P004', 'hash_password4', 'parent4@naver.com', 'Emily Brown', 'EmilyB', 0, 'email', 0, NULL, 'New parent seeking advice', 'Daegu', 'Suseong-gu', 'newborn,firsttimeparent'),
+('P005', 'hash_password5', 'parent5@naver.com', 'David Lee', 'DavidL', 1, 'kakao', 1, 'photo5.jpg', 'Father of teenagers', 'Gwangju', 'Seo-gu', 'teenagers,education');
+
+INSERT INTO post (parent_id, reveal, title, createTime, modifyTime, deleteTime, pHeart, pScript, pView, pComment, hashList)
+VALUES 
+('P001', 3, 'First day at school', NOW(), NULL, NULL, 32, 40, 842, 496, 'school,firstday'),
+('P001', 2, 'Family vacation plans', NOW(), NULL, NULL, 79, 28, 406, 466, 'vacation,family'),
+('P001', 1, 'Parenting tips for toddlers', NOW(), NULL, NULL, 57, 2, 724, 175, 'parenting,toddlers'),
+('P001', 0, 'Healthy meal ideas for kids', NOW(), NULL, NULL, 18, 74, 387, 366, 'food,health,kids'),
+('P001', 3, 'Balancing work and family life', NOW(), NULL, NULL, 100, 69, 16, 91, 'worklifebalance,family');
+
+INSERT INTO friend (parent_id, friend)
+VALUES 
+('P001', 'P002'), ('P002', 'P001'),
+('P001', 'P003'), ('P001', 'P004');
+
+INSERT INTO baby (baby_id, obn, name, gender, birthDate, bloodType, cm, kg, photoId)
+VALUES 
+('b-5116', 'Hanul', 'Oliver', 0, '2022-04-27 12:12:25', 'A-', 46.2, 10.6, 'baby10.jpg'),
+('b-7201', 'Daeun', 'Emma', 1, NULL, NULL, NULL, NULL, 'baby6.jpg'),
+('b-6677', 'Aeguk', 'Liam', 2, '2023-07-25 12:12:25', 'O+', 57.3, 7.4, NULL);
+
+INSERT INTO pbconnect (parent_id, baby_id) VALUES 
+('P001', 'b-5116'), 
+('P001', 'b-7201'), 
+('P001', 'b-6677');
+
+INSERT INTO pheart (parent_id, post_id, createTime)
+VALUES 
+('P001', 1, NOW()),
+('P001', 2, NOW()),
+('P001', 3, NOW());
+
+INSERT INTO pscript (parent_id, post_id, createTime)
+VALUES 
+('P001', 1, NOW()),
+('P001', 3, NOW()),
+('P001', 5, NOW());
+
+INSERT INTO pview (parent_id, post_id, createTime)
+VALUES 
+('P001', 2, NOW()),
+('P001', 3, NOW()),
+('P001', 4, NOW());
+
+INSERT INTO pcomment (parent_id, post_id, reply_id, content, createTime, modifyTime, deleteTime, cheart)
+VALUES 
+('P001', 1, NULL, 'This is a great post!', NOW(), NULL, NULL, 0),
+('P002', 1, NULL, 'I really enjoyed reading this!', NOW() + INTERVAL 10 SECOND, NULL, NULL, 0),
+('P002', 1, 1, 'I really enjoyed reading', NOW() + INTERVAL 20 SECOND, NULL, NULL, 0),
+('P003', 1, 3, 'I really enjoyed', NOW() + INTERVAL 30 SECOND, NULL, NULL, 0);
+
+INSERT INTO cheart (parent_id, comment_id, createTime)
+VALUES ('P001', 1, NOW());

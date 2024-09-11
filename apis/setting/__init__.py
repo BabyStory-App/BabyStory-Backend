@@ -25,7 +25,7 @@ async def get_overview(parent_id: str = Depends(JWTBearer())) -> SettingOverview
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get overview")
-    return {'status': 'success', 'message': 'Successfully get overview', 'data': overview}
+    return {'status': 200, 'message': 'Successfully get overview', 'data': overview}
 
 
 

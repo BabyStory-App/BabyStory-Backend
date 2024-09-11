@@ -14,7 +14,7 @@ class CreateParentInput(BaseModel):
     email: str
     nickname: str
     signInMethod: str
-    emailVerified: int
+    emailVerified: bool
 
 
 class CreateParentOutput(BaseModel):
@@ -28,18 +28,18 @@ class GetParentByEmailOutput(BaseModel):
 
 
 class UpdateParentInput(BaseModel):
-    password: str
-    email: str
-    name: str
-    nickname: str
-    gender: Optional[int]
-    signInMethod: str
-    emailVerified: int
-    photoId: Optional[str]
-    description: Optional[str]
-    mainAddr: Optional[str]
-    subAddr: Optional[str]
-    hashList: Optional[str]
+    password: Optional[str] = None
+    email: Optional[str] = None
+    name: Optional[str] = None
+    nickname: Optional[str] = None
+    gender: Optional[int] = None
+    signInMethod: Optional[str] = None
+    emailVerified: Optional[bool] = None
+    photoId: Optional[str] = None
+    description: Optional[str] = None
+    mainAddr: Optional[str] = None
+    subAddr: Optional[str] = None
+    hashList: Optional[str] = None
 
 
 class UpdateParentOutput(BaseModel):
@@ -67,3 +67,8 @@ class CreateLoginInput(BaseModel):
 class CreateLoginOutput(BaseModel):
     parent: Optional[Parent]
     x_jwt: XJWT
+
+
+class UploadProfileImageOutput(BaseModel):
+    success: int
+    photoId: str

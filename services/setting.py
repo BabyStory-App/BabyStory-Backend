@@ -287,11 +287,10 @@ class SettingService:
             - MyStoriesOutput: 유저 post
         """
         db = get_db_session()
-        print("service")
 
         # 유저 post
         myStories = db.query(PostTable).filter(PostTable.parent_id == parent_id).all()
-        print("mystories", myStories)
+
         # 페이징
         if page != -1 and page < 0:
             raise CustomException("page must be -1 or greater than 0")
@@ -300,12 +299,12 @@ class SettingService:
         total = db.query(PostTable).filter(
             PostTable.parent_id == parent_id,
             PostTable.deleteTime == None).count()
-        print("total", total)
+
         # 유저의 post 찾기
         myStories = db.execute(text(
         f"SELECT * FROM post WHERE parent_id = :parent_id AND deleteTime IS NULL LIMIT :limit OFFSET :offset"),
             {"parent_id": parent_id, "limit": ( page + 1 ) * take, "offset": page * 10}).fetchall() 
-        print("myStories", myStories)
+
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
         if myStories is None:
@@ -316,25 +315,24 @@ class SettingService:
         
         # 유저 post 데이터
         post = []
-        for j in range(len(myStories)):
-            for i in range(len(myStories[j])):
-                print(type(myStories[j][i]), end=', ')
-            print()
+        # for j in range(len(myStories)):
+        #     for i in range(len(myStories[j])):
+        #         print(type(myStories[j][i]), end=', ')
+
         for i in myStories:
             post.append({
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
-                'heart': i[7],
-                'script': i[8],
-                'view': i[9],
-                'comment': i[10],
+                'pHeart': i[7],
+                'pScript': i[8],
+                'pView': i[9],
+                'pComment': i[10],
                 'hashList': i[11],
                 'contentPreview': str(i[0]) + '_1',
                 'photo_id': str(i[0])
             })
-            
-        print("post : ", post)
+
         return {
             'paginationInfo': paginationInfo,
             'post': post

@@ -32,9 +32,9 @@ async def delete_pscript(deletePScriptInput: DeletePScriptInput,
                         parent_id: str = Depends(JWTBearer()))-> List[PScript]:
     try:
         result = pscriptService.deletePScript(deletePScriptInput, parent_id)
-    except CustomException as e:
+    except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
     except Exception as e:
         print(e)
         raise HTTPException(

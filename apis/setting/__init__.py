@@ -52,9 +52,7 @@ async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> My
 @router.get("/myviews/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutput:
     try:
-        print("------------------a1")
         result = settingService.getMyViews(page, parent_id)
-        print("result: ", result)
         if(result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get view post")
@@ -62,7 +60,6 @@ async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyVi
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my view post")
     return {'status': 'success', 'message': 'Successfully get my views', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
@@ -81,7 +78,6 @@ async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyScr
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get script post")
     return {'status': 'success', 'message': 'Successfully get scripts', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
@@ -100,7 +96,6 @@ async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyLikes
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get like post")
     return {'status': 'success', 'message': 'Successfully get likes', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
@@ -110,20 +105,17 @@ async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyLikes
 @router.get("/mystories/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> MyStoriesOutput:
     try:
-        print("a-------------------------")
         result = settingService.getMyStories(page, parent_id)
         if(result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my post")
-        print("result : ", result)
-        print("post", result['post'])
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my post")
+    
     return {'status': 'success', 'message': 'Successfully get my stories', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 

@@ -99,7 +99,7 @@ async def update_post(updatePostInput: UpdatePostInput,
 
 
 # 게시물 삭제
-@router.put("/delete/{post_id}", dependencies=[Depends(JWTBearer())])
+@router.delete("/delete/{post_id}", dependencies=[Depends(JWTBearer())])
 async def delete_post(deletePostInput: DeletePostInput,
                       parent_id: str = Depends(JWTBearer())) -> DeletePostOutput:
     try:

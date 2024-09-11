@@ -10,6 +10,8 @@ class SettingOverviewOutputData(BaseModel):
     myStoryCount: int
 
 class SettingOverviewOutputService(BaseModel):
+    status: int
+    message: str
     data: SettingOverviewOutputData
 
 class FriendsParent(BaseModel):

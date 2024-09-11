@@ -18,7 +18,7 @@ test_CreatePScriptInput = {
 }
 
 test_DeletePScriptInput = {
-    "post_id": 1
+    "post_id": "1"
 }
 
 
@@ -67,10 +67,11 @@ def test_delete_pscript(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, dict)
+    assert isinstance(response_json, list)
 
     # pscript 객체 확인
-    assert response_json["post_id"] == test_DeletePScriptInput["post_id"]
+    for item in response_json:
+        assert item["post_id"] == int(test_DeletePScriptInput["post_id"])
 
 # Delete post script test fail ( 잘못된 jwt )
 async def test_DeletePScriptInput_fail():

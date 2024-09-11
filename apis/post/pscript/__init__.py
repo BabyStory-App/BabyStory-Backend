@@ -29,7 +29,7 @@ async def create_pscript(createPScriptInput: CreatePScriptInput,
 # 스크립트 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_pscript(deletePScriptInput: DeletePScriptInput, 
-                        parent_id: str = Depends(JWTBearer()))-> PScript:
+                        parent_id: str = Depends(JWTBearer()))-> List[PScript]:
     try:
         result = pscriptService.deletePScript(deletePScriptInput, parent_id)
     except CustomException as e:

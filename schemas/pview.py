@@ -11,7 +11,7 @@ class CreatePViewOutput(BaseModel):
     pview: Optional[PView]
 
 class DeletePViewInput(BaseModel):
-    post_id: int
+    post_id: str
 
 class DeletePViewOutput(BaseModel):
     success: int

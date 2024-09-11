@@ -29,7 +29,7 @@ async def create_view(createPViewInput: CreatePViewInput,
 # view 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_view(deletePViewInput: DeletePViewInput, 
-                        parent_id: str = Depends(JWTBearer()))-> PView:
+                        parent_id: str = Depends(JWTBearer()))-> List[PView]:
     try:
         result = pviewService.deletePView(deletePViewInput, parent_id)
     except CustomException as e:

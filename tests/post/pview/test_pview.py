@@ -18,7 +18,7 @@ test_CreatePViewInput = {
 }
 
 test_DeletePViewInput = {
-    "post_id": 1
+    "post_id": "1"
 }
 
 
@@ -66,10 +66,11 @@ def test_delete_pview(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, dict)
+    assert isinstance(response_json, list)
 
     # pview 객체 확인
-    assert response_json["post_id"] == test_DeletePViewInput["post_id"]
+    for item in response_json:
+        assert item["post_id"] == int(test_DeletePViewInput["post_id"])
 
 # Delete post view test fail ( 잘못된 jwt )
 async def test_deletePView_fail():

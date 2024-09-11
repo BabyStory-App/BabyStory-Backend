@@ -29,7 +29,7 @@ async def create_heart(createPHeartInput: CreatePHeartInput,
 # 하트 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_heart(deletePHeartInput: DeletePHeartInput, 
-                        parent_id: str = Depends(JWTBearer()))-> PHeart:
+                        parent_id: str = Depends(JWTBearer()))-> List[PHeart]:
     try:
         result = pheartService.deletePHeart(deletePHeartInput, parent_id)
     except CustomException as e:

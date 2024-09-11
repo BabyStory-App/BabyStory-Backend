@@ -11,7 +11,7 @@ class CreatePHeartOutput(BaseModel):
     pheart: Optional[PHeart]
 
 class DeletePHeartInput(BaseModel):
-    post_id: int
+    post_id: str
 
 class DeletePHeartOutput(BaseModel):
     success: int

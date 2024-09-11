@@ -50,16 +50,22 @@ class PScriptService:
         """
         db = get_db_session()
 
-        pscript = db.query(PScriptTable).filter(
-            PScriptTable.post_id == deletePScriptInput.post_id,
-            PScriptTable.parent_id == parent_id
-        ).first()
+        post_id = [int(num.strip()) for num in deletePScriptInput.post_id.split(",")]
 
-        # pscript가 없을 경우 CustomException을 발생시킵니다.
-        if pscript is None:
-            raise CustomException("PScript not found")
+        pscripts = []
+        for i in post_id:
+            pscript = db.query(PScriptTable).filter(
+                PScriptTable.post_id == i,
+                PScriptTable.parent_id == parent_id
+            ).first()
 
-        db.delete(pscript)
-        db.commit()
+            # pscript가 없을 경우 CustomException을 발생시킵니다.
+            if pscript is None:
+                raise CustomException("PScript not found")
 
-        return pscript
+            db.delete(pscript)
+            db.commit()
+
+            pscripts.append(pscript)
+
+        return pscripts

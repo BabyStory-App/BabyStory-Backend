@@ -11,7 +11,7 @@ class CreatePScriptOutput(BaseModel):
     share: Optional[PScript]
 
 class DeletePScriptInput(BaseModel):
-    post_id: int
+    post_id: str
 
 class DeletePScriptOutput(BaseModel):
     success: int

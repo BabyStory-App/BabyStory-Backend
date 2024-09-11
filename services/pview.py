@@ -48,16 +48,22 @@ class PViewService:
             """
             db = get_db_session()
 
-            view = db.query(PViewTable).filter(
-                    PViewTable.post_id == deletePViewInput.post_id,
-                    PViewTable.parent_id == parent_id
-                ).first()
-    
-            # pview가 없을 경우 CustomException을 발생시킵니다.
-            if view is None:
-                raise CustomException("PView not found")
+            post_id = [int(num.strip()) for num in deletePViewInput.post_id.split(",")]
 
-            db.delete(view)
-            db.commit()
+            views = []
+            for i in post_id:
+                view = db.query(PViewTable).filter(
+                        PViewTable.post_id == i,
+                        PViewTable.parent_id == parent_id
+                    ).first()
+        
+                # pview가 없을 경우 CustomException을 발생시킵니다.
+                if view is None:
+                    raise CustomException("PView not found")
 
-            return view
+                db.delete(view)
+                db.commit()
+
+                views.append(view)
+
+            return views

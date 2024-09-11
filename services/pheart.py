@@ -37,7 +37,7 @@ class PHeartService:
 
         
     # 하트 삭제
-    def deletePHeart(self, deletePHeartInput: DeletePHeartInput, parent_id: str) -> Optional[PHeart]:
+    def deletePHeart(self, deletePHeartInput: DeletePHeartInput, parent_id: str) -> Optional[List[PHeart]]:
         """
         하트 삭제
         --input
@@ -48,16 +48,25 @@ class PHeartService:
         """
         db = get_db_session()
 
-        pheart = db.query(PHeartTable).filter(
-            PHeartTable.post_id == deletePHeartInput.post_id,
-            PHeartTable.parent_id == parent_id
-        ).first()
+        if ',' not in deletePHeartInput.post_id:
+            post_id = [int(deletePHeartInput.post_id)]
+        else:
+            post_id = [int(num.strip()) for num in deletePHeartInput.post_id.split(",")]
 
-        # pheart가 없을 경우 CustomException을 발생시킵니다.
-        if pheart is None:
-            raise CustomException("PHeart not found")
+        phearts = []
+        for i in post_id:
+            pheart = db.query(PHeartTable).filter(
+                PHeartTable.post_id == i,
+                PHeartTable.parent_id == parent_id
+            ).first()
 
-        db.delete(pheart)
-        db.commit()
+            # pheart가 없을 경우 CustomException을 발생시킵니다.
+            if pheart is None:
+                raise CustomException("PHeart not found")
 
-        return pheart
+            db.delete(pheart)
+            db.commit()
+
+            phearts.append(pheart)
+
+        return phearts

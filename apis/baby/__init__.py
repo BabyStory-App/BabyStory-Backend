@@ -14,7 +14,7 @@ babyService = BabyService()
 
 
 @router.post("/create", dependencies=[Depends(JWTBearer())])
-async def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends(JWTBearer()))-> CreateBabyOutput:
+async def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends(JWTBearer())) -> CreateBabyOutput:
     '''
     아기 생성
     --input
@@ -39,8 +39,8 @@ async def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends
 
 @router.post("/photoUpload", dependencies=[Depends(JWTBearer())])
 async def upload_baby_ProfileImag(file: Optional[UploadFile] = None,
-                            baby_id: int = Form(...),
-                            parent_id: str = Depends(JWTBearer())) -> uploadProfileImageOutput:
+                                  baby_id: int = Form(...),
+                                  parent_id: str = Depends(JWTBearer())) -> uploadProfileImageOutput:
     '''
     생성된 아기 사진 업로드
     --input
@@ -89,7 +89,7 @@ async def get_baby(parent_id: str = Depends(JWTBearer())):
 
 
 @router.put("/", dependencies=[Depends(JWTBearer())])
-async def update_baby(updateBabyInput: UpdateBabyInput, parent_id:str = Depends(JWTBearer())) -> UpdateBabyOutput:
+async def update_baby(updateBabyInput: UpdateBabyInput, parent_id: str = Depends(JWTBearer())) -> UpdateBabyOutput:
     '''
     아기 정보 수정
     --input
@@ -99,7 +99,7 @@ async def update_baby(updateBabyInput: UpdateBabyInput, parent_id:str = Depends(
         - Baby: 수정된 아기 정보
     '''
     try:
-        baby = babyService.updateBaby(updateBabyInput,parent_id)
+        baby = babyService.updateBaby(updateBabyInput, parent_id)
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)

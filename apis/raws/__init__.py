@@ -25,6 +25,15 @@ async def read_file(file_id: str):
         return FileResponse(os.path.join(ASSET_DIR, 'default_profile_image.jpeg'))
 
 
+@router.get("/baby/profile/{file_id}")
+async def read_file(file_id: str):
+    file_path = os.path.join(BABY_PROFILE_DIR, f'{file_id}.jpeg')
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    else:
+        return FileResponse(os.path.join(ASSET_DIR, 'default_profile_image.jpeg'))
+
+
 @router.get("/cry/{audioId}")
 async def get_file(audioId: str):
 

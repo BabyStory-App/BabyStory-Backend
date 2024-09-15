@@ -18,12 +18,12 @@ class CreateParentInput(BaseModel):
 
 
 class CreateParentOutput(BaseModel):
-    parent: Optional[Parent]
+    parent: Optional[Parent] = None
     x_jwt: XJWT
 
 
 class GetParentByEmailOutput(BaseModel):
-    parent: Optional[Parent]
+    parent: Optional[Parent] = None
     x_jwt: XJWT
 
 
@@ -44,7 +44,7 @@ class UpdateParentInput(BaseModel):
 
 class UpdateParentOutput(BaseModel):
     success: int
-    parent: Optional[Parent]
+    parent: Optional[Parent] = None
 
 
 class DeleteParentOutput(BaseModel):
@@ -56,7 +56,7 @@ class CreatePBConnectOutput(BaseModel):
 
 
 class GetFriendsByEmailOutput(BaseModel):
-    parents: Dict[str, Optional[Parent]]
+    parents: Dict[str, Optional[Parent]] = {}
 
 
 class CreateLoginInput(BaseModel):
@@ -65,7 +65,7 @@ class CreateLoginInput(BaseModel):
 
 
 class CreateLoginOutput(BaseModel):
-    parent: Optional[Parent]
+    parent: Optional[Parent] = None
     x_jwt: XJWT
 
 

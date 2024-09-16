@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Chat</title>
+    <script>
+      let websocket;
+
+      function connect() {
+        const parentId = document.getElementById("parentId").value;
+
+        // 서버와의 WebSocket 연결
+        const wsUrl = `ws://125.130.92.135:7701/chat/ws/${parentId}`;
+
+        websocket = new WebSocket(wsUrl);
+
+        websocket.onopen = () => {
+          console.log("Connected to WebSocket");
+        };
+
+        websocket.onmessage = (event) => {
+          console.log("Message from server:", event.data);
+          const messages = document.getElementById("messages");
+          messages.innerHTML += `<p>${event.data}</p>`;
+        };
+
+        websocket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+        };
+
+        websocket.onclose = () => {
+          console.log("WebSocket closed");
+        };
+
+        document.getElementById("sendMessage").onclick = () => {
+          const message = document.getElementById("message").value;
+          const messageType = document.getElementById("messageType").value;
+          const roomId = document.getElementById("roomId").value;
+
+          // room_id를 포함한 JSON 메시지 생성
+          const jsonMessage = JSON.stringify({
+            type: messageType,
+            content: message,
+            room_id: parseInt(roomId),
+          });
+
+          websocket.send(jsonMessage);
+          document.getElementById("message").value = "";
+        };
+
+        document.getElementById("requestStatus").onclick = () => {
+          const roomId = document.getElementById("roomId").value;
+
+          // room_id를 포함한 status_request 메시지 생성
+          const jsonMessage = JSON.stringify({
+            type: "status_request",
+            room_id: parseInt(roomId),
+          });
+
+          websocket.send(jsonMessage);
+        };
+      }
+    </script>
+  </head>
+  <body>
+    <h1>WebSocket Chat</h1>
+    <div>
+      <label for="parentId">Parent ID:</label>
+      <input type="text" id="parentId" />
+    </div>
+    <div>
+      <label for="roomId">Room ID:</label>
+      <input type="number" id="roomId" value="1" />
+    </div>
+    <button onclick="connect()">Connect</button>
+    <div>
+      <label for="messageType">Message Type:</label>
+      <select id="messageType">
+        <option value="text">Text</option>
+        <option value="image">Image</option>
+      </select>
+      <input type="text" id="message" />
+      <button id="sendMessage">Send</button>
+      <button id="requestStatus">Get Status</button>
+    </div>
+    <div id="messages"></div>
+  </body>
+</html>

@@ -68,7 +68,7 @@ async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
 
 # 하나의 게시물 가져오기
 @router.get("/{post_id}", dependencies=[Depends(JWTBearer())])
-async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[Post]:
+async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[PostGetOupPut]:
     try:
         post = await postService.getPost(post_id, parent_id)
     except CustomException as error:

@@ -135,6 +135,8 @@ class PostService:
         # post가 없을 경우 CustomException을 발생시킵니다.
         if post is None:
             raise CustomException("Post not found")
+        
+        post.__setattr__('content', open(os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt'), 'r', encoding='UTF-8').read())
 
         return post
         

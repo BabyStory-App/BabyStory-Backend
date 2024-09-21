@@ -38,12 +38,12 @@ async def create_recommend(createSearchRecommendInput: CreateSearchRecommendInpu
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
 
-    # 타입이 없으면 에러
-    if createSearchRecommendInput.type is None:
+    # 타입이 없거나 타입이 friend, friend_read, neighbor가 아니면 에러
+    if createSearchRecommendInput.type is None or createSearchRecommendInput.type not in ['friend', 'friend_read', 'neighbor']:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid type")
 
-    # size가 없으면 에러
+    # size가 없거나 에러
     if createSearchRecommendInput.size is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid size")

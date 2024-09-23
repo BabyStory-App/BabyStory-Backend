@@ -3,6 +3,7 @@ from constants.path import *
 from fastapi import HTTPException
 from constants.path import *
 import re
+import random
 
 from datetime import datetime, timedelta
 from sqlalchemy import desc
@@ -26,6 +27,42 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, author_name, desc 초반 100자}> : 메인 페이지 배너
         """
+        # 임시로 설정함.
+        db = get_db_session()
+        posts = db.query(PostTable).order_by(
+            desc(PostTable.pHeart)).limit(5).all()
+        banners = []
+        for i in posts:
+            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
+            file_path = os.path.join(
+                POST_CONTENT_DIR, str(i.post_id) + '.txt')
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                content = f.read()
+
+            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)
+            if len(content) >= 100:
+                descr = content[:100] + '...'
+            else:
+                descr = content
+
+            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
+            photoId = re.search(r'!\[\[(.*?)\]\]', content)
+            if photoId:
+                photoId = photoId.group(1)
+            else:
+                photoId = None
+
+            banners.append({
+                'postid': i.post_id,
+                'photoId': photoId,
+                'title': i.title,
+                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
+                'desc': descr
+            })
+        return banners
+        # 실제 코드
         # 오늘 00시부터 하루 전 23시 59분까지의 시간 간격을 계산합니다.
         end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         start = end - timedelta(days=1)
@@ -113,6 +150,22 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, author_photo, author_name}> : 짝꿍이 쓴 게시물
         """
+        # 임시로 설정함.
+        db = get_db_session()
+        _data = db.query(PostTable).all()
+        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
+        banners = []
+        for i in posts:
+            banners.append({
+                'postid': i.post_id,
+                'photoId': f"{i.post_id}.jpeg",
+                'title': i.title,
+                'author_photo': f"{i.parent_id}.jpeg",
+                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name
+            })
+        return banners
+
+        # 실제 코드
         db = get_db_session()
 
         end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -210,6 +263,45 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, pHeart, comment, author_name, desc}> : 친구가 쓴 게시물
         """
+        # 임시로 설정함.
+        db = get_db_session()
+        _data = db.query(PostTable).all()
+        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
+        banners = []
+        for i in posts:
+            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
+            file_path = os.path.join(
+                POST_CONTENT_DIR, str(i.post_id) + '.txt')
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                content = f.read()
+
+            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)
+            if len(content) >= 100:
+                descr = content[:100] + '...'
+            else:
+                descr = content
+
+            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
+            photoId = re.search(r'!\[\[(.*?)\]\]', content)
+            if photoId:
+                photoId = photoId.group(1)
+            else:
+                photoId = None
+
+            banners.append({
+                'postid': i.post_id,
+                'photoId': photoId,
+                'title': i.title,
+                'pHeart': i.pHeart,
+                'comment': i.pComment,
+                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
+                'desc': descr
+            })
+        return banners
+
+        # 실제 코드
         db = get_db_session()
 
         # 어제 시간
@@ -292,6 +384,22 @@ class PostMainService:
         --output
             - List<{parent_id, photoId, name, mainAddr, desc}> : 친구로 등록되지 않은 이웃목록
         """
+        # 임시로 설정함.
+        db = get_db_session()
+        _data = db.query(ParentTable).all()
+        neighbors = random.sample(_data, len(_data) if len(_data) < 10 else 10)
+        banners = []
+        for i in neighbors:
+            banners.append({
+                'parent_id': i.parent_id,
+                'photoId': f"{i.parent_id}.jpeg",
+                'name': i.name,
+                'mainAddr': i.mainAddr,
+                'desc': i.description[:60] + '...'
+            })
+        return banners
+
+        # 실제 코드
 
         db = get_db_session()
 
@@ -335,6 +443,45 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, pHeart, comment, author_name, desc}> : 이웃이 쓴 게시물
         """
+        # 임시로 설정함.
+        db = get_db_session()
+        _data = db.query(PostTable).all()
+        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
+        banners = []
+        for i in posts:
+            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
+            file_path = os.path.join(
+                POST_CONTENT_DIR, str(i.post_id) + '.txt')
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                content = f.read()
+
+            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)
+            if len(content) >= 100:
+                descr = content[:100] + '...'
+            else:
+                descr = content
+
+            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
+            photoId = re.search(r'!\[\[(.*?)\]\]', content)
+            if photoId:
+                photoId = photoId.group(1)
+            else:
+                photoId = None
+
+            banners.append({
+                'postid': i.post_id,
+                'photoId': photoId,
+                'title': i.title,
+                'pHeart': i.pHeart,
+                'comment': i.pComment,
+                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
+                'desc': descr
+            })
+        return banners
+
+        # 실제 코드
         db = get_db_session()
         if createPostMainInput.size != -1 and createPostMainInput.size < 0:
             raise CustomException("size must be -1 or greater than 0")

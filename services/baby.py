@@ -13,7 +13,7 @@ from model.pbconnect import *
 
 class BabyService:
 
-    def createBaby(self, createBabyInput: CreateBabyInput) ->Baby:
+    def createBaby(self, createBabyInput: CreateBabyInput) -> Baby:
         '''
         아기 생성
         --input
@@ -37,13 +37,11 @@ class BabyService:
         db.add(baby)
         db.commit()
         db.refresh(baby)
-        
+
         if baby is None:
             raise CustomException("baby is not created")
 
         return baby
-    
-
 
     def createPbconnect(self, parent_id: str, baby_id: str) -> Optional[PBConnect]:
         '''
@@ -68,8 +66,6 @@ class BabyService:
             raise CustomException("pbconnect is not created")
 
         return pbconnect
-    
-
 
     def uploadProfileImage(self, file: UploadFile, baby_id: str, parent_id: str) -> bool:
         '''
@@ -89,7 +85,7 @@ class BabyService:
             PBConnectTable.baby_id == baby_id).first()
         if pbconnect is None:
             raise CustomException("pbconnect is not found")
-        
+
         # 파일 확장자를 file.filename에서 추출
         filename = file.filename
         if "." in filename:
@@ -104,7 +100,7 @@ class BabyService:
             raise CustomException("이미지만 받을 수 있습니다.")
 
         # 파일 저장 경로 설정 (항상 .jpeg로 저장)
-        file_path = os.path.join(BABY_PROFILE_DIR, f"{parent_id}.jpeg")
+        file_path = os.path.join(BABY_PROFILE_DIR, f"{baby_id}.jpeg")
 
         # 파일을 jpeg로 변환 후 저장
         try:
@@ -113,10 +109,8 @@ class BabyService:
             rgb_image.save(file_path, format="JPEG")
         except Exception as e:
             raise CustomException(f"이미지 처리 중 오류가 발생했습니다: {str(e)}")
-        
+
         return True
-
-
 
     def getBaby(self, parent_id: str) -> List[Baby]:
         '''
@@ -129,20 +123,20 @@ class BabyService:
         db = get_db_session()
 
         # 부모 아이디로 아기-부모 연결 정보 가져오기
-        has = db.query(PBConnectTable).filter(PBConnectTable.parent_id == parent_id).all()
+        has = db.query(PBConnectTable).filter(
+            PBConnectTable.parent_id == parent_id).all()
 
         # 부모 아이디에 연결된 모든 아기의 아이디를 가져옴
         baby_ids = [i.baby_id for i in has]
 
         # has에 해당하는 아기정보와 일치하는 아기정보를 가져옴
-        baby = db.query(BabyTable).filter(BabyTable.baby_id.in_(baby_ids)).all()
-        
+        baby = db.query(BabyTable).filter(
+            BabyTable.baby_id.in_(baby_ids)).all()
+
         if baby is None:
             raise CustomException("baby is not found")
 
         return baby
-            
-
 
     def updateBaby(self, updateBabyInput: UpdateBabyInput, parent_id: str) -> Optional[Baby]:
         '''
@@ -161,13 +155,13 @@ class BabyService:
             PBConnectTable.baby_id == updateBabyInput.baby_id).first()
         if pbconnect is None:
             raise CustomException("pbconnect is not found")
-        
+
         # 아기 정보
         baby = db.query(BabyTable).filter(
             BabyTable.baby_id == updateBabyInput.baby_id).first()
         if baby is None:
             raise CustomException("baby is not found")
-        
+
         # 아기 정보 수정
         for key in ['obn', 'name', 'gender', 'birthDate', 'bloodType', 'photoId']:
             setattr(baby, key, getattr(updateBabyInput, key))
@@ -176,11 +170,9 @@ class BabyService:
         db.refresh(baby)
 
         return baby
-        
-
 
     def deleteBaby(self, baby_id: str,
-                    parent_id: str) -> bool:
+                   parent_id: str) -> bool:
         '''
         아기 삭제
         --input

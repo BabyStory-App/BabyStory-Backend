@@ -30,7 +30,7 @@ class PostService:
         # 공개 범위 ( 0 ~ 3 ) 안의 값이 들어왔는지 확인합니다.
         if createPostInput.reveal not in [0, 1, 2, 3]:
             raise CustomException("Invalid reveal value")
-        
+
         # print(createPostInput)
         post = PostTable(
             parent_id=parent_id,
@@ -56,10 +56,9 @@ class PostService:
             f.write(createPostInput.content)
 
         return post
-        
 
-        
     # 새로 생성된 post 사진 업로드
+
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
         """
         생성된 post에 대한 사진 업로드
@@ -73,30 +72,31 @@ class PostService:
         db = get_db_session()
 
         post = db.query(PostTable).filter(
-            PostTable.post_id == post_id, 
+            PostTable.post_id == post_id,
             PostTable.parent_id == parent_id,
             PostTable.deleteTime == None).first()
-        
+
         # post가 없을 경우 CustomException을 발생시킵니다.
         if post is None:
             raise CustomException("Post not found")
-        
+
         # post 사진에 대한 디렉토리를 생성합니다.
-        os.makedirs(os.path.join(POST_PHOTO_DIR, str(post.post_id)), exist_ok=True)
-        
+        os.makedirs(os.path.join(POST_PHOTO_DIR,
+                    str(post.post_id)), exist_ok=True)
+
         # 생성된 디렉토리에 사진을 저장합니다.
         for i, file in enumerate(fileList):
             file_type = file.content_type.split('/')[1]
-            file_path = os.path.join(POST_PHOTO_DIR, str(post.post_id), f"{post.post_id}_{i + 1}.{file_type}")
-            
+            file_path = os.path.join(POST_PHOTO_DIR, str(
+                post.post_id), f"{post.post_id}-{i + 1}.{file_type}")
+
             with open(file_path, 'wb') as f:
                 shutil.copyfileobj(file.file, f)
-        
+
         return True
-        
-        
 
     # 모든 게시물 가져오기
+
     async def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
         """
         모든 게시물 가져오기
@@ -106,16 +106,15 @@ class PostService:
             - List[Post]: 게시물 리스트
         """
         db = get_db_session()
-        
+
         post = db.query(PostTable).filter(
-            PostTable.parent_id == parent_id, 
+            PostTable.parent_id == parent_id,
             PostTable.deleteTime == None).all()
 
         return post
-        
-
 
     # 하나의 게시물 가져오기
+
     async def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
         """
         하나의 게시물 가져오기
@@ -129,20 +128,20 @@ class PostService:
 
         post = db.query(PostTable).filter(
             PostTable.parent_id == parent_id,
-            PostTable.post_id == post_id, 
+            PostTable.post_id == post_id,
             PostTable.deleteTime == None).first()
 
         # post가 없을 경우 CustomException을 발생시킵니다.
         if post is None:
             raise CustomException("Post not found")
-        
-        post.__setattr__('content', open(os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt'), 'r', encoding='UTF-8').read())
+
+        post.__setattr__('content', open(os.path.join(POST_CONTENT_DIR, str(
+            post.post_id) + '.txt'), 'r', encoding='UTF-8').read())
 
         return post
-        
 
-        
     # 게시물 수정
+
     async def updatePost(self, updatePostInput: UpdatePostInput, parent_id: str) -> Optional[Post]:
         """
         게시물 수정
@@ -160,16 +159,16 @@ class PostService:
         # 공개 범위 ( 0 ~ 3 ) 안의 값이 들어왔는지 확인합니다.
         if updatePostInput.reveal not in [0, 1, 2, 3]:
             raise CustomException("Invalid reveal value")
-        
+
         post = db.query(PostTable).filter(
             PostTable.parent_id == parent_id,
             PostTable.post_id == updatePostInput.post_id,
             PostTable.deleteTime == None).first()
-        
+
         # # post가 없을 경우 CustomException을 발생시킵니다.
         # if post is None:
         #     raise CustomException("Post not found")
-        
+
         for key in ['reveal', 'title', 'hashList']:
             setattr(post, key, getattr(updatePostInput, key))
         setattr(post, 'modifyTime', datetime.now())
@@ -184,10 +183,9 @@ class PostService:
         db.refresh(post)
 
         return post
-        
 
-        
     # 게시물 삭제
+
     async def deletePost(self, deletePostInput: DeletePostInput, parent_id: str) -> Optional[Post]:
         """
         게시물 삭제
@@ -200,19 +198,19 @@ class PostService:
         db = get_db_session()
 
         post = db.query(PostTable).filter(
-            PostTable.post_id == deletePostInput.post_id, 
+            PostTable.post_id == deletePostInput.post_id,
             PostTable.parent_id == parent_id,
             PostTable.deleteTime == None).first()
-        
+
         # post가 없을 경우 CustomException을 발생시킵니다.
         if post is None:
             raise CustomException("Post not found")
-        
+
         # post의 data를 삭제하지 않고 deleteTime을 추가하여 삭제된 것으로 표시합니다.
         setattr(post, 'deleteTime', datetime.now())
-        
+
         db.add(post)
         db.commit()
         db.refresh(post)
-        
+
         return post

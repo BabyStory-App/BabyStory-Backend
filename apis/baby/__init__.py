@@ -39,7 +39,7 @@ async def create_baby(createBabyInput: CreateBabyInput, parent_id: str = Depends
 
 @router.post("/photoUpload", dependencies=[Depends(JWTBearer())])
 async def upload_baby_ProfileImag(file: Optional[UploadFile] = None,
-                                  baby_id: int = Form(...),
+                                  baby_id: str = Form(...),
                                   parent_id: str = Depends(JWTBearer())) -> uploadProfileImageOutput:
     '''
     생성된 아기 사진 업로드

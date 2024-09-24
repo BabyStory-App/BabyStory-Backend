@@ -15,7 +15,6 @@ router = APIRouter(
 settingService = SettingService()
 
 
-
 # 짝꿍, 친구들, 이야기 수 가져오기
 @router.get("/overview", dependencies=[Depends(JWTBearer())])
 async def get_overview(parent_id: str = Depends(JWTBearer())) -> SettingOverviewOutputService:
@@ -28,13 +27,12 @@ async def get_overview(parent_id: str = Depends(JWTBearer())) -> SettingOverview
     return {'status': 200, 'message': 'Successfully get overview', 'data': overview}
 
 
-
 # 친구들 불러오기
 @router.get("/myfriends/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> MyFriendsOutput:
     try:
         result = settingService.getMyFriends(page, parent_id)
-        if(result == None):
+        if (result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my friends")
     except CustomException as error:
@@ -47,15 +45,12 @@ async def get_my_friends(page: int, parent_id: str = Depends(JWTBearer())) -> My
     return {'status': 'success', 'message': 'Successfully get my friends', 'paginationInfo': result['paginationInfo'], 'parents': result['parents']}
 
 
-
 # 유저가 조회한 post
 @router.get("/myviews/{page}", dependencies=[Depends(JWTBearer())])
 async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyViewsPostOutput:
     try:
-        print("------------------a1")
         result = settingService.getMyViews(page, parent_id)
-        print("result: ", result)
-        if(result == None):
+        if (result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get view post")
     except CustomException as error:
@@ -68,13 +63,12 @@ async def get_my_views(page: int, parent_id: str = Depends(JWTBearer())) -> MyVi
     return {'status': 'success', 'message': 'Successfully get my views', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 
-
 # 유저가 script한 post
 @router.get("/scripts/{page}", dependencies=[Depends(JWTBearer())])
 async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyScriptsPostOutput:
     try:
         result = settingService.getScripts(page, parent_id)
-        if(result == None):
+        if (result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get script post")
     except CustomException as error:
@@ -87,13 +81,12 @@ async def get_scripts(page: int, parent_id: str = Depends(JWTBearer())) -> MyScr
     return {'status': 'success', 'message': 'Successfully get scripts', 'paginationInfo': result['paginationInfo'], 'post': result['post']}
 
 
-
 # 유저가 좋아요한 post
 @router.get("/likes/{page}", dependencies=[Depends(JWTBearer())])
 async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyLikesPostOutput:
     try:
         result = settingService.getLikes(page, parent_id)
-        if(result == None):
+        if (result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get like post")
     except CustomException as error:
@@ -111,7 +104,7 @@ async def get_likes(page: int, parent_id: str = Depends(JWTBearer())) -> MyLikes
 async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> MyStoriesOutput:
     try:
         result = settingService.getMyStories(page, parent_id)
-        if(result == None):
+        if (result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my post")
     except CustomException as error:
@@ -129,7 +122,7 @@ async def get_my_stories(page: int, parent_id: str = Depends(JWTBearer())) -> My
 async def get_my_mates(page: int, parent_id: str = Depends(JWTBearer())) -> MyMatesOutput:
     try:
         result = settingService.getMyMates(page, parent_id)
-        if(result == None):
+        if (result == None):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to get my mates")
     except Exception as e:

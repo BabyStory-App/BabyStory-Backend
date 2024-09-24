@@ -325,16 +325,14 @@ class SettingService:
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
-                'heart': i[7],
-                'script': i[8],
-                'view': i[9],
-                'comment': i[10],
+                'pHeart': i[7],
+                'pScript': i[8],
+                'pView': i[9],
+                'pComment': i[10],
                 'hashList': i[11],
                 'contentPreview': str(i[0]) + '_1',
                 'photo_id': str(i[0])
             })
-            
-        print("post : ", post)
         return {
             'paginationInfo': paginationInfo,
             'post': post

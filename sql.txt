@@ -391,11 +391,11 @@ DELIMITER ;
 
 INSERT INTO parent (parent_id, password, email, name, nickname, gender, signInMethod, emailVerified, photoId, description, mainAddr, subAddr, hashList)
 VALUES
-('P001', 'hash_password1', 'importjaewone@gmail.com', '김철수', '철수아빠', 1, 'google', 1, 'P001.jpg', '쌍둥이 아기의 사랑하는 아빠', '서울', '강남구', '가족,신생아'),
-('P002', 'hash_password2', 'parent2@email.com', '이영희', '영희맘', 0, 'email', 1, 'P002.jpg', '6개월 아기 키우는 워킹맘', '부산', '해운대구', '워킹맘,영아'),
-('P003', 'hash_password3', 'parent3@gmail.com', '박민수', '민수파파', 1, 'email', 1, 'P003.jpg', '12개월 아기 돌보는 전업 아빠', '인천', '연수구', '전업아빠,이유식'),
-('P004', 'hash_password4', 'parent4@naver.com', '정미영', '미영맘', 0, 'email', 0, NULL, '조언을 구하는 신생아 부모', '대구', '수성구', '신생아,초보부모'),
-('P005', 'hash_password5', 'parent5@naver.com', '이대현', '대현아빠', 1, 'email', 1, 'P005.jpg', '18개월 아기 아빠', '광주', '서구', '육아,걸음마');
+('P001', 'hash_password1', 'importjaewone@gmail.com', '김철수', '철수아빠', 1, 'google', 1, 'P001.jpg', '쌍둥이 아기의 사랑하는 아빠', NULL, NULL, '가족,신생아'),
+('P002', 'hash_password2', 'parent2@email.com', '이영희', '영희맘', 0, 'email', 1, 'P002.jpg', '6개월 아기 키우는 워킹맘', NULL, NULL, '워킹맘,영아'),
+('P003', 'hash_password3', 'parent3@gmail.com', '박민수', '민수파파', 1, 'email', 1, 'P003.jpg', '12개월 아기 돌보는 전업 아빠', NULL, NULL, '전업아빠,이유식'),
+('P004', 'hash_password4', 'parent4@naver.com', '정미영', '미영맘', 0, 'email', 0, NULL, '조언을 구하는 신생아 부모', NULL, NULL, '신생아,초보부모'),
+('P005', 'hash_password5', 'parent5@naver.com', '이대현', '대현아빠', 1, 'email', 1, 'P005.jpg', '18개월 아기 아빠', NULL, NULL, '육아,걸음마');
 
 INSERT INTO post (parent_id, reveal, title, createTime, modifyTime, deleteTime, pHeart, pScript, pView, pComment, hashList)
 VALUES

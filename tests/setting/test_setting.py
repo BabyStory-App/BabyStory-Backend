@@ -45,6 +45,9 @@ def test_get_my_friends(client, test_jwt):
     assert "parents" in response_json
     assert "paginationInfo" in response_json
 
+    assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    assert len(response_json["post"]["contentPreview"]) == 100
+
 # test_get_my_friends ( 잘못된 jwt )
 async def test_get_my_friends_fail():
     with pytest.raises(HTTPException) as err:
@@ -66,6 +69,9 @@ def test_get_my_views(client, test_jwt):
     response_json = response.json()
     assert "post" in response_json
     assert "paginationInfo" in response_json
+
+    assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    assert len(response_json["post"]["contentPreview"]) == 100
 
 # test_get_my_views ( 잘못된 jwt )
 async def test_get_my_views_fail():
@@ -89,6 +95,9 @@ def test_get_scripts(client, test_jwt):
     assert "post" in response_json
     assert "paginationInfo" in response_json
 
+    assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    assert len(response_json["post"]["contentPreview"]) == 100
+
 # test_get_scripts ( 잘못된 jwt )
 async def test_get_scripts_fail():
     with pytest.raises(HTTPException) as err:
@@ -111,6 +120,9 @@ def test_get_likes(client, test_jwt):
     assert "post" in response_json
     assert "paginationInfo" in response_json
 
+    assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    assert len(response_json["post"]["contentPreview"]) == 100
+
 # test_get_likes ( 잘못된 jwt )
 async def test_get_likes_fail():
     with pytest.raises(HTTPException) as err:
@@ -132,6 +144,9 @@ def test_get_my_post(client, test_jwt):
     response_json = response.json()
     assert "post" in response_json
     assert "paginationInfo" in response_json
+
+    assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    assert len(response_json["post"]["contentPreview"]) == 100
 
 # test_get_my_post ( 잘못된 jwt )
 async def test_get_my_post_fail():

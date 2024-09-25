@@ -144,12 +144,12 @@ class SettingService:
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
-                'heart': i[7],
-                'script': i[8],
-                'view': i[9],
-                'comment': i[10],
+                'pHeart': i[7],
+                'pScript': i[8],
+                'pView': i[9],
+                'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': str(i[0]) + '_1',
+                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
                 'photo_id': str(i[0])
             })
         
@@ -202,12 +202,12 @@ class SettingService:
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
-                'heart': i[7],
-                'script': i[8],
-                'view': i[9],
-                'comment': i[10],
+                'pHeart': i[7],
+                'pScript': i[8],
+                'pView': i[9],
+                'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': str(i[0]) + '_1',
+                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
                 'photo_id': str(i[0])
             })
 
@@ -260,12 +260,12 @@ class SettingService:
                 'post_id': i[0],
                 'title': i[3],
                 'createTime': i[4],
-                'heart': i[7],
-                'script': i[8],
-                'view': i[9],
-                'comment': i[10],
+                'pHeart': i[7],
+                'pScript': i[8],
+                'pView': i[9],
+                'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': str(i[0]) + '_1',
+                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
                 'photo_id': str(i[0])
             })
 
@@ -330,7 +330,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': str(i[0]) + '_1',
+                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
                 'photo_id': str(i[0])
             })
         return {

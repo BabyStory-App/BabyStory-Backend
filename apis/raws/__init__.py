@@ -58,7 +58,7 @@ async def read_file(file_id: str):
 
 @router.get("/baby/profile/{file_id}")
 async def read_file(file_id: str):
-    file_path = get_image_path(file_id, PROFILE_IMAGE_DIR)
+    file_path = get_image_path(file_id, BABY_PROFILE_DIR)
     if file_path != None:
         return FileResponse(file_path)
     else:
@@ -67,11 +67,9 @@ async def read_file(file_id: str):
 
 @router.get("/post/photo/{file_id}")
 async def read_file(file_id: str):
-    print("Request file_id", file_id)
     file_id = f'{file_id}-1' if file_id.find('-') == -1 else file_id
     file_path = get_image_path(file_id, os.path.join(
         POST_PHOTO_DIR, file_id.split('-')[0]))
-    print("file_path", file_path)
     if file_path != None:
         return FileResponse(file_path)
     else:

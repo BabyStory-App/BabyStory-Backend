@@ -20,6 +20,18 @@ from error.exception.customerror import *
 
 class PostMainService:
 
+    def _get_photoId_and_desc(self, content: str):
+        # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
+        photoIdRex = re.search(r'!\[\[(.*?)\]\]', content)
+        photoId = photoIdRex.group(1) if photoIdRex else None
+
+        # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+        content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+        descr = content if len(
+            content) < 100 else content[:100] + '...'
+
+        return photoId, descr
+
     # 메인 페이지 배너 생성
     def createPostMainBanner(self) -> CreatePostMainBannerListOutput:
         """
@@ -30,8 +42,9 @@ class PostMainService:
         # 임시로 설정함.
         db = get_db_session()
         posts = db.query(PostTable).order_by(
-            desc(PostTable.pHeart)).limit(5).all()
+            desc(PostTable.pHeart)).all()
         banners = []
+        idx = 0
         for i in posts:
             # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
             file_path = os.path.join(
@@ -39,28 +52,26 @@ class PostMainService:
             with open(file_path, 'r', encoding='UTF-8') as f:
                 content = f.read()
 
-            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-            content = re.sub(r'\n', '', content)
-            if len(content) >= 100:
-                descr = content[:100] + '...'
-            else:
-                descr = content
-
             # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
             photoId = re.search(r'!\[\[(.*?)\]\]', content)
             if photoId:
                 photoId = photoId.group(1)
-            else:
-                photoId = None
 
-            banners.append({
-                'postid': i.post_id,
-                'photoId': photoId,
-                'title': i.title,
-                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
-                'desc': descr
-            })
+                # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+                content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+                descr = content if len(
+                    content) < 100 else content[:100] + '...'
+                banners.append({
+                    'postid': i.post_id,
+                    'photoId': photoId,
+                    'title': i.title,
+                    'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
+                    'desc': descr
+                })
+                idx += 1
+            if idx == 5:
+                break
+
         return banners
         # 실제 코드
         # 오늘 00시부터 하루 전 23시 59분까지의 시간 간격을 계산합니다.
@@ -275,20 +286,7 @@ class PostMainService:
             with open(file_path, 'r', encoding='UTF-8') as f:
                 content = f.read()
 
-            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-            content = re.sub(r'\n', '', content)
-            if len(content) >= 100:
-                descr = content[:100] + '...'
-            else:
-                descr = content
-
-            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
+            photoId, descr = self._get_photoId_and_desc(content)
 
             banners.append({
                 'postid': i.post_id,
@@ -455,20 +453,7 @@ class PostMainService:
             with open(file_path, 'r', encoding='UTF-8') as f:
                 content = f.read()
 
-            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-            content = re.sub(r'\n', '', content)
-            if len(content) >= 100:
-                descr = content[:100] + '...'
-            else:
-                descr = content
-
-            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
+            photoId, descr = self._get_photoId_and_desc(content)
 
             banners.append({
                 'postid': i.post_id,
@@ -571,29 +556,7 @@ class PostMainService:
             with open(file_path, 'r', encoding='UTF-8') as f:
                 content = f.read()
 
-            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-            content = re.sub(r'\n', '', content)
-            if len(content) >= 100:
-                descr = content[:100] + '...'
-            else:
-                descr = content
-
-            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
-
-            # photoId = None
-            # try:
-            #     photoId = os.listdir(os.path.join(
-            #         POST_PHOTO_DIR, str(i.post_id)))[0]
-            #     photoId = os.path.join(
-            #         POST_PHOTO_DIR, str(i.post_id), photoId)
-            # except OSError:
-            #     pass
+            photoId, descr = self._get_photoId_and_desc(content)
 
             banners.append({
                 'post_id': i.post_id,
@@ -648,20 +611,7 @@ class PostMainService:
             with open(file_path, 'r', encoding='UTF-8') as f:
                 content = f.read()
 
-            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-            content = re.sub(r'\n', '', content)
-            if len(content) >= 100:
-                descr = content[:100] + '...'
-            else:
-                descr = content
-
-            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
+            photoId, descr = self._get_photoId_and_desc(content)
 
             banners.append({
                 'post_id': i.post_id,

@@ -413,8 +413,8 @@ VALUES
 INSERT INTO baby (baby_id, obn, name, gender, birthDate, bloodType, cm, kg, photoId)
 VALUES
 ('b-5116', '하늘', '민준', 0, '2022-04-27 12:12:25', 'A-', 46.2, 10.6, 'b-5116.jpg'),
-('b-7201', '다은', '서연', 1, NULL, NULL, NULL, NULL, 'b-7201.jpg'),
-('b-6677', '애국', '지후', 2, '2023-07-25 12:12:25', 'O+', 57.3, 7.4, 'b-6677.jpg');
+('b-7201', '다은', '서연', 1, '2022-04-26 13:14:25', 'AB+', 42.6, 9.8, 'b-7201.jpg'),
+('b-6677', '애국', '지후', 2, '2023-07-25 18:17:25', 'O+', 57.3, 7.4, 'b-6677.jpg');
 
 INSERT INTO pbconnect (parent_id, baby_id) VALUES 
 ('P001', 'b-5116'), 

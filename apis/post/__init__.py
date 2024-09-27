@@ -7,7 +7,6 @@ from schemas.post import *
 from error.exception.customerror import *
 
 
-
 router = APIRouter(
     prefix="/post",
     tags=["post"],
@@ -15,7 +14,6 @@ router = APIRouter(
 )
 
 postService = PostService()
-
 
 
 # 게시물 생성
@@ -32,7 +30,6 @@ async def create_post(createPostInput: CreatePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create post")
     return {'post': post}
-
 
 
 # 새로 생성된 post 사진 업로드
@@ -52,25 +49,35 @@ async def upload_post_photo(fileList: List[UploadFile],
     return {'success': success}
 
 
-
 # 모든 게시물 가져오기
 @router.get("/", dependencies=[Depends(JWTBearer())])
 async def get_all_post(parent_id: str = Depends(JWTBearer())) -> List[Post]:
     try:
-        post = await postService.getAllPost(parent_id)
+        post = await postService.getAllPost()
     except Exception as e:
         print(e)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all post")    
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all post")
     return post
 
+
+# 특정 부모의 모든 게시물 가져오기
+@router.get("/parent/{parent_id}/{limit}", dependencies=[Depends(JWTBearer())])
+async def get_all_post_by_parent(parent_id: str, limit: Optional[int], uid: str = Depends(JWTBearer())):
+    try:
+        post = await postService.getAllPostByParent(parent_id, limit)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all post")
+    return post
 
 
 # 하나의 게시물 가져오기
 @router.get("/{post_id}", dependencies=[Depends(JWTBearer())])
-async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())) -> Optional[PostGetOupPut]:
+async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())):
     try:
-        post = await postService.getPost(post_id, parent_id)
+        post = await postService.getPost(post_id)
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
@@ -95,7 +102,6 @@ async def update_post(updatePostInput: UpdatePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to update post")
     return {"success": 200 if post else 403, "post": post}
-
 
 
 # 게시물 삭제

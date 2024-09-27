@@ -1,21 +1,47 @@
 from fastapi import HTTPException, UploadFile
 from typing import Optional, List
+from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from constants.path import *
 import os
+import re
 import shutil
 from uuid import uuid4
+from datetime import datetime
+import random
 
 from schemas.post import *
 from model.post import Post
 from schemas.post import *
 from db import get_db_session
 from error.exception.customerror import *
+from model.friend import FriendTable
 
 
 class PostService:
 
+    def _getParentStatus(self, parent_id: str):
+        db = get_db_session()
+
+        # 내가 친구로 등록한 부모 수
+        friendCount = db.query(FriendTable).filter(
+            FriendTable.parent_id == parent_id).count()
+
+        # 짝꿍 수
+        mateCount = int(db.execute(text(
+            f"select count(0) from friend p inner join friend f \
+            ON p.parent_id = f.friend AND p.friend = f.parent_id \
+            where p.parent_id = \"{parent_id}\"")).fetchall()[0][0])
+
+        # 이야기 수
+        myStoryCount = db.query(PostTable).filter(
+            PostTable.parent_id == parent_id,
+            PostTable.deleteTime == None).count()
+
+        return {'friendCount': friendCount, 'mateCount': mateCount, 'myStoryCount': myStoryCount}
+
     # 게시물 생성
+
     def createPost(self, parent_id: str, createPostInput: CreatePostInput) -> Post:
         """
         게시물 생성
@@ -97,7 +123,7 @@ class PostService:
 
     # 모든 게시물 가져오기
 
-    async def getAllPost(self, parent_id: str) -> Optional[List[Post]]:
+    async def getAllPost(self) -> Optional[List[Post]]:
         """
         모든 게시물 가져오기
         --input
@@ -108,26 +134,74 @@ class PostService:
         db = get_db_session()
 
         post = db.query(PostTable).filter(
-            PostTable.parent_id == parent_id,
             PostTable.deleteTime == None).all()
 
-        return post
+        return random.choices(post, k=5)
+
+    def _get_photoId_and_desc(self, content: str):
+        # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
+        photoIdRex = re.search(r'!\[\[(.*?)\]\]', content)
+        photoId = photoIdRex.group(1) if photoIdRex else None
+
+        # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+        content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+        descr = content if len(
+            content) < 100 else content[:100] + '...'
+
+        return photoId, descr
+
+    # 특정 부모의 모든 게시물 가져오기
+
+    async def getAllPostByParent(self, parent_id: str, limit: Optional[int]):
+        """
+        특정 부모의 모든 게시물 가져오기
+        --input
+            - parent_id: 부모 아이디
+            - limit: 가져올 게시물 수
+        --output
+            - List[Post]: 게시물 리스트
+        """
+        db = get_db_session()
+        _data = db.query(PostTable).where(
+            PostTable.parent_id == parent_id).all()
+        posts = random.sample(_data, len(
+            _data) if len(_data) < limit else limit) if limit else _data
+        banners = []
+        for i in posts:
+            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
+            file_path = os.path.join(
+                POST_CONTENT_DIR, str(i.post_id) + '.txt')
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                content = f.read()
+
+            photoId, descr = self._get_photoId_and_desc(content)
+
+            banners.append({
+                'postid': i.post_id,
+                'photoId': photoId,
+                'title': i.title,
+                'pView': i.pView,
+                'pScript': i.pScript,
+                'pHeart': i.pHeart,
+                'comment': i.pComment,
+                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
+                'desc': descr
+            })
+        return banners
 
     # 하나의 게시물 가져오기
 
-    async def getPost(self, post_id: str, parent_id: str) -> Optional[Post]:
+    async def getPost(self, post_id: str):
         """
         하나의 게시물 가져오기
         --input
             - post_id: 게시물 아이디
-            - parent_id: 부모 아이디
         --output
             - Post: 게시물 딕셔너리
         """
         db = get_db_session()
 
         post = db.query(PostTable).filter(
-            PostTable.parent_id == parent_id,
             PostTable.post_id == post_id,
             PostTable.deleteTime == None).first()
 
@@ -135,8 +209,24 @@ class PostService:
         if post is None:
             raise CustomException("Post not found")
 
-        post.__setattr__('content', open(os.path.join(POST_CONTENT_DIR, str(
-            post.post_id) + '.txt'), 'r', encoding='UTF-8').read())
+        creater = db.query(ParentTable).filter(
+            ParentTable.parent_id == post.parent_id).first()
+        status = self._getParentStatus(post.parent_id)
+        post.__setattr__('creater', {
+            "parentId": creater.parent_id,
+            "email": creater.email,
+            "name": creater.name,
+            "nickname": creater.nickname,
+            "photoId": creater.photoId,
+            "description": creater.description,
+            "status": status,
+        })
+        postContent = open(os.path.join(POST_CONTENT_DIR, str(
+            post.post_id) + '.txt'), 'r', encoding='UTF-8').read()
+        post.__setattr__('content', postContent)
+
+        match = re.search(r'!\[\[(.*?)\]\]', postContent)
+        post.__setattr__('photoId', match.group(1) if match else None)
 
         return post
 

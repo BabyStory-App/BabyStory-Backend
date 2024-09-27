@@ -14,8 +14,9 @@ router = APIRouter(
 
 postMainService = PostMainService()
 
+
 # 메인페이지 생성
-@router.post("/create", dependencies=[Depends(JWTBearer())])
+@router.get("/create", dependencies=[Depends(JWTBearer())])
 async def create_postmain(parent_id: str = Depends(JWTBearer())):
     """
     메인페이지 생성
@@ -32,7 +33,8 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
     """
     # 부모 아이디가 없으면 에러
     if parent_id is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Invalid parent_id")
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
+                            detail="Invalid parent_id")
 
     try:
         # 메인페이지 배너
@@ -41,14 +43,14 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
         if createpostmain is None:
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="createpostmain not found")
-    
-    
+
         # 짝꿍이 쓴 게시물
-        createpostmainfriend = postMainService.createPostMainFriend(CreatePostMainInput(parent_id=parent_id))
-    
+        createpostmainfriend = postMainService.createPostMainFriend(
+            CreatePostMainInput(parent_id=parent_id))
 
         # 친구가 쓴 게시물
-        createpostmainfriendread = postMainService.createPostMainFriendRead(CreatePostMainInput(parent_id=parent_id))
+        createpostmainfriendread = postMainService.createPostMainFriendRead(
+            CreatePostMainInput(parent_id=parent_id))
 
         if createpostmainfriendread is None:
             raise HTTPException(
@@ -63,7 +65,8 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
                 status_code=HTTP_400_BAD_REQUEST, detail="neighbor not found")
 
         # 이웃들이 쓴 게시물
-        createpostmainneighbor = postMainService.createPostMainNeighbor(CreatePostMainInput(parent_id=parent_id))
+        createpostmainneighbor = postMainService.createPostMainNeighbor(
+            CreatePostMainInput(parent_id=parent_id))
 
         if createpostmainneighbor is None:
             raise HTTPException(
@@ -77,12 +80,13 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
                 status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhighview not found")
 
         # 많이 본 해시태그로 게시물 추천
-        createpostmainhashtag = postMainService.createPostMainHashtag(parent_id)
+        createpostmainhashtag = postMainService.createPostMainHashtag(
+            parent_id)
 
         if createpostmainhashtag is None:
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="createpostmainhashtag not found")
-        
+
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
@@ -90,21 +94,11 @@ async def create_postmain(parent_id: str = Depends(JWTBearer())):
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail=error)
 
-    return { 'banner' : createpostmain,
-             'friend' : createpostmainfriend,
-            'friend_read' : createpostmainfriendread,
-            'neighbor' : getneighbor,
-            'neighbor_post' : createpostmainneighbor,
-            'highview' : createpostmainhighview,
-            'hashtag' : createpostmainhashtag
-             }
-
-
-
-
-
-
-
-
-
-
+    return {'banner': createpostmain,
+            'friend': createpostmainfriend,
+            'friend_read': createpostmainfriendread,
+            'neighbor': getneighbor,
+            'neighbor_post': createpostmainneighbor,
+            'highview': createpostmainhighview,
+            'hashtag': createpostmainhashtag
+            }

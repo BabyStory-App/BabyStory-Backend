@@ -163,17 +163,32 @@ class PostMainService:
         """
         # 임시로 설정함.
         db = get_db_session()
-        _data = db.query(PostTable).all()
-        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
+        posts = db.query(PostTable).all()
+        random.shuffle(posts)
+        idx = 0
         banners = []
         for i in posts:
-            banners.append({
-                'postid': i.post_id,
-                'photoId': f"{i.post_id}.jpeg",
-                'title': i.title,
-                'author_photo': f"{i.parent_id}.jpeg",
-                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name
-            })
+            photo_file_list = os.listdir(os.path.join(
+                POST_PHOTO_DIR, str(i.post_id)))
+            if len(photo_file_list) > 0:
+                # 유저가 게시물에 하트를 눌렀는지 확인
+                hasHeart = False
+                if db.query(PHeartTable).filter(
+                    PHeartTable.parent_id == createPostMainInput.parent_id,
+                    PHeartTable.post_id == i.post_id
+                ).first() is not None:
+                    hasHeart = True
+                banners.append({
+                    'postid': i.post_id,
+                    'photoId': f"{photo_file_list[0]}",
+                    'hasHeart': hasHeart,
+                    'title': i.title,
+                    'author_photo': f"{i.parent_id}",
+                    'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name
+                })
+                idx += 1
+            if idx == 5:
+                break
         return banners
 
         # 실제 코드
@@ -390,10 +405,10 @@ class PostMainService:
         for i in neighbors:
             banners.append({
                 'parent_id': i.parent_id,
-                'photoId': f"{i.parent_id}.jpeg",
+                'photoId': f"{i.parent_id}",
                 'name': i.name,
                 'mainAddr': i.mainAddr,
-                'desc': i.description[:60] + '...'
+                'desc': i.description[:100]
             })
         return banners
 

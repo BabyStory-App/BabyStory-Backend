@@ -1,6 +1,8 @@
 from typing import Optional
 from constants.path import *
 from sqlalchemy import text
+import os
+import re
 
 from schemas.setting import *
 from schemas.setting import *
@@ -140,6 +142,10 @@ class SettingService:
         # 유저가 조회한 post 데이터
         post = []
         for i in myViews:
+            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)[:101]
+
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -149,7 +155,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
+                'contentPreview': content,
                 'photo_id': str(i[0])
             })
         
@@ -198,6 +204,10 @@ class SettingService:
         # 유저가 script한 post 데이터
         post = []
         for i in scripts:
+            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)[:101]
+        
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -207,7 +217,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
+                'contentPreview':content,
                 'photo_id': str(i[0])
             })
 
@@ -256,6 +266,10 @@ class SettingService:
         # 유저가 script한 post 데이터
         post = []
         for i in likes:
+            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)[:101]
+        
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -265,7 +279,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
+                'contentPreview':content,
                 'photo_id': str(i[0])
             })
 
@@ -321,6 +335,10 @@ class SettingService:
                 print(type(myStories[j][i]), end=', ')
             print()
         for i in myStories:
+            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+            content = re.sub(r'\n', '', content)[:101]
+        
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -330,7 +348,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview': open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()[:101],
+                'contentPreview':content,
                 'photo_id': str(i[0])
             })
         return {

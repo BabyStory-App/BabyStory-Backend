@@ -279,6 +279,129 @@ class PostMainService:
 
         return banners
 
+    def createPostMainFriendSearch(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendSearchListOutput:
+        """
+        짝꿍이 쓴 게시물
+        --input
+            - createPostMainInput.parent_id: 부모 아이디
+            - createPostMainInput.size: 게시물 개수 default -1
+            - createPostMainInput.page: 페이지 수 default -1
+        --output
+            - List<{postid, photoId, title, author_photo, author_name}> : 짝꿍이 쓴 게시물
+        """
+        # 임시로 설정함.
+        db = get_db_session()
+        _data = db.query(PostTable).all()
+        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
+        banners = []
+        for i in posts:
+            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
+            file_path = os.path.join(
+                POST_CONTENT_DIR, str(i.post_id) + '.txt')
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                content = f.read()
+
+            photoId, descr = self._get_photoId_and_desc(content)
+
+            banners.append({
+                'postid': i.post_id,
+                'photoId': photoId,
+                'title': i.title,
+                'pHeart': i.pHeart,
+                'comment': i.pComment,
+                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
+                'desc': descr
+            })
+        return banners
+
+        # 실제 코드
+        db = get_db_session()
+
+        end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        end = end - timedelta(days=1)
+
+        if createPostMainInput.size != -1 and createPostMainInput.size < 0:
+            raise CustomException("size must be -1 or greater than 0")
+        if createPostMainInput.page != -1 and createPostMainInput.page < 0:
+            raise CustomException("page must be -1 or greater than 0")
+
+        # size와 page가 -1이면 기본 페이지를 가져온다.
+        if createPostMainInput.size == -1 or createPostMainInput.size == 0:
+            size = 10
+        else:
+            size = createPostMainInput.size
+
+        if createPostMainInput.page == -1 or createPostMainInput.page == 0:
+            page = 0
+        else:
+            # 10개씩 보여주는 페이지일 경우 페이지의 시작점을 계산
+            page = createPostMainInput.page * size
+
+        temp = db.query(FriendTable).filter(
+            FriendTable.friend == createPostMainInput.parent_id
+        ).all()
+
+        temp_ids = [friend.parent_id for friend in temp]
+
+        friend = db.query(FriendTable).filter(
+            FriendTable.parent_id == createPostMainInput.parent_id,
+            FriendTable.friend.in_(temp_ids)
+        ).all()
+
+        friend_ids = [f.friend for f in friend]
+
+        # 오늘 친구가 쓴 게시물 중 page에서 size개 가져오기
+        post = db.query(PostTable).filter(
+            PostTable.parent_id.in_(friend_ids),
+            PostTable.createTime >= end
+        ).order_by(desc(PostTable.createTime)).offset(page).limit(size).all()
+
+        # 값을 반환: List<{postid, photoId, title, parentHeart, author_photo, author_name}>
+        banners = []
+        for i in post:
+            # file_list = os.listdir(os.path.join(
+            #     POST_PHOTO_DIR, str(i.post_id)))
+            # if len(file_list) == 0:
+            #     photoId = None
+            # else:
+            #     # file_list의 첫번째 이미지를 photoId 경로로 사용
+            #     photoId = os.path.join(
+            #         POST_PHOTO_DIR, str(i.post_id), file_list[0])
+            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
+            file_path = os.path.join(
+                POST_CONTENT_DIR, str(i.post_id) + '.txt')
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                content = f.read()
+
+            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
+            photoId = re.search(r'!\[\[(.*?)\]\]', content)
+            if photoId:
+                photoId = photoId.group(1)
+            else:
+                photoId = None
+
+            # 유저가 게시물에 하트를 눌렀는지 확인
+            if db.query(PHeartTable).filter(
+                PHeartTable.parent_id == createPostMainInput.parent_id,
+                PHeartTable.post_id == i.post_id
+            ).first() is not None:
+                pHeart = True
+            else:
+                pHeart = False
+
+            banners.append({
+                'post_id': i.post_id,
+                'photoId': photoId,
+                'title': i.title,
+                # 'pHeart': i.pHeart,
+                'parentHeart': pHeart,
+                'author_photo': f"{i.parent_id}.jpeg",
+                'author_name': db.query(ParentTable).filter(
+                    ParentTable.parent_id == i.parent_id).first().name
+            })
+
+        return banners
+
     def createPostMainFriendRead(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendListOutput:
         """
         친구가 쓴 게시물

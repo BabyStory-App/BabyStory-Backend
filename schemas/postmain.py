@@ -37,6 +37,20 @@ class CreatePostMainFriendListOutput(BaseModel):
     banners: List[CreatePostMainFriendOutput]
 
 
+class CreatePostMainFriendSearchOutput(BaseModel):
+    post_id: int
+    photo_id: str
+    title: str
+    pHeart: int
+    comment: int
+    author_name: str
+    desc: str
+
+
+class CreatePostMainFriendSearchListOutput(BaseModel):
+    banners: List[CreatePostMainFriendSearchOutput]
+
+
 class GetNeighborOutput(BaseModel):
     parent_id: str
     photo_id: str

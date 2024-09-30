@@ -57,7 +57,7 @@ async def create_recommend(createSearchRecommendInput: CreateSearchRecommendInpu
 
         # 짝꿍이 쓴 게시물
         if createSearchRecommendInput.type == 'friend':
-            result = postMainService.createPostMainFriend(
+            result = postMainService.createPostMainFriendSearch(
                 CreatePostMainInput(parent_id=parent_id,
                                     size=createSearchRecommendInput.size,
                                     page=createSearchRecommendInput.page
@@ -142,6 +142,7 @@ async def create_result(createSearchInput: CreateSearchInput, parent_id: str = D
 
     try:
         # 검색 결과 생성
+        print('createSearchInput', createSearchInput)
         result = searchService.createSearch(createSearchInput)
 
     except CustomException as e:
@@ -149,6 +150,7 @@ async def create_result(createSearchInput: CreateSearchInput, parent_id: str = D
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=e.message)
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="search not found")
 

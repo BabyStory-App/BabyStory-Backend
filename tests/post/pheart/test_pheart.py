@@ -22,6 +22,53 @@ test_DeletePHeartInput = {
 }
 
 
+""" Manage post heart test 1 """
+def test_manage_pheartc(client, test_jwt):
+    response = client.post(
+        "pheart",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_CreatePHeartInput
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pheart 객체 확인
+    assert response_json["post_id"] == test_CreatePHeartInput["post_id"]
+
+# Manage post heart test fail ( post_id가 없는 경우 )
+async def test_managePHeartc_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
+        client.post("pheart", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to manage pheart"
+
+
+""" Manage post heart test 2 """
+def test_manage_pheartd(client, test_jwt):
+    response = client.post(
+        "pheart",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_CreatePHeartInput
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pheart 객체 확인
+    assert response_json["post_id"] == test_CreatePHeartInput["post_id"]
+
+# Manage post heart test fail ( post_id가 없는 경우 )
+async def test_managePHeartd_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
+        client.post("pheart", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to manage pheart"
+
 
 """ Create post heart test """
 def test_create_pheart(client, test_jwt):

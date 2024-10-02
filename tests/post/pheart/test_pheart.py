@@ -1,16 +1,11 @@
 from apis.post import router
 from fastapi.testclient import TestClient
-from auth.auth_handler import decodeJWT
-from uuid import uuid4
-from main import app  # assuming your FastAPI app is defined in main.py
 from datetime import *
 from fastapi import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
 import pytest
-import json
 
 client = TestClient(router)
-
 test_jwt_tmp = None
 
 test_CreatePHeartInput = {

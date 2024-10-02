@@ -4,10 +4,12 @@ from typing import Optional, List
 from model.cheart import *
 
 
+class ManageCHeartInput(BaseModel):
+    comment_id: int
+
+
 class CreateCHeartInput(BaseModel):
     comment_id: int
-    createTime: datetime = datetime.now()
-
 
 class CreateCHeartOutput(BaseModel):
     success: int
@@ -16,7 +18,6 @@ class CreateCHeartOutput(BaseModel):
 
 class DeleteCHeartInput(BaseModel):
     comment_id: int
-
 
 class DeleteCHeartOutput(BaseModel):
     success: int

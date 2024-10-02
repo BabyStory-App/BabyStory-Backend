@@ -15,7 +15,6 @@ router = APIRouter(
 pcommentService = PCommentService()
 
 
-
 # 댓글 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pcomment(createCommentInput: CreatePCommentInput,
@@ -27,7 +26,6 @@ async def create_pcomment(createCommentInput: CreatePCommentInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pcomment")
     return { 'pcomment': pcomment }
-
 
 
 # 모든 댓글 가져오기
@@ -46,7 +44,6 @@ async def get_all_comment(post_id: int) -> List[PComment]:
     return comment
 
 
-
 # 댓글에 대댓글이 있는 경우 대댓글 가져오기
 @router.get("/reply", dependencies=[Depends(JWTBearer())])
 async def get_reply_comment(comment_id: int) -> List[PComment]:
@@ -61,7 +58,6 @@ async def get_reply_comment(comment_id: int) -> List[PComment]:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all reply comment")
     return comment
-
 
 
 # 댓글 수정
@@ -79,7 +75,6 @@ async def update_comment(updatePCommentInput: UpdatePCommentInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to update comment")
     return { "success": 200 if pcomment else 403, 'pcomment': pcomment }
-
 
 
 # 댓글 삭제

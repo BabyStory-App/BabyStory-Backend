@@ -9,6 +9,7 @@ from schemas.pcomment import *
 from error.exception.customerror import *
 
 class PCommentService:
+
     # 댓글 생성
     def createPComment(self, parent_id: str, createPCommentInput: CreatePCommentInput) -> PComment:
         """
@@ -44,7 +45,6 @@ class PCommentService:
         return pcomment
 
 
-
     # 모든 댓글 가져오기
     def getAllPComment(self, post_id: int) -> List[PComment]:
         """
@@ -69,7 +69,6 @@ class PCommentService:
         return pcomment
         
 
-
     # 댓글에 대댓글이 있는 경우 대댓글 가져오기
     def getReplyPComment(self, comment_id: int) -> List[PComment]:
         """
@@ -81,19 +80,22 @@ class PCommentService:
         """
         db = get_db_session()
         
-        # 입력된 comment_id가 없는 경우 CustomException을 발생시킵니다.
-        if pcomment is None:
-            raise CustomException("Comment reply not found")
-
-        # Comment 중 reply_id가 comment_id인 경우를 찾아서 대댓글 리스트를 가져옵니다.
         pcomment = db.query(PCommentTable).filter(
             PCommentTable.reply_id == comment_id,
             PCommentTable.deleteTime == None).all()
+        
+        # 입력된 comment_id가 없는 경우 CustomException을 발생시킵니다.
+        if pcomment is None:
+            raise CustomException("Comment reply not found")
+        
+        pcomments = []
+        pcomments = db.query(PCommentTable).filter(
+                PCommentTable.reply_id == comment_id,
+                PCommentTable.deleteTime == None).all()
 
-        return pcomment
+        return pcomments
 
         
-
     # 댓글 수정
     async def updatePComment(self, updatePCommentInput: UpdatePCommentInput, parent_id: str) -> Optional[PComment]:
         """
@@ -125,7 +127,6 @@ class PCommentService:
 
         return pcomment
         
-
 
     # 댓글 삭제
     async def deletePComment(self, deletePCommentInput: DeletePCommentInput, parent_id: str) -> PComment:

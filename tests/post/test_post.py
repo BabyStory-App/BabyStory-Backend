@@ -1,6 +1,3 @@
-from auth.auth_handler import decodeJWT
-from uuid import uuid4
-from main import app  # assuming your FastAPI app is defined in main.py
 from datetime import *
 from fastapi import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -212,7 +209,7 @@ async def test_updatePost_fail(client):
 """ Delete post test """
 def test_delete_post(client, test_jwt):
     response = client.request(
-        method="DELETE",
+        method="PUT",
         url=f"/post/delete/{test_jwt['post_id']}",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
         json={"post_id": test_jwt["post_id"]}

@@ -4,6 +4,9 @@ from typing import Optional, List
 from model.pscript import *
 
 
+class ManagePScriptInput(BaseModel):
+    post_id: int
+
 class CreatePScriptInput(BaseModel):
     post_id: int
 

@@ -12,6 +12,48 @@ from error.exception.customerror import *
 
 class PScriptService:
 
+    # 스크립트 관리
+    def managePScript(self, managePScriptInput: ManagePScriptInput, parent_id:str) -> Optional[PScript]:
+        """
+        스크립트 관리
+        --input
+            - managePScriptInput.post_id: 게시물 아이디
+        --output
+            - PScript: 스크립트 딕셔너리
+        """
+        db = get_db_session()
+
+        pscript = db.query(PScriptTable).filter(
+            PScriptTable.post_id == managePScriptInput.post_id,
+            PScriptTable.parent_id == parent_id
+        ).first()
+
+        if pscript is None:
+            new_pscript = PScriptTable(
+                post_id=managePScriptInput.post_id,
+                parent_id = parent_id,
+                createTime = datetime.now()
+            )
+
+            try:
+                db.add(new_pscript)
+                db.commit()
+                db.refresh(new_pscript)
+                return new_pscript
+            
+            except Exception as e:
+                db.rollback()
+                raise e
+
+        else:
+            try:
+                db.delete(pscript)
+                db.commit()
+                return pscript
+            
+            except Exception as e:
+                db.rollback()
+
     # 스크립트 생성
     def createPScript(self, createPScriptInput: CreatePScriptInput, parent_id: str) -> Optional[PScript]:
         """

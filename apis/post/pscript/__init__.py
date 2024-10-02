@@ -14,6 +14,17 @@ router = APIRouter(
 
 pscriptService = PScriptService()
 
+# 스크립트 관리
+@router.post("/", dependencies=[Depends(JWTBearer())])
+async def manage_pscript(managePScriptInput: ManagePScriptInput,
+                        parent_id: str = Depends(JWTBearer()))-> PScript:
+    try:
+        result = pscriptService.managePScript(managePScriptInput, parent_id)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pscript")
+    return result
 # 스크립트 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pscript(createPScriptInput: CreatePScriptInput, 

@@ -6,3 +6,6 @@ from model.friend import Friend
 
 class CreateFriendInput(BaseModel):
     friend: str
+
+class DeleteFriendInput(BaseModel):
+    friend: str

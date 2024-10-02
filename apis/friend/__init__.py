@@ -30,3 +30,16 @@ async def create_post(friend: CreateFriendInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Friend not found")
     
     return { 'friend': friend }
+
+
+# 친구관계 삭제
+@router.post("/delete", dependencies=[Depends(JWTBearer())])
+async def delete_post(friend: DeleteFriendInput,
+                parent_id: str = Depends(JWTBearer())):
+    
+    friend = friendService.deleteFriend(parent_id, friend.friend)
+    
+    if friend is None:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Friend not found")
+    return { 'friend': friend }

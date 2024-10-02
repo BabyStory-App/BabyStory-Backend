@@ -10,6 +10,46 @@ from error.exception.customerror import *
 
 class PHeartService:
 
+    # 하트 관리
+    def managePHeart(self, managePHeartInput: ManagePHeartInput, parent_id:str) -> PHeart:
+        """
+        하트 관리
+        --input
+            - managePHeartInput.post_id: 게시물 아이디
+        --output
+            - PHeart: 하트 딕셔너리
+        """
+        db = get_db_session()
+
+        pheart = db.query(PHeartTable).filter(
+            PHeartTable.post_id == managePHeartInput.post_id,
+            PHeartTable.parent_id == parent_id
+        ).first()
+
+        if pheart is None:
+            PHeart = PHeartTable(
+                post_id=managePHeartInput.post_id,
+                parent_id = parent_id,
+                createTime = datetime.now()
+            )
+
+            db.add(pheart)
+            db.commit()
+            db.refresh(pheart)
+
+            return PHeart
+
+        else:
+            PHeart = PHeartTable(
+                post_id=managePHeartInput.post_id,
+                parent_id = parent_id
+            ).first()
+
+            db.delete(pheart)
+            db.commit()
+
+            return PHeart
+
     # 하트 생성
     def createPHeart(self, createPHeartInput: CreatePHeartInput, parent_id: str) -> Optional[PHeart]:
         """

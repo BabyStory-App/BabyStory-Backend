@@ -14,6 +14,18 @@ router = APIRouter(
 
 pviewService = PViewService()
 
+# view 관리
+@router.post("/", dependencies=[Depends(JWTBearer())])
+async def manage_view(managePViewInput: ManagePViewInput,
+                        parent_id: str = Depends(JWTBearer()))-> PView:
+    try:
+        result = pviewService.managePView(managePViewInput, parent_id)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pview")
+    return result
+
 # view 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_view(createPViewInput: CreatePViewInput, 

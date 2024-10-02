@@ -102,7 +102,6 @@ async def test_createp_script_fail():
     assert err.value.detail == "Failed to create pscript"
 
 
-
 """ Delete post script test """
 def test_delete_pscript(client, test_jwt):
     response = client.request(

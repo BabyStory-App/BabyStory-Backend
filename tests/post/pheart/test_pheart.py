@@ -102,7 +102,6 @@ async def test_createPHeart_fail():
     assert err.value.detail == "Failed to create pheart"
 
 
-
 """ Delete post heart test """
 def test_delete_pheart(client, test_jwt):
     response = client.request(

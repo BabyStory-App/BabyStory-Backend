@@ -12,7 +12,6 @@ class CreatePostInput(BaseModel):
     content: str
     hashList: Optional[str] = None
 
-
 class CreatePostOutput(BaseModel):
     post: Optional[Post] = None
 
@@ -37,16 +36,14 @@ class PostGetOupPut(BaseModel):
     hashList: Optional[str] = None
     content: str
 
+
 # 게시물 수정
-
-
 class UpdatePostInput(BaseModel):
     post_id: int
     reveal: int
     title: str
     content: str
     hashList: Optional[str] = None
-
 
 class UpdatePostOutput(BaseModel):
     success: int
@@ -56,7 +53,6 @@ class UpdatePostOutput(BaseModel):
 # 게시물 삭제
 class DeletePostInput(BaseModel):
     post_id: int
-
 
 class DeletePostOutput(BaseModel):
     success: int

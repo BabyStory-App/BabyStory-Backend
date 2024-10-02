@@ -4,6 +4,9 @@ from typing import Optional, List
 from model.pview import *
 
 
+class ManagePViewInput(BaseModel):
+    post_id: int
+
 class CreatePViewInput(BaseModel):
     post_id: int
 

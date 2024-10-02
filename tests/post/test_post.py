@@ -30,8 +30,6 @@ test_UploadPhoto = {
 
 
 """ Create post test """
-
-
 def test_create_post(client, test_jwt):
     response = client.post(
         "/post/create",
@@ -59,7 +57,6 @@ def test_create_post(client, test_jwt):
     # post_id를 test_jwt에 저장하여 다른곳 에서도 사용 가능하게 합니다.
     test_jwt["post_id"] = response_json["post"]["post_id"]
 
-
 # Create post test fail ( 잘못된 jwt )
 async def test_createPost_fail(client):
     with pytest.raises(HTTPException) as err:
@@ -69,8 +66,6 @@ async def test_createPost_fail(client):
     assert err.value.detail == "Failed to create post"
 
 # Create post test fail ( reveal 값이 0 ~ 3이 아닌 경우 )
-
-
 async def test_createPost_fail(client):
     with pytest.raises(HTTPException) as err:
         test_CreatePostInput["reveal"] != 0 or test_CreatePostInput[
@@ -81,8 +76,6 @@ async def test_createPost_fail(client):
 
 
 """ upload post photo test """
-
-
 def test_upload_post_photo(client, test_jwt):
     # 파일을 열기 전에 경로가 유효한지 확인
     files = [("fileList", (file, open(os.path.join(TEST_ASSET_DIR, file), "rb")))
@@ -107,8 +100,6 @@ def test_upload_post_photo(client, test_jwt):
 
 
 """ Get all post test """
-
-
 def test_get_all_post(client, test_jwt):
     response = client.get(
         "/post/",
@@ -122,8 +113,6 @@ def test_get_all_post(client, test_jwt):
     assert response_json[0]["post_id"] == test_jwt["post_id"]
 
 # Get all post test fail ( 잘못된 jwt )
-
-
 async def test_getPost_fail(client):
     with pytest.raises(HTTPException) as err:
         headers = {"Authorization": f"Bearer wrong_jwt_token"}
@@ -133,8 +122,6 @@ async def test_getPost_fail(client):
 
 
 """ Get post by post_id test """
-
-
 def test_get_post(client, test_jwt):
     response = client.get(
         f"/post/{test_jwt['post_id']}",
@@ -148,8 +135,6 @@ def test_get_post(client, test_jwt):
     assert response_json["post_id"] == test_jwt["post_id"]
 
 # Get post by post_id test fail ( 잘못된 jwt )
-
-
 async def test_getPost_fail(client):
     with pytest.raises(HTTPException) as err:
         headers = {"Authorization": f"Bearer wrong_jwt_token"}
@@ -158,8 +143,6 @@ async def test_getPost_fail(client):
     assert err.value.detail == "Failed to get post"
 
 # Get post by post_id test fail ( 잘못된 post_id )
-
-
 async def test_getPost_fail(client):
     with pytest.raises(HTTPException) as err:
         client.get("/{post_id}")
@@ -167,8 +150,6 @@ async def test_getPost_fail(client):
     assert err.value.detail == "post not found"
 
 # Get post by post_id test fail ( 데이터가 없는 경우 )
-
-
 async def test_getPost_fail(client):
     with pytest.raises(HTTPException) as err:
         client.get("/{post_id}")
@@ -177,8 +158,6 @@ async def test_getPost_fail(client):
 
 
 """ Update post test """
-
-
 def test_update_post(client, test_jwt):
     test_UpdatePostInput["post_id"] = test_jwt["post_id"]
 
@@ -199,8 +178,6 @@ def test_update_post(client, test_jwt):
     assert response_json["success"] == 200
 
 # Update post test fail ( 잘못된 jwt )
-
-
 async def test_updatePost_fail(client):
     with pytest.raises(HTTPException) as err:
         headers = {"Authorization": f"Bearer wrong_jwt_token"}
@@ -209,8 +186,6 @@ async def test_updatePost_fail(client):
     assert err.value.detail == "Failed to update post"
 
 # Update post test fail ( 잘못된 post_id )
-
-
 async def test_updatePost_fail(client):
     with pytest.raises(HTTPException) as err:
         client.put("/post/update/{post_id}")
@@ -218,8 +193,6 @@ async def test_updatePost_fail(client):
     assert err.value.detail == "post not found"
 
 # Update post test fail ( reveal 값이 0 ~ 3이 아닌 경우 )
-
-
 async def test_updatePost_fail(client):
     with pytest.raises(HTTPException) as err:
         test_UpdatePostInput["reveal"] != 0 or test_UpdatePostInput[
@@ -229,8 +202,6 @@ async def test_updatePost_fail(client):
     assert err.value.detail == "Invalid reveal value"
 
 # Update post test fail ( 데이터수정에 실패한 경우 )
-
-
 async def test_updatePost_fail(client):
     with pytest.raises(HTTPException) as err:
         client.put("/post/update/{post_id}", json=test_UpdatePostInput)
@@ -239,8 +210,6 @@ async def test_updatePost_fail(client):
 
 
 """ Delete post test """
-
-
 def test_delete_post(client, test_jwt):
     response = client.request(
         method="DELETE",
@@ -256,8 +225,6 @@ def test_delete_post(client, test_jwt):
     assert response_json["post"]["post_id"] == test_jwt["post_id"]
 
 # Delete post test fail ( 잘못된 jwt )
-
-
 async def test_deletePost_fail(client):
     with pytest.raises(HTTPException) as err:
         headers = {"Authorization": f"Bearer wrong_jwt_token"}
@@ -266,8 +233,6 @@ async def test_deletePost_fail(client):
     assert err.value.detail == "Failed to delete post"
 
 # Delete post test fail ( 잘못된 post_id )
-
-
 async def test_deletePost_fail(client):
     with pytest.raises(HTTPException) as err:
         client.delete("/post/delete/{post_id}")
@@ -275,8 +240,6 @@ async def test_deletePost_fail(client):
     assert err.value.detail == "post not found"
 
 # Delete post test fail ( 데이터삭제에 실패한 경우 )
-
-
 async def test_deletePost_fail(client):
     with pytest.raises(HTTPException) as err:
         client.delete("/post/delete/{post_id}")

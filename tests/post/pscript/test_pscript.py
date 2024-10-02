@@ -22,6 +22,53 @@ test_DeletePScriptInput = {
 }
 
 
+""" Manage post script test 1 """
+def test_manage_pscript(client, test_jwt):
+    response = client.post(
+        "pscript",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_CreatePScriptInput
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pscript 객체 확인
+    assert response_json["post_id"] == test_CreatePScriptInput["post_id"]
+
+# Manage post script test fail ( post_id가 없는 경우 )
+async def test_managePScript_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
+        client.post("pscript", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to manage pscript"
+
+
+""" Manage post script test 2 """
+def test_manage_pscript(client, test_jwt):
+    response = client.post(
+        "pscript",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_CreatePScriptInput
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pscript 객체 확인
+    assert response_json["post_id"] == test_CreatePScriptInput["post_id"]
+
+# Manage post script test fail ( post_id가 없는 경우 )
+async def test_managePScript_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
+        client.post("pscript", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to manage pscript"
+
 
 """ Create post script test """
 def test_create_pscript(client, test_jwt):

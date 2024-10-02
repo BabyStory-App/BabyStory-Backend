@@ -10,7 +10,51 @@ from db import get_db_session
 
 class CHeartService:
 
-    # 하트 생성
+    # 댓글 하트 관리
+    def manageCHeart(self, manageCHeartInput: ManageCHeartInput, parent_id:str) -> Optional[CHeart]:
+        """
+        하트 관리
+        --input
+            - manageCHeartInput.comment_id: 댓글 아이디
+        --output
+            - CHeart: 하트 딕셔너리
+        """
+        db = get_db_session()
+
+        Cheart = db.query(CHeartTable).filter(
+            CHeartTable.comment_id == manageCHeartInput.comment_id,
+            CHeartTable.parent_id == parent_id
+        ).first()
+
+        if Cheart is None:
+            new_Cheart = CHeartTable(
+                comment_id=manageCHeartInput.comment_id,
+                parent_id = parent_id,
+                createTime = datetime.now()
+            )
+
+            try:
+                db.add(new_Cheart)
+                db.commit()
+                db.refresh(new_Cheart)
+                return new_Cheart
+            
+            except Exception as e:
+                db.rollback()
+                raise e
+
+        else:
+            try:
+                db.delete(Cheart)
+                db.commit()
+                return Cheart
+            
+            except Exception as e:
+                db.rollback()
+                raise e
+
+
+    # 댓글 하트 생성
     def createCHeart(self,
                     createCHeartInput: CreateCHeartInput,
                     parent_id: str) -> Optional[CHeart]:
@@ -27,7 +71,7 @@ class CHeartService:
             Cheart = CHeartTable(
                 comment_id=createCHeartInput.comment_id,
                 parent_id = parent_id,
-                createTime = createCHeartInput.createTime
+                createTime = datetime.now()
             )
 
             db.add(Cheart)
@@ -40,7 +84,8 @@ class CHeartService:
             db.rollback()
             raise (e)
         
-    # 하트 삭제
+
+    # 댓글 하트 삭제
     def deleteCHeart(self, deleteCHeartInput: DeleteCHeartInput, parent_id: str) -> Optional[CHeart]:
         """
         하트 삭제
@@ -51,20 +96,20 @@ class CHeartService:
             - CHeart: 하트 딕셔너리
         """
         db = get_db_session()
+        
+        Cheart = db.query(CHeartTable).filter(
+            CHeartTable.comment_id == deleteCHeartInput.comment_id,
+            CHeartTable.parent_id == parent_id
+        ).first()
+
+        if Cheart is None:
+            raise HTTPException(status_code=404, detail="Heart not found")
+        
         try:
-            Cheart = db.query(CHeartTable).filter(
-                CHeartTable.comment_id == deleteCHeartInput.comment_id,
-                CHeartTable.parent_id == parent_id
-            ).first()
-
-            if Cheart is None:
-                return None
-
             db.delete(Cheart)
             db.commit()
-
             return Cheart
-
+        
         except Exception as e:
             db.rollback()
             raise (e)

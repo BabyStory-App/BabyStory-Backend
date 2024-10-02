@@ -22,6 +22,54 @@ test_DeletePViewInput = {
 }
 
 
+""" Manage post view test 1 """
+def test_manage_pviewc(client, test_jwt):
+    response = client.post(
+        "pview",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_CreatePViewInput
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pview 객체 확인
+    assert response_json["post_id"] == test_CreatePViewInput["post_id"]
+
+# Manage post view test fail ( post_id가 없는 경우 )
+async def test_managePViewc_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
+        client.post("pview", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to manage pview"
+
+
+""" Manage post view test 2 """
+def test_manage_pviewd(client, test_jwt):
+    response = client.post(
+        "pview",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_CreatePViewInput
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pview 객체 확인
+    assert response_json["post_id"] == test_CreatePViewInput["post_id"]
+
+# Manage post view test fail ( post_id가 없는 경우 )
+async def test_managePViewd_fail():
+    with pytest.raises(HTTPException) as err:
+        headers={"Authorization": f"Bearer {test_jwt_tmp['access_token']}"}
+        client.post("pview", headers=headers)
+    assert err.value.status_code == HTTP_400_BAD_REQUEST
+    assert err.value.detail == "Failed to manage pview"
+
+
 """ Create post view test """
 def test_create_pview(client, test_jwt):
     response = client.post(
@@ -52,7 +100,6 @@ async def test_createPView_fail():
         client.post("pview/viewCreate", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to create pview"
-
 
 
 """ Delete post view test """

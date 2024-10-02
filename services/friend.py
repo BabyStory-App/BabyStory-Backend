@@ -29,3 +29,23 @@ class FriendService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to create friend")
+        
+    # 친구 관계 삭제
+    def deleteFriend(self, parent_id: str,
+                     friend: str) :
+        db = get_db_session()
+        try:
+            friend = db.query(FriendTable).filter(
+                FriendTable.parent_id == parent_id,
+                FriendTable.friend == friend).first()
+
+            db.delete(friend)
+            db.commit()
+
+            return friend
+
+        except Exception as e:
+            db.rollback()
+            print(e)
+            raise HTTPException(
+                status_code=400, detail="Failed to delete friend")

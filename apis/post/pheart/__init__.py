@@ -14,6 +14,18 @@ router = APIRouter(
 
 pheartService = PHeartService()
 
+# 하트 관리
+@router.post("/", dependencies=[Depends(JWTBearer())])
+async def manage_heart(managePHeartInput: ManagePHeartInput,
+                        parent_id: str = Depends(JWTBearer()))-> PHeart:
+    try:
+        result = pheartService.managePHeart(managePHeartInput, parent_id)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pheart")
+    return result
+
 # 하트 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_heart(createPHeartInput: CreatePHeartInput, 

@@ -17,7 +17,7 @@ pheartService = PHeartService()
 # 하트 관리
 @router.post("/", dependencies=[Depends(JWTBearer())])
 async def manage_heart(managePHeartInput: ManagePHeartInput,
-                        parent_id: str = Depends(JWTBearer()))-> List[PHeart]:
+                        parent_id: str = Depends(JWTBearer()))-> PHeart:
     try:
         result = pheartService.managePHeart(managePHeartInput, parent_id)
     except Exception as e:

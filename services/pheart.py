@@ -11,7 +11,7 @@ from error.exception.customerror import *
 class PHeartService:
 
     # 하트 관리
-    def managePHeart(self, managePHeartInput: ManagePHeartInput, parent_id:str) -> PHeart:
+    def managePHeart(self, managePHeartInput: ManagePHeartInput, parent_id:str) -> Optional[PHeart]:
         """
         하트 관리
         --input
@@ -27,28 +27,31 @@ class PHeartService:
         ).first()
 
         if pheart is None:
-            PHeart = PHeartTable(
+            new_pheart = PHeartTable(
                 post_id=managePHeartInput.post_id,
                 parent_id = parent_id,
                 createTime = datetime.now()
             )
 
-            db.add(pheart)
-            db.commit()
-            db.refresh(pheart)
-
-            return PHeart
+            try:
+                db.add(new_pheart)
+                db.commit()
+                db.refresh(new_pheart)
+                return new_pheart
+            
+            except Exception as e:
+                db.rollback()
+                raise e
 
         else:
-            PHeart = PHeartTable(
-                post_id=managePHeartInput.post_id,
-                parent_id = parent_id
-            ).first()
-
-            db.delete(pheart)
-            db.commit()
-
-            return PHeart
+            try:
+                db.delete(pheart)
+                db.commit()
+                return pheart
+            
+            except Exception as e:
+                db.rollback()
+                raise e
 
     # 하트 생성
     def createPHeart(self, createPHeartInput: CreatePHeartInput, parent_id: str) -> Optional[PHeart]:

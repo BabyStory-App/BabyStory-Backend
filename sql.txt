@@ -185,15 +185,15 @@ CREATE TABLE dday (
     picture VARCHAR(255),
     post TEXT,
     createTime DATETIME NOT NULL,
-    modifyTime DATETIME
-    FOREIGN KEY (diary_id) REFERENCES daiary(diary_id)
+    modifyTime DATETIME,  -- 쉼표 추가
+    FOREIGN KEY (diary_id) REFERENCES diary(diary_id)
 );
 
 CREATE TABLE hospital (
-    hospital_id INT PRIMARY KEY auto_increment NOT NULL,
+    hospital_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     dday_id INT NOT NULL,
     createTime DATETIME NOT NULL,
-    modifyTime DATETIME,
+    modifyTime DATETIME,  -- 쉼표 추가
     parent_kg FLOAT NOT NULL,
     bpressure FLOAT NOT NULL,
     baby_kg FLOAT,
@@ -206,12 +206,12 @@ CREATE TABLE hospital (
 );
 
 CREATE TABLE milk (
-		milk_id INT PRIMARY KEY auto_increment NOT NULL,
-		dday_id INT NOT NULL,
-		milk INT NOT NULL,
-		mamount Int NOT NULL,
-		mtime DATETIME NOT NULL,
-		FOREIGN KEY (dday_id) REFERENCES dday(dday_id)
+    milk_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    dday_id INT NOT NULL,
+    milk INT NOT NULL,
+    mamount INT NOT NULL,
+    mtime DATETIME NOT NULL,
+    FOREIGN KEY (dday_id) REFERENCES dday(dday_id)
 );
 
 CREATE TABLE deal (

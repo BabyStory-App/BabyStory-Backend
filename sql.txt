@@ -494,7 +494,7 @@ VALUES
 ('P001', 1, NULL, '정말 좋은 글이네요!', NOW(), NULL, NULL, 0),
 ('P002', 1, NULL, '읽는 동안 정말 즐거웠어요!', NOW() + INTERVAL 10 SECOND, NULL, NULL, 0),
 ('P002', 1, 1, '맞아요 좋은 글이네요!', NOW() + INTERVAL 20 SECOND, NULL, NULL, 0),
-('P003', 1, 3, '저도 즐겁게 읽었어요', NOW() + INTERVAL 30 SECOND, NULL, NULL, 0);
+('P003', 1, 1, '저도 즐겁게 읽었어요', NOW() + INTERVAL 30 SECOND, NULL, NULL, 0);
 
 INSERT INTO cheart (parent_id, comment_id, createTime)
 VALUES ('P001', 1, NOW());

@@ -41,8 +41,8 @@ class PostService:
 
         return {'friendCount': friendCount, 'mateCount': mateCount, 'myStoryCount': myStoryCount}
 
-
     # 게시물 생성
+
     def createPost(self, parent_id: str, createPostInput: CreatePostInput) -> Post:
         """
         게시물 생성
@@ -84,8 +84,8 @@ class PostService:
 
         return post
 
-
     # 새로 생성된 post 사진 업로드
+
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
         """
         생성된 post에 대한 사진 업로드
@@ -122,8 +122,8 @@ class PostService:
 
         return True
 
-
     # 모든 게시물 가져오기
+
     async def getAllPost(self) -> Optional[List[Post]]:
         """
         모든 게시물 가져오기
@@ -137,7 +137,9 @@ class PostService:
         post = db.query(PostTable).filter(
             PostTable.deleteTime == None).all()
 
-        return random.choices(post, k=5)
+        random.shuffle(post)
+
+        return post
 
     def _get_photoId_and_desc(self, content: str):
         # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
@@ -151,8 +153,8 @@ class PostService:
 
         return photoId, descr
 
-
     # 특정 부모의 모든 게시물 가져오기
+
     async def getAllPostByParent(self, parent_id: str, limit: Optional[int]):
         """
         특정 부모의 모든 게시물 가져오기
@@ -190,8 +192,8 @@ class PostService:
             })
         return banners
 
-
     # 하나의 게시물 가져오기
+
     async def getPost(self, post_id: str):
         """
         하나의 게시물 가져오기
@@ -231,8 +233,8 @@ class PostService:
 
         return post
 
-
     # 게시물 수정
+
     async def updatePost(self, updatePostInput: UpdatePostInput, parent_id: str) -> Optional[Post]:
         """
         게시물 수정
@@ -275,8 +277,8 @@ class PostService:
 
         return post
 
-
     # 게시물 삭제
+
     async def deletePost(self, deletePostInput: DeletePostInput, parent_id: str) -> Optional[Post]:
         """
         게시물 삭제

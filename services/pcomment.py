@@ -48,7 +48,7 @@ class PCommentService:
 
     # 모든 댓글 가져오기
 
-    def getAllPComment(self, post_id: int):
+    def getAllPComment(self, post_id: int) -> List[CommentOutput]:
         """
         모든 댓글 가져오기
         --input
@@ -101,6 +101,8 @@ class PCommentService:
         for i in range(len(comments)):
             if comments[i]['comment_id'] in reply_comments:
                 comments[i]['replies'] = reply_comments[comments[i]['comment_id']]
+
+        comments.sort(key=lambda x: x['createTime'], reverse=True)
 
         return comments
 

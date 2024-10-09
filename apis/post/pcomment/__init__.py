@@ -30,7 +30,7 @@ async def create_pcomment(createCommentInput: CreatePCommentInput,
 
 
 # 모든 댓글 가져오기
-@router.get("/all", dependencies=[Depends(JWTBearer())])
+@router.get("/all/{post_id}", dependencies=[Depends(JWTBearer())])
 async def get_all_comment(post_id: int) -> GetAllPCommentOutput:
     try:
         comments = pcommentService.getAllPComment(post_id)

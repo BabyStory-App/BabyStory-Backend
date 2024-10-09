@@ -35,9 +35,9 @@ class Diary(BaseModel):
     deleteTime: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
@@ -47,8 +47,10 @@ class Diary(BaseModel):
 class DiaryTable(DB_Base):
     __tablename__ = 'diary'
 
-    diary_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    diary_id = Column(Integer, primary_key=True,
+                      nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
     born = Column(Integer, nullable=False)
     title = Column(String(50), nullable=False)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, ForeignKey, Integer, DateTime, TEXT
+from sqlalchemy import Column, String, ForeignKey, Integer, DateTime, TEXT
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -29,22 +29,26 @@ class Pregndaily(BaseModel):
     post: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class PregndailyTable(DB_Base):
     __tablename__ = 'pregndaily'
 
-    daily_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    pregn_id = Column(Integer, ForeignKey('pregnancy.pregn_id'), nullable=False)
+    daily_id = Column(Integer, primary_key=True,
+                      nullable=False, autoincrement=True)
+    pregn_id = Column(Integer, ForeignKey(
+        'pregnancy.pregn_id'), nullable=False)
     daily = Column(DateTime, nullable=False)
     title = Column(String(50), nullable=False)
     picture = Column(String(255), nullable=True)
     post = Column(TEXT, nullable=True)
 
-    pregnancy = relationship(PregnancyTable, back_populates='pregndaily', passive_deletes=True)
+    pregnancy = relationship(
+        PregnancyTable, back_populates='pregndaily', passive_deletes=True)

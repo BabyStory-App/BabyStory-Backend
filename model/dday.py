@@ -30,9 +30,9 @@ class Dday(BaseModel):
     modifyTime: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
@@ -42,7 +42,8 @@ class Dday(BaseModel):
 class DdayTable(DB_Base):
     __tablename__ = 'dday'
 
-    dday_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    dday_id = Column(Integer, primary_key=True,
+                     nullable=False, autoincrement=True)
     diary_id = Column(Integer, ForeignKey('diary.diary_id'), nullable=False)
     title = Column(String(50), nullable=False)
     picture = Column(String(255), nullable=True)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, ForeignKey, Integer, DateTime, TEXT
+from sqlalchemy import Column, String, ForeignKey, Integer, DateTime, TEXT
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -35,19 +35,22 @@ class Deal(BaseModel):
     dview: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class DealTable(DB_Base):
     __tablename__ = 'deal'
 
-    deal_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    deal_id = Column(Integer, primary_key=True,
+                     nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     title = Column(String(20), nullable=False)
     content = Column(TEXT, nullable=True)
     photoId = Column(String(255), nullable=False)
@@ -56,4 +59,5 @@ class DealTable(DB_Base):
     dheart = Column(Integer, nullable=True)
     dview = Column(Integer, nullable=True)
 
-    parent = relationship(ParentTable, back_populates='deal', passive_deletes=True)
+    parent = relationship(
+        ParentTable, back_populates='deal', passive_deletes=True)

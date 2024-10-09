@@ -15,6 +15,12 @@ class CreatePCommentOutput(BaseModel):
     pcomment: Optional[PComment] = None
 
 
+class CommentParent(BaseModel):
+    parent_id: str
+    nickname: str
+    photoId: str
+
+
 class CommentOutput(BaseModel):
     comment_id: int
     content: str
@@ -22,6 +28,7 @@ class CommentOutput(BaseModel):
     modifyTime: Optional[datetime]
     cheart: Optional[int] = 0
     replies: Optional[List["CommentOutput"]] = None
+    parent: CommentParent
 
 # 모든 댓글 가져오기
 

@@ -41,7 +41,7 @@ class Parent(BaseModel):
     hashList: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
 
     def __init__(self, **kwargs):

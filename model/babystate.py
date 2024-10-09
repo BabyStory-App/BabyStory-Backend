@@ -26,21 +26,24 @@ class Babystate(BaseModel):
     kg: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class BabystateTable(DB_Base):
     __tablename__ = 'babystate'
 
-    state_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    state_id = Column(Integer, primary_key=True,
+                      nullable=False, autoincrement=True)
     baby_id = Column(String(255), nullable=False)
     createTime = Column(DateTime, nullable=False)
     cm = Column(Float, nullable=True)
     kg = Column(Float, nullable=True)
 
-    baby = relationship(BabyTable, back_populates='babystate', passive_deletes=True)
+    baby = relationship(
+        BabyTable, back_populates='babystate', passive_deletes=True)

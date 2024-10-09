@@ -26,9 +26,9 @@ class Milk(BaseModel):
     mtime: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
@@ -38,7 +38,8 @@ class Milk(BaseModel):
 class MilkTable(DB_Base):
     __tablename__ = 'milk'
 
-    milk_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    milk_id = Column(Integer, primary_key=True,
+                     nullable=False, autoincrement=True)
     dday_id = Column(Integer, ForeignKey('dday.dday_id'), nullable=False)
     milk = Column(Integer, nullable=False)
     mamount = Column(Integer, nullable=False)

@@ -5,6 +5,7 @@ from sqlalchemy.orm.session import Session
 from db import get_db_session
 
 from model.pcomment import PCommentTable, PComment
+from model.parent import ParentTable
 from schemas.pcomment import *
 from error.exception.customerror import *
 
@@ -47,7 +48,7 @@ class PCommentService:
 
     # 모든 댓글 가져오기
 
-    def getAllPComment(self, post_id: int) -> List[PComment]:
+    def getAllPComment(self, post_id: int):
         """
         모든 댓글 가져오기
         --input
@@ -57,17 +58,51 @@ class PCommentService:
         """
         db = get_db_session()
 
-        # reply_id가 None인 경우 댓글 리스트를 가져옵니다.
-        pcomment = db.query(PCommentTable).filter(
+        # Comments를 가져오면서 ParentTable의 parent_id, nickname, photoId도 함께 가져오기
+        pcomments = db.query(
+            PCommentTable.comment_id,
+            PCommentTable.content,
+            PCommentTable.createTime,
+            PCommentTable.modifyTime,
+            PCommentTable.cheart,
+            PCommentTable.reply_id,
+            ParentTable.parent_id,
+            ParentTable.nickname,
+            ParentTable.photoId
+        ).join(ParentTable, PCommentTable.parent_id == ParentTable.parent_id).filter(
             PCommentTable.post_id == post_id,
-            PCommentTable.deleteTime == None,
-            PCommentTable.reply_id == None).all()
+            PCommentTable.deleteTime == None
+        ).all()
 
-        # post가 없는 경우 CustomException을 발생시킵니다.
-        if pcomment is None:
-            raise CustomException("Post not found")
+        comments = []
+        reply_comments = {}
+        for i in range(len(pcomments)):
+            comment_data = {
+                'comment_id': pcomments[i][0],
+                'content': pcomments[i][1],
+                'createTime': pcomments[i][2],
+                'modifyTime': pcomments[i][3],
+                'cheart': pcomments[i][4],
+                'parent': {
+                    'parent_id': pcomments[i][6],
+                    'nickname': pcomments[i][7],
+                    'photoId': pcomments[i][8]
+                },
+                'replies': None
+            }
+            if pcomments[i][5] == None:
+                comments.append(comment_data)
+            else:
+                if pcomments[i][5] not in reply_comments:
+                    reply_comments[pcomments[i][5]] = []
+                reply_comments[pcomments[i][5]].append(comment_data)
 
-        return pcomment
+        # 댓글에 대댓글이 있는 경우 대댓글을 댓글에 추가.
+        for i in range(len(comments)):
+            if comments[i]['comment_id'] in reply_comments:
+                comments[i]['replies'] = reply_comments[comments[i]['comment_id']]
+
+        return comments
 
     # 댓글에 대댓글이 있는 경우 대댓글 가져오기
 

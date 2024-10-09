@@ -25,19 +25,22 @@ class PHeart(BaseModel):
     createTime: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class PHeartTable(DB_Base):
     __tablename__ = 'pheart'
 
-    pheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    pheart_id = Column(Integer, primary_key=True,
+                       nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
     createTime = Column(DateTime, nullable=True)
 

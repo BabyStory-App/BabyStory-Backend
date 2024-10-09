@@ -28,23 +28,26 @@ class Chat(BaseModel):
     content: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class ChatTable(DB_Base):
     __tablename__ = 'chat'
 
-    chat_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    chat_id = Column(Integer, primary_key=True,
+                     nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     room_id = Column(Integer, ForeignKey('chatroom.room_id'), nullable=False)
     createTime = Column(DateTime, nullable=False)
     chatType = Column(String(255), nullable=False)
     content = Column(TEXT, nullable=False)
-    
-    #chat = relationship(ChatRoomTable, back_populates='chat', passive_deletes=True)
-    #parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)
+
+    # chat = relationship(ChatRoomTable, back_populates='chat', passive_deletes=True)
+    # parent = relationship(ParentTable, back_populates='chat', passive_deletes=True)

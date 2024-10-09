@@ -22,7 +22,6 @@ from typing import Optional, List
 # +------------+--------------+------+-----+---------+----------------+
 
 
-
 class PComment(BaseModel):
     comment_id: int
     parent_id: str
@@ -33,33 +32,39 @@ class PComment(BaseModel):
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
     cheart: Optional[int]
-    
+
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
         from_attributes = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class PCommentTable(DB_Base):
     __tablename__ = 'pcomment'
 
-    comment_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    comment_id = Column(Integer, primary_key=True,
+                        nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     post_id = Column(Integer, ForeignKey('post.post_id'), nullable=False)
-    reply_id = Column(Integer, ForeignKey('pcomment.comment_id'), nullable=True)
+    reply_id = Column(Integer, ForeignKey(
+        'pcomment.comment_id'), nullable=True)
     content = Column(TEXT, nullable=False)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
     deleteTime = Column(DateTime, nullable=True)
     cheart = Column(Integer, nullable=True)
 
-    parent = relationship("ParentTable", backref='pcomment', passive_deletes=True)
+    parent = relationship(
+        "ParentTable", backref='pcomment', passive_deletes=True)
     post = relationship("PostTable", backref='pcomment', passive_deletes=True)
-    replies = relationship("PCommentTable", backref=backref('parent_comment', remote_side=[comment_id]))
-    #post = relationship("PostTable", backref='comment', passive_deletes=True)
-    #parent = relationship("ParentTable", backref='comment', passive_deletes=True)
-    #comment = relationship("CommentTable", backref='comment', passive_deletes=True)
+    replies = relationship("PCommentTable", backref=backref(
+        'parent_comment', remote_side=[comment_id]))
+    # post = relationship("PostTable", backref='comment', passive_deletes=True)
+    # parent = relationship("ParentTable", backref='comment', passive_deletes=True)
+    # comment = relationship("CommentTable", backref='comment', passive_deletes=True)

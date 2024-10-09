@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime, JSON
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, DateTime, JSON
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -32,18 +32,20 @@ class Babycry(BaseModel):
     duration: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class BabycryTable(DB_Base):
     __tablename__ = 'babycry'
 
-    babycry_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    babycry_id = Column(Integer, primary_key=True,
+                        nullable=False, autoincrement=True)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
     createTime = Column(DateTime, nullable=True)
     cryType = Column(String(50), nullable=True)
@@ -52,4 +54,5 @@ class BabycryTable(DB_Base):
     intensity = Column(Integer, nullable=True)
     duration = Column(Float, nullable=True)
 
-    baby = relationship(BabyTable, back_populates='babycry', passive_deletes=True)
+    baby = relationship(BabyTable, back_populates='babycry',
+                        passive_deletes=True)

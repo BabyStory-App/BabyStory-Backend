@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, ForeignKey, Integer, Float, DateTime
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, DateTime
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -37,19 +37,22 @@ class Phospital(BaseModel):
     uvideo: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class PhospitalTable(DB_Base):
     __tablename__ = 'phospital'
 
-    hospital_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    pregn_id = Column(Integer, ForeignKey('pregnancy.pregn_id'), nullable=False)
+    hospital_id = Column(Integer, primary_key=True,
+                         nullable=False, autoincrement=True)
+    pregn_id = Column(Integer, ForeignKey(
+        'pregnancy.pregn_id'), nullable=False)
     hday = Column(DateTime, nullable=False)
     parent_kg = Column(Float, nullable=False)
     bpressure = Column(Float, nullable=False)
@@ -59,4 +62,5 @@ class PhospitalTable(DB_Base):
     ultrasound = Column(String(255), nullable=True)
     uvideo = Column(String(255), nullable=True)
 
-    pregnancy = relationship(PregnancyTable, backref='phospital', passive_deletes=True)
+    pregnancy = relationship(
+        PregnancyTable, backref='phospital', passive_deletes=True)

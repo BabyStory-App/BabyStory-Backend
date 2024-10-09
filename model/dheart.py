@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, ForeignKey, Integer
+from sqlalchemy import Column, String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -25,21 +25,26 @@ class Dheart(BaseModel):
     createTime: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class DheartTable(DB_Base):
     __tablename__ = 'dheart'
 
-    dheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    dheart_id = Column(Integer, primary_key=True,
+                       nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     deal_id = Column(Integer, ForeignKey('deal.deal_id'), nullable=False)
     createTime = Column(datetime, nullable=False)
 
-    parent = relationship(ParentTable, back_populates='dheart', passive_deletes=True)
-    deal = relationship(DealTable, back_populates='dheart', passive_deletes=True)
+    parent = relationship(
+        ParentTable, back_populates='dheart', passive_deletes=True)
+    deal = relationship(DealTable, back_populates='dheart',
+                        passive_deletes=True)

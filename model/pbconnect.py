@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, ForeignKey, Integer
+from sqlalchemy import Column, String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
@@ -22,20 +22,24 @@ class PBConnect(BaseModel):
     baby_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class PBConnectTable(DB_Base):
     __tablename__ = 'pbconnect'
 
-    pbc_id = Column(Integer, primary_key=True, nullable=False,autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    pbc_id = Column(Integer, primary_key=True,
+                    nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
-    
-    parent = relationship(ParentTable, backref='pbconnect', passive_deletes=True)
+
+    parent = relationship(
+        ParentTable, backref='pbconnect', passive_deletes=True)
     baby = relationship(BabyTable, backref='pbconnect', passive_deletes=True)

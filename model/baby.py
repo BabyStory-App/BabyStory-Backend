@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from db import DB_Base
 import uuid
-#from model.baby_state_record import BabyStateRecord
-#from model.cry_state import CryState
+# from model.baby_state_record import BabyStateRecord
+# from model.cry_state import CryState
 
 
 # 아기 테이블
@@ -37,7 +37,7 @@ class Baby(BaseModel):
     photoId: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
 
     def __init__(self, **kwargs):
@@ -48,7 +48,8 @@ class Baby(BaseModel):
 
 class BabyTable(DB_Base):
     __tablename__ = 'baby'
-    baby_id = Column(String(255), primary_key=True, nullable=False, default=uuid.uuid4)
+    baby_id = Column(String(255), primary_key=True,
+                     nullable=False, default=uuid.uuid4)
     obn = Column(String(255), nullable=False)
     name = Column(String(255), index=True)
     gender = Column(Integer, nullable=True)
@@ -57,7 +58,6 @@ class BabyTable(DB_Base):
     cm = Column(Float, nullable=True)
     kg = Column(Float, nullable=True)
     photoId = Column(String(255), nullable=True)
-
 
     # Relationships
     # state_records = relationship(

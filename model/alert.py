@@ -27,21 +27,25 @@ class Alert(BaseModel):
     click: Optional[int]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class AlertTable(DB_Base):
     __tablename__ = 'alert'
 
-    alert_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    alert_id = Column(Integer, primary_key=True,
+                      nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     target = Column(String(255), nullable=True)
     message = Column(TEXT, nullable=False)
     click = Column(Integer, nullable=True)
 
-    parent = relationship(ParentTable, back_populates='alert', passive_deletes=True)
+    parent = relationship(
+        ParentTable, back_populates='alert', passive_deletes=True)

@@ -23,23 +23,28 @@ class CHeart(BaseModel):
     parent_id: str
     comment_id: int
     createTime: datetime
-    
+
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class CHeartTable(DB_Base):
     __tablename__ = 'cheart'
 
-    cheart_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
-    comment_id = Column(Integer, ForeignKey('pcomment.comment_id'), nullable=True)
+    cheart_id = Column(Integer, primary_key=True,
+                       nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
+    comment_id = Column(Integer, ForeignKey(
+        'pcomment.comment_id'), nullable=True)
     createTime = Column(DateTime, nullable=True)
-    
-    pcomment = relationship(PCommentTable, backref='pcheart', passive_deletes=True)
+
+    pcomment = relationship(
+        PCommentTable, backref='pcheart', passive_deletes=True)
     parent = relationship(ParentTable, backref='pcheart', passive_deletes=True)

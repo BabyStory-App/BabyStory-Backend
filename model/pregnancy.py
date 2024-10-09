@@ -29,23 +29,28 @@ class Pregnancy(BaseModel):
     time: DateTime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         use_enum_values = True
-    
+
     def __init__(self, **kwargs):
         if '_sa_instance_state' in kwargs:
             kwargs.pop('_sa_instance_state')
         super().__init__(**kwargs)
 
+
 class PregnancyTable(DB_Base):
     __tablename__ = 'pregnancy'
 
-    pregn_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    parent_id = Column(String(255), ForeignKey('parent.parent_id'), nullable=False)
+    pregn_id = Column(Integer, primary_key=True,
+                      nullable=False, autoincrement=True)
+    parent_id = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=False)
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
     dname = Column(String(50), nullable=True)
     img = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=False)
 
-    parent = relationship(ParentTable, back_populates='pregnancy', passive_deletes=True)
-    baby = relationship(BabyTable, back_populates='pregnancy', passive_deletes=True)
+    parent = relationship(
+        ParentTable, back_populates='pregnancy', passive_deletes=True)
+    baby = relationship(
+        BabyTable, back_populates='pregnancy', passive_deletes=True)

@@ -7,13 +7,19 @@ from model.pscript import *
 class ManagePScriptInput(BaseModel):
     post_id: int
 
+class ManagePScriptOutput(BaseModel):
+    hasCreated: bool
+    message: str
+    pscript: Optional[PScript] = None
+
 class CreatePScriptInput(BaseModel):
     post_id: int
 
 
 class CreatePScriptOutput(BaseModel):
     success: int
-    share: Optional[PScript] = None
+    message: str
+    pscript: Optional[PScript] = None
 
 
 class DeletePScriptInput(BaseModel):
@@ -22,4 +28,5 @@ class DeletePScriptInput(BaseModel):
 
 class DeletePScriptOutput(BaseModel):
     success: int
-    script: Optional[PScript] = None
+    message: str
+    pscript: Optional[List[PScript]] = None

@@ -12,9 +12,9 @@ class ManagePScriptOutput(BaseModel):
     message: str
     pscript: Optional[PScript] = None
 
+
 class CreatePScriptInput(BaseModel):
     post_id: int
-
 
 class CreatePScriptOutput(BaseModel):
     success: int
@@ -24,7 +24,6 @@ class CreatePScriptOutput(BaseModel):
 
 class DeletePScriptInput(BaseModel):
     post_id: str
-
 
 class DeletePScriptOutput(BaseModel):
     success: int

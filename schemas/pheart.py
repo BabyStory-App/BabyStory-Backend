@@ -25,7 +25,6 @@ class CreatePHeartOutput(BaseModel):
 class DeletePHeartInput(BaseModel):
     post_id: str
 
-
 class DeletePHeartOutput(BaseModel):
     success: int
     message: str

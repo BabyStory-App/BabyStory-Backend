@@ -12,9 +12,9 @@ class ManagePViewOutput(BaseModel):
     message: str
     pview: Optional[PView] = None
 
+
 class CreatePViewInput(BaseModel):
     post_id: int
-
 
 class CreatePViewOutput(BaseModel):
     success: int
@@ -24,7 +24,6 @@ class CreatePViewOutput(BaseModel):
 
 class DeletePViewInput(BaseModel):
     post_id: str
-
 
 class DeletePViewOutput(BaseModel):
     success: int

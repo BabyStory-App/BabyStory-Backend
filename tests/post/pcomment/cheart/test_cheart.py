@@ -30,7 +30,7 @@ def test_manage_cheartc(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # cheart 객체 확인
-    assert response_json["comment_id"] == test_CreateCHeartInput["comment_id"]
+    assert response_json["cheart"]["comment_id"] == test_CreateCHeartInput["comment_id"]
 
 # Manage comment heart test fail ( comment_id가 없는 경우 )
 async def test_manageCHeartc_fail():
@@ -54,7 +54,7 @@ def test_manage_cheartd(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # cheart 객체 확인
-    assert response_json["comment_id"] == test_CreateCHeartInput["comment_id"]
+    assert response_json["cheart"]["comment_id"] == test_CreateCHeartInput["comment_id"]
 
 # Manage comment heart test fail ( comment_id가 없는 경우 )
 async def test_manageCHeartd_fail():
@@ -78,7 +78,7 @@ def test_create_cheart(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # cheart 객체 확인
-    assert response_json["comment_id"] == test_CreateCHeartInput["comment_id"]
+    assert response_json["cheart"]["comment_id"] == test_CreateCHeartInput["comment_id"]
 
 # Create comment heart test fail ( comment_id가 없는 경우 )
 async def test_createCHeart_fail():
@@ -100,10 +100,10 @@ def test_delete_cheart(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, dict)
+    assert isinstance(response_json["cheart"], list)
 
     # cheart 객체 확인
-    assert response_json["comment_id"] == int(test_DeleteCHeartInput["comment_id"])
+    assert response_json["cheart"][0]["comment_id"] == int(test_DeleteCHeartInput["comment_id"])
 
 # Delete comment heart test fail ( comment_id가 없는 경우 )
 async def test_deleteCHeart_fail():

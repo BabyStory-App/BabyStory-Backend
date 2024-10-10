@@ -30,7 +30,7 @@ def test_manage_pheartc(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pheart 객체 확인
-    assert response_json["post_id"] == test_CreatePHeartInput["post_id"]
+    assert response_json["pheart"]["post_id"] == test_CreatePHeartInput["post_id"]
 
 # Manage post heart test fail ( post_id가 없는 경우 )
 async def test_managePHeartc_fail():
@@ -54,7 +54,7 @@ def test_manage_pheartd(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pheart 객체 확인
-    assert response_json["post_id"] == test_CreatePHeartInput["post_id"]
+    assert response_json["pheart"]["post_id"] == test_CreatePHeartInput["post_id"]
 
 # Manage post heart test fail ( post_id가 없는 경우 )
 async def test_managePHeartd_fail():
@@ -63,6 +63,7 @@ async def test_managePHeartd_fail():
         client.post("pheart", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to manage pheart"
+
 
 
 """ Create post heart test """
@@ -78,7 +79,7 @@ def test_create_pheart(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pheart 객체 확인
-    assert response_json["post_id"] == test_CreatePHeartInput["post_id"]
+    assert response_json["pheart"]["post_id"] == test_CreatePHeartInput["post_id"]
 
 # Create post heart test fail ( 잘못된 jwt )
 async def test_createPHeart_fail():
@@ -106,13 +107,14 @@ def test_delete_pheart(client, test_jwt):
         json=test_DeletePHeartInput
     )
 
+    print(response.status_code)
+    print(response.json())
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, list)
-
+    assert isinstance(response_json['pheart'], list)
+    
     # pheart 객체 확인
-    for item in response_json:
-        assert item["post_id"] == int(test_DeletePHeartInput["post_id"])
+    assert response_json['pheart'][0]['post_id'] == int(test_DeletePHeartInput['post_id'])
 
 # Delete post heart test fail ( 잘못된 jwt )
 async def test_deletePHeart_fail():

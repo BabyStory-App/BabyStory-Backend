@@ -112,7 +112,10 @@ def test_get_all_comment(client, test_jwt):
     print(response_json)
 
     # pcomment 객체 확인
-    assert response_json[0]["comment_id"] == test_jwt["comment_id"]
+    if response_json[0]["reply_id"] is None:
+        assert response_json[0]["comment_id"] == test_jwt["comment_id"]
+    else:
+        assert response_json[0]["reply_id"] == test_jwt["comment_id"]
 
 # Get all pcomment test fail ( post_id가 없는 경우 )
 async def test_get_all_comment_fail():

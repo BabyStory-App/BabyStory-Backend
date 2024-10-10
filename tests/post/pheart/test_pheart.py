@@ -107,8 +107,6 @@ def test_delete_pheart(client, test_jwt):
         json=test_DeletePHeartInput
     )
 
-    print(response.status_code)
-    print(response.json())
     assert response.status_code == 200
     response_json = response.json()
     assert isinstance(response_json['pheart'], list)

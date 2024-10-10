@@ -7,12 +7,18 @@ from model.pview import *
 class ManagePViewInput(BaseModel):
     post_id: int
 
+class ManagePViewOutput(BaseModel):
+    hasCreated: bool
+    message: str
+    pview: Optional[PView] = None
+
 class CreatePViewInput(BaseModel):
     post_id: int
 
 
 class CreatePViewOutput(BaseModel):
     success: int
+    message: str
     pview: Optional[PView] = None
 
 
@@ -22,4 +28,5 @@ class DeletePViewInput(BaseModel):
 
 class DeletePViewOutput(BaseModel):
     success: int
-    pview: Optional[PView] = None
+    message: str
+    pview: Optional[List[PView]] = None

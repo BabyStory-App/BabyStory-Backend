@@ -46,8 +46,8 @@ class PCommentService:
 
         return pcomment
 
-
     # 모든 댓글 가져오기
+
     def getAllPComment(self, post_id: int) -> List[CommentOutput]:
         """
         모든 댓글 가져오기
@@ -101,13 +101,15 @@ class PCommentService:
         for i in range(len(comments)):
             if comments[i]['comment_id'] in reply_comments:
                 comments[i]['replies'] = reply_comments[comments[i]['comment_id']]
+                comments[i]['replies'].sort(
+                    key=lambda x: x['createTime'], reverse=False)
 
-        comments.sort(key=lambda x: x['createTime'], reverse=True)
+        comments.sort(key=lambda x: x['createTime'], reverse=False)
 
         return comments
 
-
     # 댓글에 대댓글이 있는 경우 대댓글 가져오기
+
     def getReplyPComment(self, comment_id: int) -> List[PComment]:
         """
         댓글에 대댓글이 있는 경우 대댓글 가져오기
@@ -133,8 +135,8 @@ class PCommentService:
 
         return pcomments
 
-
     # 댓글 수정
+
     async def updatePComment(self, updatePCommentInput: UpdatePCommentInput, parent_id: str) -> Optional[PComment]:
         """
         댓글 수정
@@ -165,8 +167,8 @@ class PCommentService:
 
         return pcomment
 
-
     # 댓글 삭제
+
     async def deletePComment(self, deletePCommentInput: DeletePCommentInput, parent_id: str) -> PComment:
         """
         댓글 삭제

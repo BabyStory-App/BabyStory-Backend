@@ -33,9 +33,9 @@ async def create_post(createPostInput: CreatePostInput,
 
 
 # 새로 생성된 post 사진 업로드
-@router.post("/photoUpload", dependencies=[Depends(JWTBearer())])
+@router.post("/photoUpload/{post_id}", dependencies=[Depends(JWTBearer())])
 async def upload_post_photo(fileList: List[UploadFile],
-                            post_id: int = Form(...),
+                            post_id: int,
                             parent_id: str = Depends(JWTBearer())) -> UploadPhotoOutput:
     try:
         success = postService.uploadPhoto(fileList, post_id, parent_id)

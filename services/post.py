@@ -77,10 +77,14 @@ class PostService:
         db.commit()
         db.refresh(post)
 
-        # content를 txt 파일로 저장합니다.
+        # content 파일의 tempPostId를 post_id로 변경
+        content = createPostInput.content.replace(
+            '![[tempPostId', f'![[{post.post_id}')
+
+        # content를 txt 파일로 저장
         file_path = os.path.join(POST_CONTENT_DIR, str(post.post_id) + '.txt')
         with open(file_path, 'w', encoding='UTF-8') as f:
-            f.write(createPostInput.content)
+            f.write(content)
 
         return post
 

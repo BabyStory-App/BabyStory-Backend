@@ -734,11 +734,12 @@ class PostMainService:
 
         # 해시태그가 포함된 게시물을 가져오기
         for post in posts:
-            post_hashlist = post.hashList.split(',')
-            if any(hash in parent_hashlist for hash in post_hashlist):
-                matching_posts.append(post)
-            if len(matching_posts) == 10:
-                break
+            if post.hashList != None and post.hashList != '':
+                post_hashlist = post.hashList.split(',')
+                if any(hash in parent_hashlist for hash in post_hashlist):
+                    matching_posts.append(post)
+                if len(matching_posts) == 10:
+                    break
 
         # 값을 반환: List<{postid, photoId, title, author_name, desc, hashList}>
         banners = []

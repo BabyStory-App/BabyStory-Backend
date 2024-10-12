@@ -1,8 +1,11 @@
+from db import get_db_session
 from fastapi import APIRouter, UploadFile, HTTPException, Depends, File, Header, Form
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 
 from services.post import PostService
+from services.setting import SettingService
+from services.postmain import PostMainService
 from schemas.post import *
 from error.exception.customerror import *
 
@@ -13,7 +16,11 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+db = get_db_session()
+
 postService = PostService()
+settingService = SettingService()
+postMainService = PostMainService()
 
 
 # 게시물 생성
@@ -118,3 +125,36 @@ async def delete_post(deletePostInput: DeletePostInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete post")
     return {"success": 200 if success else 403, "post": success}
+
+# 게시물 작성자의 프로필 사진 가져오기
+
+
+@router.get("/poster/profile/{parent_ids}")
+async def get_poster_profile(parent_ids: str):
+    try:
+        # parent_ids가 없을 경우
+        if parent_ids is None:
+            raise CustomException("parent_id is required")
+
+        counts = settingService.getOverview(parent_ids)
+        # posts = postService.getAllPostByParent(parent_ids, 10)
+        posts = postMainService.createPostMainFriendSearch(parent_ids)
+
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get poster profile")
+
+    return {'parent': {
+        "parentId": parent_ids,
+        "photoId": parent_ids+".jpeg",
+        "parentName": db.query(ParentTable).filter(ParentTable.parent_id == parent_ids).first().name,
+        "parentDesc": db.query(ParentTable).filter(ParentTable.parent_id == parent_ids).first().description,
+        "mateCount": counts['mateCount'],
+        "friendCount": counts['friendCount'],
+        "myStoryCount": counts['myStoryCount']},
+        'posts': posts
+    }

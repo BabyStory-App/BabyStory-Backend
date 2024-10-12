@@ -11,7 +11,7 @@ from db import get_db_session
 class CHeartService:
 
     # 댓글 하트 관리
-    def manageCHeart(self, manageCHeartInput: ManageCHeartInput, parent_id:str) -> Optional[CHeart]:
+    def manageCHeart(self, manageCHeartInput: ManageCHeartInput, parent_id:str) -> ManageCHeartOutput:
         """
         하트 관리
         --input
@@ -21,23 +21,23 @@ class CHeartService:
         """
         db = get_db_session()
 
-        Cheart = db.query(CHeartTable).filter(
+        cheart = db.query(CHeartTable).filter(
             CHeartTable.comment_id == manageCHeartInput.comment_id,
             CHeartTable.parent_id == parent_id
         ).first()
 
-        if Cheart is None:
-            new_Cheart = CHeartTable(
+        if cheart is None:
+            new_cheart = CHeartTable(
                 comment_id=manageCHeartInput.comment_id,
                 parent_id = parent_id,
                 createTime = datetime.now()
             )
 
             try:
-                db.add(new_Cheart)
+                db.add(new_cheart)
                 db.commit()
-                db.refresh(new_Cheart)
-                return new_Cheart
+                db.refresh(new_cheart)
+                return {'hasCreated': True, 'message': 'Success to create Cheart', 'cheart': new_cheart}
             
             except Exception as e:
                 db.rollback()
@@ -45,9 +45,9 @@ class CHeartService:
 
         else:
             try:
-                db.delete(Cheart)
+                db.delete(cheart)
                 db.commit()
-                return Cheart
+                return {'hasCreated': False, 'message': 'Success to delete Cheart', 'cheart': cheart}
             
             except Exception as e:
                 db.rollback()
@@ -68,17 +68,17 @@ class CHeartService:
         """
         db = get_db_session()
         try:
-            Cheart = CHeartTable(
+            cheart = CHeartTable(
                 comment_id=createCHeartInput.comment_id,
                 parent_id = parent_id,
                 createTime = datetime.now()
             )
 
-            db.add(Cheart)
+            db.add(cheart)
             db.commit()
-            db.refresh(Cheart)
+            db.refresh(cheart)
 
-            return Cheart
+            return cheart
         
         except Exception as e:
             db.rollback()
@@ -97,18 +97,18 @@ class CHeartService:
         """
         db = get_db_session()
         
-        Cheart = db.query(CHeartTable).filter(
+        cheart = db.query(CHeartTable).filter(
             CHeartTable.comment_id == deleteCHeartInput.comment_id,
             CHeartTable.parent_id == parent_id
         ).first()
 
-        if Cheart is None:
+        if cheart is None:
             raise HTTPException(status_code=404, detail="Heart not found")
         
         try:
-            db.delete(Cheart)
+            db.delete(cheart)
             db.commit()
-            return Cheart
+            return cheart
         
         except Exception as e:
             db.rollback()

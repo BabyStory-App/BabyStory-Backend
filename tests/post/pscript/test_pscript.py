@@ -35,7 +35,7 @@ def test_manage_pscript(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pscript 객체 확인
-    assert response_json["post_id"] == test_CreatePScriptInput["post_id"]
+    assert response_json["pscript"]["post_id"] == test_CreatePScriptInput["post_id"]
 
 # Manage post script test fail ( post_id가 없는 경우 )
 async def test_managePScript_fail():
@@ -59,7 +59,7 @@ def test_manage_pscript(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pscript 객체 확인
-    assert response_json["post_id"] == test_CreatePScriptInput["post_id"]
+    assert response_json["pscript"]["post_id"] == test_CreatePScriptInput["post_id"]
 
 # Manage post script test fail ( post_id가 없는 경우 )
 async def test_managePScript_fail():
@@ -83,7 +83,7 @@ def test_create_pscript(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pscript 객체 확인
-    assert response_json["post_id"] == test_CreatePScriptInput["post_id"]
+    assert response_json["pscript"]["post_id"] == test_CreatePScriptInput["post_id"]
 
 # Create post script test fail ( 잘못된 jwt )
 async def test_CreatePScriptInput_fail():
@@ -113,11 +113,10 @@ def test_delete_pscript(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, list)
+    assert isinstance(response_json["pscript"], list)
 
     # pscript 객체 확인
-    for item in response_json:
-        assert item["post_id"] == int(test_DeletePScriptInput["post_id"])
+    assert response_json["pscript"][0]["post_id"] == int(test_DeletePScriptInput["post_id"])
 
 # Delete post script test fail ( 잘못된 jwt )
 async def test_DeletePScriptInput_fail():

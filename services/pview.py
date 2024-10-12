@@ -12,7 +12,7 @@ from error.exception.customerror import *
 class PViewService:
         
     # view 관리
-    def managePView(self, managePViewInput: ManagePViewInput, parent_id:str) -> Optional[PView]:
+    def managePView(self, managePViewInput: ManagePViewInput, parent_id:str) -> ManagePViewOutput:
         """
         view 관리
         --input
@@ -38,7 +38,7 @@ class PViewService:
                 db.add(new_view)
                 db.commit()
                 db.refresh(new_view)
-                return new_view
+                return {'hasCreated': True, 'message': 'Success to create pview', 'pview': new_view}
             
             except Exception as e:
                 db.rollback()
@@ -48,7 +48,7 @@ class PViewService:
             try:
                 db.delete(view)
                 db.commit()
-                return view
+                return {'hasCreated': False, 'message': 'Success to delete pview', 'pview': view}
             
             except Exception as e:
                 db.rollback()

@@ -11,7 +11,7 @@ from error.exception.customerror import *
 class PHeartService:
 
     # 하트 관리
-    def managePHeart(self, managePHeartInput: ManagePHeartInput, parent_id:str) -> Optional[PHeart]:
+    def managePHeart(self, managePHeartInput: ManagePHeartInput, parent_id:str) -> ManagePHeartOutput:
         """
         하트 관리
         --input
@@ -37,7 +37,7 @@ class PHeartService:
                 db.add(new_pheart)
                 db.commit()
                 db.refresh(new_pheart)
-                return new_pheart
+                return {'hasCreated': True, 'message': 'Success to create pheart', 'pheart': new_pheart}
             
             except Exception as e:
                 db.rollback()
@@ -47,7 +47,7 @@ class PHeartService:
             try:
                 db.delete(pheart)
                 db.commit()
-                return pheart
+                return {'hasCreated': False, 'message': 'Success to delete pheart', 'pheart': pheart}
             
             except Exception as e:
                 db.rollback()

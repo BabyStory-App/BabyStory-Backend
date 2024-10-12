@@ -17,30 +17,31 @@ pscriptService = PScriptService()
 # 스크립트 관리
 @router.post("/", dependencies=[Depends(JWTBearer())])
 async def manage_pscript(managePScriptInput: ManagePScriptInput,
-                        parent_id: str = Depends(JWTBearer()))-> PScript:
+                        parent_id: str = Depends(JWTBearer()))-> ManagePScriptOutput:
     try:
         result = pscriptService.managePScript(managePScriptInput, parent_id)
     except Exception as e:
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pscript")
-    return result
+    return {"hasCreated": result['hasCreated'], "message": result['message'], "pscript": result['pscript']}
+
 # 스크립트 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pscript(createPScriptInput: CreatePScriptInput, 
-                        parent_id: str = Depends(JWTBearer()))-> PScript:
+                        parent_id: str = Depends(JWTBearer()))-> CreatePScriptOutput:
     try:
         result = pscriptService.createPScript(createPScriptInput, parent_id)
     except Exception as e:
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pscript")
-    return result
+    return {"success": 200, "message": "Success to create pscript", "pscript": result}
 
 # 스크립트 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_pscript(deletePScriptInput: DeletePScriptInput, 
-                        parent_id: str = Depends(JWTBearer()))-> List[PScript]:
+                        parent_id: str = Depends(JWTBearer()))-> DeletePScriptOutput:
     try:
         result = pscriptService.deletePScript(deletePScriptInput, parent_id)
     except CustomException as e:
@@ -50,4 +51,4 @@ async def delete_pscript(deletePScriptInput: DeletePScriptInput,
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pscript")
-    return result
+    return {"success": 200, "message": "Success to delete pscript", "pscript": result}

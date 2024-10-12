@@ -35,7 +35,7 @@ def test_manage_pviewc(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pview 객체 확인
-    assert response_json["post_id"] == test_CreatePViewInput["post_id"]
+    assert response_json["pview"]["post_id"] == test_CreatePViewInput["post_id"]
 
 # Manage post view test fail ( post_id가 없는 경우 )
 async def test_managePViewc_fail():
@@ -59,7 +59,7 @@ def test_manage_pviewd(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pview 객체 확인
-    assert response_json["post_id"] == test_CreatePViewInput["post_id"]
+    assert response_json["pview"]["post_id"] == test_CreatePViewInput["post_id"]
 
 # Manage post view test fail ( post_id가 없는 경우 )
 async def test_managePViewd_fail():
@@ -83,7 +83,7 @@ def test_create_pview(client, test_jwt):
     assert isinstance(response_json, dict)
 
     # pview 객체 확인
-    assert response_json["post_id"] == test_CreatePViewInput["post_id"]
+    assert response_json["pview"]["post_id"] == test_CreatePViewInput["post_id"]
 
 # Create post view test fail ( 잘못된 jwt )
 async def test_createPView_fail():
@@ -113,11 +113,10 @@ def test_delete_pview(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, list)
+    assert isinstance(response_json['pview'], list)
 
     # pview 객체 확인
-    for item in response_json:
-        assert item["post_id"] == int(test_DeletePViewInput["post_id"])
+    assert response_json['pview'][0]['post_id'] == int(test_DeletePViewInput['post_id'])
 
 # Delete post view test fail ( 잘못된 jwt )
 async def test_deletePView_fail():

@@ -13,7 +13,7 @@ from error.exception.customerror import *
 class PScriptService:
 
     # 스크립트 관리
-    def managePScript(self, managePScriptInput: ManagePScriptInput, parent_id:str) -> Optional[PScript]:
+    def managePScript(self, managePScriptInput: ManagePScriptInput, parent_id:str) -> ManagePScriptOutput:
         """
         스크립트 관리
         --input
@@ -39,7 +39,7 @@ class PScriptService:
                 db.add(new_pscript)
                 db.commit()
                 db.refresh(new_pscript)
-                return new_pscript
+                return {'hasCreated': True, 'message': 'Success to create pscript', 'pscript': new_pscript}
             
             except Exception as e:
                 db.rollback()
@@ -49,7 +49,7 @@ class PScriptService:
             try:
                 db.delete(pscript)
                 db.commit()
-                return pscript
+                return {'hasCreated': False, 'message': 'Success to delete pscript', 'pscript': pscript}
             
             except Exception as e:
                 db.rollback()

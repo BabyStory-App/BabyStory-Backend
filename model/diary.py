@@ -17,7 +17,6 @@ from model.baby import BabyTable
 # | baby_id    | varchar(255) | NO   | MUL | NULL    |                |
 # | born       | tinyint(4)   | NO   |     | NULL    |                |
 # | title      | varchar(50)  | NO   |     | NULL    |                |
-# | img        | varchar(255) | YES  |     | NULL    |                |
 # | createTime | datetime     | NO   |     | NULL    |                |
 # | modifyTime | datetime     | YES  |     | NULL    |                |
 # | deleteTime | datetime     | YES  |     | NULL    |                |
@@ -28,7 +27,6 @@ class Diary(BaseModel):
     baby_id: str
     born: int
     title: str
-    img: str
     createTime: Optional[datetime]
     modifyTime: Optional[datetime]
     deleteTime: Optional[datetime]
@@ -51,9 +49,9 @@ class DiaryTable(DB_Base):
     baby_id = Column(String(255), ForeignKey('baby.baby_id'), nullable=False)
     born = Column(Integer, nullable=False)
     title = Column(String(50), nullable=False)
-    img = Column(String(255), nullable=True)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
+    deleteTime = Column(DateTime, nullable=True)
 
     parent = relationship(ParentTable, backref='diary', passive_deletes=True)
     baby = relationship(BabyTable, backref='diary', passive_deletes=True)

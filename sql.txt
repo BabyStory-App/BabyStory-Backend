@@ -170,7 +170,6 @@ CREATE TABLE diary (
     baby_id VARCHAR(255) NOT NULL,
     born TINYINT NOT NULL,
     title VARCHAR(50) NOT NULL,
-    img VARCHAR(255),
     createTime DATETIME NOT NULL,
     modifyTime DATETIME,
     deleteTime DATETIME,

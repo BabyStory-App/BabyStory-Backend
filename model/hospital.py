@@ -12,7 +12,8 @@ from model.dday import DdayTable
 # | Field       | Type         | Null | Key | Default | Extra          |
 # +-------------+--------------+------+-----+---------+----------------+
 # | hospital_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | dday_id     | int(11)      | NO   | MUL | NULL    |                |
+# | diary_id    | int(11)      | NO   | MUL | NULL    |                |
+# | baby_id     | varchar(255) | NO   |     | NULL    |                |
 # | createTime  | datetime     | NO   |     | NULL    |                |
 # | modifyTime  | datetime     | YES  |     | NULL    |                |
 # | parent_kg   | float        | NO   |     | NULL    |                |
@@ -21,23 +22,19 @@ from model.dday import DdayTable
 # | baby_cm     | int(11)      | YES  |     | NULL    |                |
 # | special     | text         | YES  |     | NULL    |                |
 # | next_day    | datetime     | YES  |     | NULL    |                |
-# | ultrasound  | varchar(255) | YES  |     | NULL    |                |
-# | uvideo      | varchar(255) | YES  |     | NULL    |                |
 # +-------------+--------------+------+-----+---------+----------------+
 
 class Hospital(BaseModel):
-    hospital_id: int
-    dday_id: int
-    createTime: datetime
+    diary_id: int
+    baby_id: str
+    createTime: Optional[datetime]
     modifyTime: Optional[datetime]
     parent_kg: float
     bpressure: float
     baby_kg: Optional[float]
     baby_cm: Optional[int]
-    special: Optional[str]
+    special: str
     next_day: Optional[datetime]
-    ultrasound: Optional[str]
-    uvideo: Optional[str]
 
     class Config:
         from_attributes = True
@@ -52,9 +49,9 @@ class Hospital(BaseModel):
 class HospitalTable(DB_Base):
     __tablename__ = 'hospital'
 
-    hospital_id = Column(Integer, primary_key=True,
-                         nullable=False, autoincrement=True)
-    dday_id = Column(Integer, ForeignKey('dday.dday_id'), nullable=False)
+    hospital_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    diary_id = Column(Integer, ForeignKey('diary.diary_id'), nullable=False)
+    baby_id = Column(String(255), nullable=False)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
     parent_kg = Column(Integer, nullable=False)
@@ -63,7 +60,5 @@ class HospitalTable(DB_Base):
     baby_cm = Column(Integer, nullable=True)
     special = Column(TEXT, nullable=True)
     next_day = Column(DateTime, nullable=True)
-    ultrasound = Column(String(255), nullable=True)
-    uvideo = Column(String(255), nullable=True)
 
-    dday = relationship(DdayTable, backref='hospital', passive_deletes=True)
+    diary = relationship(DdayTable, backref='hospital', passive_deletes=True)

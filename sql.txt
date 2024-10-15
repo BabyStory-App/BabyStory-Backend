@@ -87,14 +87,23 @@ CREATE TABLE pcconnect(
     FOREIGN KEY (room_id) REFERENCES chatroom(room_id)
 );
 
-CREATE TABLE aidoctor(
-    ai_id INT PRIMARY KEY auto_increment NOT NULL,
+CREATE TABLE aidoctorroom (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     createTime DATETIME NOT NULL,
-    ask text NOT NULL,
-    res text NOT NULL,
-    hAddr text,
-    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+);
+
+CREATE TABLE aidoctorchat (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    room_id INT NOT NULL,
+    createTime DATETIME NOT NULL,
+    ask TEXT NOT NULL,
+    res TEXT NOT NULL,
+    hospital JSON,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (room_id) REFERENCES aidoctorroom(id)
 );
 
 CREATE TABLE post(

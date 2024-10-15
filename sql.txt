@@ -87,14 +87,23 @@ CREATE TABLE pcconnect(
     FOREIGN KEY (room_id) REFERENCES chatroom(room_id)
 );
 
-CREATE TABLE aidoctor(
-    ai_id INT PRIMARY KEY auto_increment NOT NULL,
+CREATE TABLE aidoctorroom (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     createTime DATETIME NOT NULL,
-    ask text NOT NULL,
-    res text NOT NULL,
-    hAddr text,
-    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+);
+
+CREATE TABLE aidoctorchat (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
+    room_id INT NOT NULL,
+    createTime DATETIME NOT NULL,
+    ask TEXT NOT NULL,
+    res TEXT NOT NULL,
+    hospital JSON,
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (room_id) REFERENCES aidoctorroom(id)
 );
 
 CREATE TABLE post(
@@ -168,9 +177,8 @@ CREATE TABLE diary (
     diary_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     baby_id VARCHAR(255) NOT NULL,
-    born INT NOT NULL,
+    born TINYINT NOT NULL,
     title VARCHAR(50) NOT NULL,
-    img VARCHAR(255) NOT NULL,
     createTime DATETIME NOT NULL,
     modifyTime DATETIME,
     deleteTime DATETIME,
@@ -181,37 +189,37 @@ CREATE TABLE diary (
 CREATE TABLE dday (
     dday_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     diary_id INT NOT NULL,
+    parent_id VARCHAR(255) NOT NULL,
     title VARCHAR(50) NOT NULL,
-    picture VARCHAR(255),
     post TEXT,
     createTime DATETIME NOT NULL,
-    modifyTime DATETIME,  -- 쉼표 추가
+    modifyTime DATETIME,
     FOREIGN KEY (diary_id) REFERENCES diary(diary_id)
 );
 
 CREATE TABLE hospital (
     hospital_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    dday_id INT NOT NULL,
+    diary_id INT NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
     createTime DATETIME NOT NULL,
-    modifyTime DATETIME,  -- 쉼표 추가
+    modifyTime DATETIME,
     parent_kg FLOAT NOT NULL,
     bpressure FLOAT NOT NULL,
     baby_kg FLOAT,
     baby_cm INT,
     special TEXT,
     next_day DATETIME,
-    ultrasound VARCHAR(255),
-    uvideo VARCHAR(255),
-    FOREIGN KEY (dday_id) REFERENCES dday(dday_id)
+    FOREIGN KEY (diary_id) REFERENCES diary(diary_id)
 );
 
 CREATE TABLE milk (
     milk_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    dday_id INT NOT NULL,
+    diary_id INT NOT NULL,
+    baby_id VARCHAR(255) NOT NULL,
     milk INT NOT NULL,
-    mamount INT NOT NULL,
+    amount INT NOT NULL,
     mtime DATETIME NOT NULL,
-    FOREIGN KEY (dday_id) REFERENCES dday(dday_id)
+    FOREIGN KEY (diary_id) REFERENCES diary(diary_id)
 );
 
 CREATE TABLE deal (

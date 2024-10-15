@@ -13,20 +13,19 @@ from model.diary import DiaryTable
 # +------------+--------------+------+-----+---------+----------------+
 # | dday_id    | int(11)      | NO   | PRI | NULL    | auto_increment |
 # | diary_id   | int(11)      | NO   | MUL | NULL    |                |
+# | parent_id  | varchar(255) | NO   |     | NULL    |                |
 # | title      | varchar(50)  | NO   |     | NULL    |                |
-# | picture    | varchar(255) | YES  |     | NULL    |                |
 # | post       | text         | YES  |     | NULL    |                |
 # | createTime | datetime     | NO   |     | NULL    |                |
 # | modifyTime | datetime     | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
 
 class Dday(BaseModel):
-    dday_id: int
     diary_id: int
+    parent_id: str
     title: str
-    picture: Optional[str]
-    post: Optional[str]
-    createTime: datetime
+    post: str
+    createTime: Optional[datetime]
     modifyTime: Optional[datetime]
 
     class Config:
@@ -42,11 +41,10 @@ class Dday(BaseModel):
 class DdayTable(DB_Base):
     __tablename__ = 'dday'
 
-    dday_id = Column(Integer, primary_key=True,
-                     nullable=False, autoincrement=True)
+    dday_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     diary_id = Column(Integer, ForeignKey('diary.diary_id'), nullable=False)
+    parent_id = Column(String(255), nullable=False)
     title = Column(String(50), nullable=False)
-    picture = Column(String(255), nullable=True)
     post = Column(TEXT, nullable=True)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)

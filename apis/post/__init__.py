@@ -33,7 +33,7 @@ async def create_post(createPostInput: CreatePostInput,
         post = postService.createPost(parent_id, createPostInput)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -50,7 +50,7 @@ async def upload_post_photo(fileList: List[UploadFile],
         success = postService.uploadPhoto(fileList, post_id, parent_id)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -89,7 +89,7 @@ async def get_post(post_id: str, parent_id: str = Depends(JWTBearer())):
         post = await postService.getPost(post_id)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -105,7 +105,7 @@ async def update_post(updatePostInput: UpdatePostInput,
         post = await postService.updatePost(updatePostInput, parent_id)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -121,7 +121,7 @@ async def delete_post(deletePostInput: DeletePostInput,
         success = await postService.deletePost(deletePostInput, parent_id)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         print(e)
         raise HTTPException(

@@ -75,7 +75,7 @@ class GetPosterProfileParent(BaseModel):
 
 
 class GetPosterProfilePost(BaseModel):
-    post_id: int
+    postid: int
     photoId: str
     desc: str
     title: str

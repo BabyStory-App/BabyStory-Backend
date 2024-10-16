@@ -21,3 +21,17 @@ class CreateDiaryOutput(BaseModel):
 class UploadDiaryCoverOutput(BaseModel):
     success: bool
     message: str
+
+
+# 아기의 모든 다이어리 가져오기
+class GetDiaryOutput(BaseModel):
+    success: int
+    message: str
+    diary: Optional[List[Diary]] = None
+
+
+# 하나의 다이어리 가져오기
+class GetDiaryOutput(BaseModel):
+    success: int
+    message: str
+    diary: Optional[Diary] = None

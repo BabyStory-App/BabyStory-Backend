@@ -24,7 +24,7 @@ async def create_diary(createDiaryInput: CreateDiaryInput,
         print(diary)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -41,7 +41,7 @@ async def upload_diary_cover_image(file: UploadFile,
         success = diaryService.uploadDiaryCover(parent_id, file, diary_id)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to upload diary cover image")
@@ -56,7 +56,7 @@ async def get_all_diary(baby_id: str,
         diary = diaryService.getAllDiary(parent_id, baby_id)
     except CustomException as error:
         raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error)
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get all diary")

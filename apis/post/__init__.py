@@ -129,7 +129,7 @@ async def delete_post(deletePostInput: DeletePostInput,
     return {"success": 200 if success else 403, "post": success}
 
 
-@router.get("/poster/profile/{parent_id}")
+@router.get("/poster/profile/{parent_id}", dependencies=[Depends(JWTBearer())])
 async def get_poster_profile(parent_id: str) -> GetPosterProfileOutput:
     try:
         # parent_id가 없을 경우 에러

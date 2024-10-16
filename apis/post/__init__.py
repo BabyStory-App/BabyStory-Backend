@@ -156,13 +156,13 @@ async def get_poster_profile(parent_id: str) -> GetPosterProfileOutput:
 
     return {'parent': {
         "parentId": parent_id,
-        "photoId": parent_id+".jpeg",
-        "parentName": parent.name,
+        "photoId": parent_id + ".jpeg",
+        "parentName": parent.nickname,
         "parentDesc": parent.description,
         "mateCount": counts['mateCount'],
         "friendCount": counts['friendCount'],
         "myStoryCount": counts['myStoryCount']},
-        'posts': ({"post_id": post.post_id,
+        'posts': ({"postid": post.post_id,
                    **dict(zip(["photoId", "desc"], postMainService._get_photoId_and_desc(
                        open(os.path.join(POST_CONTENT_DIR,
                             f"{post.post_id}.txt"), 'r', encoding='UTF-8').read()

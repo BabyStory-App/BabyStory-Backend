@@ -12,6 +12,7 @@ class CreatePostInput(BaseModel):
     content: str
     hashList: Optional[str] = None
 
+
 class CreatePostOutput(BaseModel):
     post: Optional[Post] = None
 
@@ -45,6 +46,7 @@ class UpdatePostInput(BaseModel):
     content: str
     hashList: Optional[str] = None
 
+
 class UpdatePostOutput(BaseModel):
     success: int
     post: Post
@@ -54,6 +56,34 @@ class UpdatePostOutput(BaseModel):
 class DeletePostInput(BaseModel):
     post_id: int
 
+
 class DeletePostOutput(BaseModel):
     success: int
     post: Optional[Post] = None
+
+# poster/profile
+
+
+class GetPosterProfileParent(BaseModel):
+    parentId: str
+    photoId: str
+    parentName: str
+    parentDesc: str
+    mateCount: int
+    friendCount: int
+    myStoryCount: int
+
+
+class GetPosterProfilePost(BaseModel):
+    postid: int
+    photoId: str
+    desc: str
+    title: str
+    pHeart: int
+    comment: int
+    author_name: str
+
+
+class GetPosterProfileOutput(BaseModel):
+    parent: GetPosterProfileParent
+    posts: List[GetPosterProfilePost]

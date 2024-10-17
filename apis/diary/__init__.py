@@ -74,3 +74,49 @@ async def get_diary(diary_id: int,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get diary")
     return {"success": 200, "message": "Success to get diary", "diary": diary}
+
+
+# 다이어리 수정
+@router.put("/update", dependencies=[Depends(JWTBearer())])
+async def update_diary(updateDiaryInput: UpdateDiaryInput,
+                       parent_id: str = Depends(JWTBearer())) -> UpdateDiaryOutput:
+    try:
+        diary = diaryService.updateDiary(parent_id, updateDiaryInput)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to update diary")
+    return {"success": 200, "message": "Success to update diary", "diary": diary}
+
+
+# 다이어리 표지 사진 수정
+@router.put("/updateCover/{diary_id}", dependencies=[Depends(JWTBearer())])
+async def update_diary_cover_image(file: UploadFile,
+                                      diary_id: int,
+                                      parent_id: str = Depends(JWTBearer())) -> UploadDiaryCoverOutput:
+     try:
+          success = diaryService.updateDiaryCover(parent_id, file, diary_id)
+     except CustomException as error:
+          raise HTTPException(
+                status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+     except Exception as e:
+          raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to update diary cover image")
+     return {'success': success, 'message': 'Success to update diary cover image'}
+
+
+# 다이어리 삭제
+@router.delete("/delete/{diary_id}", dependencies=[Depends(JWTBearer())])
+async def delete_diary(diary_id: int,
+                       parent_id: str = Depends(JWTBearer())) -> DeleteDiaryOutput:
+    try:
+        success = diaryService.deleteDiary(parent_id, diary_id)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete diary")
+    return {"success": success, "message": "Success to delete diary"}

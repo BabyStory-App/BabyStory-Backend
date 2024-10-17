@@ -91,7 +91,7 @@ CREATE TABLE aidoctorroom (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
     createTime DATETIME NOT NULL,
-    FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (parent_id) REFERENCES parent(parent_id)
 );
 
 CREATE TABLE aidoctorchat (

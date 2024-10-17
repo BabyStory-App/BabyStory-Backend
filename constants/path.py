@@ -12,6 +12,7 @@ DIARY_COVER_PATH = f'{PROJECT_DIR}/dataset/diary'
 POST_CONTENT_DIR = f'{PROJECT_DIR}/dataset/post/content'
 TEST_ASSET_DIR = f'{PROJECT_DIR}/tests/assets'
 POSTMAIN_BANNER_DIR = f'{PROJECT_DIR}/dataset/post/postmain/banner'
+AIDOCTOR_DIR = f'{PROJECT_DIR}/dataset/aidoctor'
 
 
 os.makedirs(BABY_CRY_DATASET_DIR, exist_ok=True)

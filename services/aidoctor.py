@@ -5,8 +5,10 @@ from datetime import datetime
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import ChatPromptTemplate
-import httpx
 import os
+import json
+import urllib.request
+import requests
 
 from model.aidoctorroom import AIDoctorRoomTable
 from model.aidoctorchat import AIDoctorChatTable
@@ -133,29 +135,58 @@ class AiDoctorService:
 
             return room.id
 
-    def add_chat(self, parent_id: str, room_id: int, ask: str, res: str):
+    def kakao_api_request(self, region: str, query: str):
+        """
+        카카오 API를 통해 병원 정보를 가져오는 함수
+        --input
+            - region: 지역
+            - query: 검색어
+        --output
+            - 병원 정보
+        """
+
+        kakao_api_key = os.getenv("KAKAO_REST_API_KEY")
+        query = region + " " + query
+        encText = urllib.parse.quote(query)
+
+        url = "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + encText + "&size=1"
+        # &x=127.423084&y=37.078956&radius=20000 x경도 y위도 radius반경m단위
+        headers = {
+            "Authorization": "KakaoAK " + kakao_api_key
+        }
+
+        response = requests.get(url, headers=headers).json()['documents']
+
+        if response is not None:
+
+            return response
+        else:
+            raise CustomException("Failed to request kakao api")
+
+    def add_chat(self, parent_id: str, room_id: int, ask: str, res: str, region: str):
         """
         AI 의사 채팅방에 질문,답변 추가
         --input
+            - parent_id: 부모 아이디
             - room_id: 채팅방 아이디
             - ask: 질문
             - res: 답변
+            - region: 지역
         --output
             - 추가된 질문 정보
         """
 
         db = get_db_session()
 
-        CLIENT_ID = os.getenv("NAVER_CLIENT_ID")
-        CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET")
         # res에서 병원 추천 정보 추출
         hospital = None
+        # region = "강남대학교"
 
         if "더 정확한 진단과 치료가 필요하시면 가까운" in res:
             hospital = res.split("더 정확한 진단과 치료가 필요하시면 가까운")[
-                1].split("를 방문하는 것이 좋습니다.")[0]
-            # hospital을 json 형태로 변환
-            hospital = {"hospital": hospital}
+                1].split("를")[0].split("을")[0]
+
+            hospital = self.kakao_api_request(region, hospital)
 
         try:
             # 질문 추가

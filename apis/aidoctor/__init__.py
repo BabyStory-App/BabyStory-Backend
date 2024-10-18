@@ -97,7 +97,7 @@ async def aidoc(query: str, k: int):
 
 
 @router.post("/{chatroom_id}")
-async def new_ai_chat(chatroom_id: int, ask: str, parent_id: str = Depends(JWTBearer())):
+async def new_ai_chat(region: str, chatroom_id: int, ask: str, parent_id: str = Depends(JWTBearer())):
     '''
     AI 의사와의 채팅방 생성
     - chatroom_id: 채팅방 아이디
@@ -109,26 +109,44 @@ async def new_ai_chat(chatroom_id: int, ask: str, parent_id: str = Depends(JWTBe
         # 채팅방 유무 확인(존재하지 않을 경우 생성, 존재할 경우 가져오기)
         room_id = aiDoctorService.create_aichatroom(parent_id, chatroom_id)
 
+        # RAG에서 k는 5로 설정되어 있음 수정 가능
         result = aiDoctorService.search_in_rag(
             vectorstore, ask, 5)
 
         # 프롬프트의 context 부분 생성
         llm_prompt = aiDoctorService.format_for_llm_prompt(result)
 
+        # 이전 채팅 내역 가져오기
+        previos_chat = aiDoctorService.load_chat_history(
+            parent_id, chatroom_id)
+
+        previos_prompt = "이전 채팅 내역:\n"
+
+        # 이전 채팅 내역이 있을 경우 이전 채팅 내역을 추가하여 질문 생성
+        if 'chat_history' in previos_chat:
+
+            # 각 chat의 ask와 res를 가져와서 previos_prompt에 추가
+            for chat in previos_chat["chat_history"]:
+                previos_prompt += f"\n질문: {chat.ask}\n답변: {chat.res}\n"
+
+            llm_prompt = previos_prompt + "\n" + llm_prompt
+
         response = aiDoctorService.ask_gpt(llm, llm_prompt, ask)
 
         # 채팅방에 채팅 추가
         chat = aiDoctorService.add_chat(
-            parent_id, room_id, ask, response)
+            parent_id, room_id, ask, response, region)
 
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create chatroom")
 
     return {"room_id": room_id,
+            "llm_prompt": llm_prompt,
             "createTime": chat.createTime,
             "chat": chat
             }

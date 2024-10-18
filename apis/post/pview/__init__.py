@@ -26,6 +26,7 @@ async def manage_view(managePViewInput: ManagePViewInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pview")
     return {"hasCreated": result['hasCreated'], "message": result['message'], "pview": result['pview']}
 
+
 # view 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_view(createPViewInput: CreatePViewInput, 
@@ -37,6 +38,7 @@ async def create_view(createPViewInput: CreatePViewInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pview")
     return {"success": 200, "message": "Success to create pview", "pview": result}
+
 
 # view 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])

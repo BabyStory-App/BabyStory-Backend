@@ -14,7 +14,6 @@ router = APIRouter(
 
 settingService = SettingService()
 
-
 # 짝꿍, 친구들, 이야기 수 가져오기
 @router.get("/overview", dependencies=[Depends(JWTBearer())])
 async def get_overview(parent_id: str = Depends(JWTBearer())) -> SettingOverviewOutputService:

@@ -26,6 +26,7 @@ async def manage_heart(managePHeartInput: ManagePHeartInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pheart")
     return {"hasCreated": result['hasCreated'], "message": result['message'], "pheart": result['pheart']}
 
+
 # 하트 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_heart(createPHeartInput: CreatePHeartInput, 
@@ -37,6 +38,7 @@ async def create_heart(createPHeartInput: CreatePHeartInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pheart")
     return {"success": 200, "message": "Success to create pheart", "pheart": pheart}
+
 
 # 하트 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
@@ -52,3 +54,16 @@ async def delete_heart(deletePHeartInput: DeletePHeartInput,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pheart")
     return {"success": 200, "message": "Success to delete pheart", "pheart": pheart}
+
+
+# 하트 조회
+@router.get("/hasHeart/{post_id}", dependencies=[Depends(JWTBearer())])
+async def has_heart(post_id: int,
+                    parent_id: str = Depends(JWTBearer()))-> HasHeartOutput:
+    try:
+        pheart = pheartService.hasPHeart(post_id, parent_id)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get pheart")
+    return {"status": 200, "message": f"Successfully get pheart of {post_id}", "state": pheart}

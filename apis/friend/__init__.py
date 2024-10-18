@@ -25,6 +25,7 @@ async def manage_friend(manageFriendInput: ManageFriendInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage friend")
     return {"hasCreated": result['hasCreated'], "message": result['message'], "friend": result['friend']}
 
+
 # 친구관계 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_post(createFriendInput: CreateFriendInput,

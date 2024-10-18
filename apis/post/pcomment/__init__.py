@@ -14,7 +14,6 @@ router = APIRouter(
 
 pcommentService = PCommentService()
 
-
 # 댓글 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pcomment(createCommentInput: CreatePCommentInput,

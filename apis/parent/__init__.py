@@ -21,23 +21,8 @@ router = APIRouter(
 parentService = ParentService()
 
 # 부모 생성
-
-
 @router.post("/")
 def create_parent(createParentInput: CreateParentInput) -> CreateParentOutput:
-    '''
-    부모 생성
-    --input
-        - createParentInput.parent_id: 부모 아이디
-        - createParentInput.email: 이메일
-        - createParentInput.password: 비밀번호
-        - createParentInput.nickname: 닉네임
-        - createParentInput.signInMethod: 로그인 방식
-        - createParentInput.emailVerified: 이메일 인증 여부
-    --output
-        - parent: 부모 정보
-        - x-jwt: JWT 토큰
-    '''
     try:
         parent = parentService.createParent(createParentInput)
 
@@ -73,19 +58,10 @@ def create_parent(createParentInput: CreateParentInput) -> CreateParentOutput:
         'x-jwt': signJWT(parent.parent_id)
     })
 
+
 # 부모 정보 조회
-
-
 @router.get("/", dependencies=[Depends(JWTBearer())])
 async def get_parent(parent_id: str = Depends(JWTBearer())) -> GetParentByEmailOutput:
-    '''
-    부모 정보 조회
-    --input: None
-    --output
-        - parent: 부모 정보
-        - x-jwt: JWT 토큰
-    '''
-
     parent = parentService.getParent(parent_id)
 
     if parent is None:
@@ -113,31 +89,11 @@ async def get_parent(parent_id: str = Depends(JWTBearer())) -> GetParentByEmailO
         'x-jwt': signJWT(parent.parent_id)
     })
 
+
 # 부모 정보 수정
-
-
 @router.put("/", dependencies=[Depends(JWTBearer())])
 async def update_parent(updateParentInput: UpdateParentInput,
                         parent_id: str = Depends(JWTBearer())) -> UpdateParentOutput:
-    '''
-    부모 정보 수정
-    --input
-        - updateParentInput.password: 비밀번호
-        - updateParentInput.email: 이메일
-        - updateParentInput.name: 이름
-        - updateParentInput.nickname: 닉네임
-        - updateParentInput.gender: 성별 (0: 남성, 1: 여성, 2: 기타)
-        - updateParentInput.signInMethod: 로그인 방식
-        - updateParentInput.emailVerified: 이메일 인증 여부
-        - updateParentInput.photoId: 사진 아이디
-        - updateParentInput.description: 설명
-        - updateParentInput.mainAddr: 주소
-        - updateParentInput.subAddr: 상세 주소
-        - updateParentInput.hashList: 해시 리스트
-    --output
-        - success: 성공 여부
-        - parent: 부모 정보
-    '''
     if updateParentInput.gender != None and updateParentInput.gender not in [0, 1, 2]:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Gender must be 0, 1, 2"
@@ -154,16 +110,9 @@ async def update_parent(updateParentInput: UpdateParentInput,
     }
 
 
+# 프로필 이미지 업로드
 @router.post("/upload/profile", dependencies=[Depends(JWTBearer())])
 async def upload_profile_image(file: Optional[UploadFile] = None, parent_id: str = Depends(JWTBearer())) -> UploadProfileImageOutput:
-    '''
-    프로필 이미지 업로드
-    --input
-        - file: 이미지 파일
-    --output
-        - success: 성공 여부
-        - photoId: 사진 아이디
-    '''
     try:
         success = parentService.uploadProfileImage(file, parent_id)
 
@@ -188,13 +137,6 @@ async def upload_profile_image(file: Optional[UploadFile] = None, parent_id: str
 # 부모 삭제
 @router.delete("/", dependencies=[Depends(JWTBearer())])
 async def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOutput:
-    '''
-    부모 삭제
-    --input
-        - parent_id: 부모 아이디
-    --output
-        - success: 성공 여부
-    '''
     if parent_id is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Parent not found")
@@ -205,18 +147,10 @@ async def delete_parent(parent_id: str = Depends(JWTBearer())) -> DeleteParentOu
         "success": 200 if parent else 403,
     }
 
+
 # 이메일로 부모 목록 조회
-
-
 @router.get("/friends")
 async def get_friends(emails: str = Header(None)):
-    '''
-    이메일로 부모의 대략적인 정보 조회
-    --input
-        - emails: 이메일
-    --output
-        - friends: 부모 정보
-    '''
     email_list = emails.split(',') if emails is not None else []
     print(email_list)
     try:
@@ -238,14 +172,6 @@ async def get_friends(emails: str = Header(None)):
 # 부모에게 다른 아기 pbconnect 요청
 @router.post("/pbconnect")
 async def create_pbconnect(baby_id: str, parent_id: str = Depends(JWTBearer())) -> CreatePBConnectOutput:
-    '''
-    부모에게 다른 아기 연결 요청 (부부끼리 아기를 공유할 수 있음)
-    --input
-        - baby_id: 아기 아이디
-        - parent_id: 부모 아이디
-    --output
-        - success: 성공 여부
-    '''
     pbconnect = parentService.create_pbconnect(baby_id, parent_id)
 
     if pbconnect is None:
@@ -267,17 +193,9 @@ async def get_parent():
     return parent
 
 
+# 부모 로그인
 @router.post("/login")
 async def login_parent(createLoginInput: CreateLoginInput) -> CreateLoginOutput:
-    '''
-    부모 로그인
-    --input
-        - createLoginInput.email: 이메일
-        - createLoginInput.password: 비밀번호
-    --output
-        - parent: 부모 정보
-        - x-jwt: JWT 토큰
-    '''
     try:
         parent = parentService.createLogin(createLoginInput)
         parent_data = {

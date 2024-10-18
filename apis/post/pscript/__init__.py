@@ -26,6 +26,7 @@ async def manage_pscript(managePScriptInput: ManagePScriptInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage pscript")
     return {"hasCreated": result['hasCreated'], "message": result['message'], "pscript": result['pscript']}
 
+
 # 스크립트 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_pscript(createPScriptInput: CreatePScriptInput, 
@@ -38,12 +39,13 @@ async def create_pscript(createPScriptInput: CreatePScriptInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create pscript")
     return {"success": 200, "message": "Success to create pscript", "pscript": result}
 
+
 # 스크립트 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_pscript(deletePScriptInput: DeletePScriptInput, 
                         parent_id: str = Depends(JWTBearer()))-> DeletePScriptOutput:
     try:
-        result = pscriptService.deletePScript(deletePScriptInput, parent_id)
+        script = pscriptService.deletePScript(deletePScriptInput, parent_id)
     except CustomException as e:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
@@ -51,4 +53,17 @@ async def delete_pscript(deletePScriptInput: DeletePScriptInput,
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete pscript")
-    return {"success": 200, "message": "Success to delete pscript", "pscript": result}
+    return {"success": 200, "message": "Success to delete pscript", "pscript": script}
+
+
+# 스크립트 조회
+@router.get("/hasScript/{post_id}", dependencies=[Depends(JWTBearer())])
+async def has_script(post_id: int,
+                     parent_id: str = Depends(JWTBearer()))-> HasScriptOutput:
+    try:
+        script = pscriptService.hasScript(post_id, parent_id)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to check script")
+    return {"status": 200, "message": f"Successfully get Script of {post_id}", "state": script}

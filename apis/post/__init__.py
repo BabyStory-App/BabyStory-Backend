@@ -113,6 +113,23 @@ async def update_post(updatePostInput: UpdatePostInput,
     return {"success": 200 if post else 403, "post": post}
 
 
+# 게시물 post 사진 수정
+@router.put("/photoUpdate/{post_id}", dependencies=[Depends(JWTBearer())])
+async def update_post_photo(fileList: List[UploadFile],
+                            post_id: int,
+                            parent_id: str = Depends(JWTBearer())) -> UpdatePhotoOutput:
+    try:
+        success = await postService.updatePhoto(fileList, post_id, parent_id)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to update photo")
+    return {'success': success, 'message': 'Success to update photo'}
+
+
 # 게시물 삭제
 @router.delete("/delete/{post_id}", dependencies=[Depends(JWTBearer())])
 async def delete_post(deletePostInput: DeletePostInput,
@@ -129,6 +146,7 @@ async def delete_post(deletePostInput: DeletePostInput,
     return {"success": 200 if success else 403, "post": success}
 
 
+# 해당 부모의 프로필과 모든 게시물 가져오기
 @router.get("/poster/profile/{parent_id}", dependencies=[Depends(JWTBearer())])
 async def get_poster_profile(parent_id: str) -> GetPosterProfileOutput:
     try:

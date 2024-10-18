@@ -43,8 +43,8 @@ class SettingService:
 
         return {'friendCount': friendCount, 'mateCount': mateCount, 'myStoryCount': myStoryCount}
 
-    # 내가 친구로 등록한 부모 불러오기
 
+    # 내가 친구로 등록한 부모 불러오기
     def getMyFriends(self, page: int, parent_id: str) -> Optional[MyFriendsOutputService]:
         """
         친구들 불러오기
@@ -104,8 +104,8 @@ class SettingService:
             'parents': parents
         }
 
-    # 유저가 조회한 post
 
+    # 유저가 조회한 post
     def getMyViews(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 조회한 post
@@ -165,8 +165,8 @@ class SettingService:
             'post': post
         }
 
-    # 유저가 script한 post
 
+    # 유저가 script한 post
     def getScripts(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 script한 post
@@ -226,8 +226,8 @@ class SettingService:
             'post': post
         }
 
-    # 유저가 좋아요한 post
 
+    # 유저가 좋아요한 post
     def getLikes(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 좋아요한 post
@@ -287,8 +287,8 @@ class SettingService:
             'post': post
         }
 
-    # 유저 post
 
+    # 유저 post
     def getMyStories(self, page: int, parent_id: str) -> Optional[MyStoriesOutputService]:
         """
         유저 post
@@ -351,8 +351,8 @@ class SettingService:
             'post': post
         }
 
-    # 짝꿍 불러오기
 
+    # 짝꿍 불러오기
     def getMyMates(self, page: int, parent_id: str) -> Optional[MyMatesOutputService]:
         """
         짝꿍 불러오기

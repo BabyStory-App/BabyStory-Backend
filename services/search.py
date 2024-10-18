@@ -31,6 +31,7 @@ class SearchService:
 
         return photoId, descr
 
+
     # 검색어 입력시 검색 결과 반환
     def createSearch(self, createSearchInput: CreateSearchInput) -> CreateSearchOutputListOutput:
         """

@@ -32,6 +32,7 @@ class PostMainService:
 
         return photoId, descr
 
+
     # 메인 페이지 배너 생성
     def createPostMainBanner(self) -> CreatePostMainBannerListOutput:
         """
@@ -150,6 +151,7 @@ class PostMainService:
             })
 
         return banners
+
 
     def createPostMainFriend(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendListOutput:
         """
@@ -279,6 +281,7 @@ class PostMainService:
 
         return banners
 
+
     def createPostMainFriendSearch(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendSearchListOutput:
         """
         짝꿍이 쓴 게시물
@@ -402,6 +405,7 @@ class PostMainService:
 
         return banners
 
+
     def createPostMainFriendRead(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendListOutput:
         """
         친구가 쓴 게시물
@@ -512,6 +516,7 @@ class PostMainService:
 
         return banners
 
+
     def getNeighbor(self, parent_id: str) -> GetNeighborOutputListOutput:
         """
         친구로 등록되지 않은 이웃목록
@@ -568,6 +573,7 @@ class PostMainService:
             })
 
         return banners
+
 
     def createPostMainNeighbor(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainNeighborListOutput:
         """
@@ -673,6 +679,7 @@ class PostMainService:
 
         return banners
 
+
     def createPostMainHighView(self) -> CreatePostMainHighViewListOutput:
         """
         조회수가 높은 게시물
@@ -706,6 +713,7 @@ class PostMainService:
             })
 
         return banners
+
 
     def createPostMainHashtag(self, parent_id: str) -> CreatePostMainHashtagListOutput:
         """

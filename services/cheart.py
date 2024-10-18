@@ -5,6 +5,7 @@ from sqlalchemy.orm.session import Session
 
 from model.cheart import CHeartTable
 from schemas.cheart import *
+from error.exception.customerror import *
 
 from db import get_db_session
 
@@ -103,7 +104,7 @@ class CHeartService:
         ).first()
 
         if cheart is None:
-            raise HTTPException(status_code=404, detail="Heart not found")
+            raise CustomException("Cheart not found")
         
         try:
             db.delete(cheart)
@@ -113,3 +114,23 @@ class CHeartService:
         except Exception as e:
             db.rollback()
             raise (e)
+        
+
+    # 댓글 하트 조회
+    def getCHeart(self, comment_id: int, parent_id: str) -> Optional[CHeart]:
+        """
+        하트 조회
+        --input
+            - comment_id: 댓글 아이디
+            - parent_id: 부모 아이디
+        --output
+            - CHeart: 하트 딕셔너리
+        """
+        db = get_db_session()
+
+        cheart = db.query(CHeartTable).filter(
+            CHeartTable.comment_id == comment_id,
+            CHeartTable.parent_id == parent_id
+        ).first()
+
+        return True if cheart else False

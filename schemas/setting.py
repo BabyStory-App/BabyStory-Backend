@@ -10,13 +10,13 @@ class SettingOverviewOutputData(BaseModel):
     friendCount: int
     myStoryCount: int
 
-
 class SettingOverviewOutputService(BaseModel):
     status: int
     message: str
     data: SettingOverviewOutputData
 
 
+# 친구인 부모 정보
 class FriendsParent(BaseModel):
     parent_id: str
     nickname: str
@@ -25,10 +25,10 @@ class FriendsParent(BaseModel):
     isMate: bool
 
 
+# 내가 팔로우한 부모 정보
 class MyFriendsOutputService(BaseModel):
     paginationInfo: PaginationInfo
     parents: List[FriendsParent]
-
 
 class MyFriendsOutput(BaseModel):
     status: str
@@ -50,10 +50,10 @@ class Post(BaseModel):
     photo_id: Optional[str] = None
 
 
+# 내가 본 포스트
 class MyViewsPostOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
-
 
 class MyViewsPostOutput(BaseModel):
     status: str
@@ -62,10 +62,10 @@ class MyViewsPostOutput(BaseModel):
     post: list[Post]
 
 
+# 내가 스크랩트한 포스트
 class MyScriptsPostOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
-
 
 class MyScriptsPostOutput(BaseModel):
     status: str
@@ -74,10 +74,10 @@ class MyScriptsPostOutput(BaseModel):
     post: list[Post]
 
 
+# 내가 좋아요 누른 포스트
 class MyLikesPostOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[Post]
-
 
 class MyLikesPostOutput(BaseModel):
     status: str
@@ -99,10 +99,10 @@ class MyStoriesPost(BaseModel):
     photo_id: Optional[str] = None
 
 
+# 내가 쓴 포스트
 class MyStoriesOutputService(BaseModel):
     paginationInfo: PaginationInfo
     post: list[MyStoriesPost]
-
 
 class MyStoriesOutput(BaseModel):
     status: str
@@ -118,6 +118,7 @@ class MatesParent(BaseModel):
     description: Optional[str] = None
 
 
+# 내 짝꿍 정보
 class MyMatesOutputService(BaseModel):
     paginationInfo: PaginationInfo
     parents: list[MatesParent]

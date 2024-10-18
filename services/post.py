@@ -41,8 +41,8 @@ class PostService:
 
         return {'friendCount': friendCount, 'mateCount': mateCount, 'myStoryCount': myStoryCount}
 
-    # 게시물 생성
 
+    # 게시물 생성
     def createPost(self, parent_id: str, createPostInput: CreatePostInput) -> Post:
         """
         게시물 생성
@@ -88,8 +88,8 @@ class PostService:
 
         return post
 
-    # 새로 생성된 post 사진 업로드
 
+    # 새로 생성된 post 사진 업로드
     def uploadPhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> bool:
         """
         생성된 post에 대한 사진 업로드
@@ -126,8 +126,8 @@ class PostService:
 
         return True
 
-    # 모든 게시물 가져오기
 
+    # 모든 게시물 가져오기
     async def getAllPost(self) -> Optional[List[Post]]:
         """
         모든 게시물 가져오기
@@ -145,6 +145,8 @@ class PostService:
 
         return post
 
+
+    #
     def _get_photoId_and_desc(self, content: str):
         # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
         photoIdRex = re.search(r'!\[\[(.*?)\]\]', content)
@@ -157,8 +159,8 @@ class PostService:
 
         return photoId, descr
 
-    # 특정 부모의 모든 게시물 가져오기
 
+    # 특정 부모의 모든 게시물 가져오기
     async def getAllPostByParent(self, parent_id: str, limit: Optional[int]):
         """
         특정 부모의 모든 게시물 가져오기
@@ -196,8 +198,8 @@ class PostService:
             })
         return banners
 
-    # 하나의 게시물 가져오기
 
+    # 하나의 게시물 가져오기
     async def getPost(self, post_id: str):
         """
         하나의 게시물 가져오기
@@ -237,8 +239,8 @@ class PostService:
 
         return post
 
-    # 게시물 수정
 
+    # 게시물 수정
     async def updatePost(self, updatePostInput: UpdatePostInput, parent_id: str) -> Optional[Post]:
         """
         게시물 수정
@@ -280,9 +282,50 @@ class PostService:
         db.refresh(post)
 
         return post
+    
+
+    # 게시물 post 사진 업데이트
+    async def updatePhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> UpdatePhotoOutput:
+        """
+        게시물 post 사진 업데이트
+        --input
+            - fileList: 업로드할 파일 리스트
+            - post_id: 게시물 아이디
+            - parent_id: 부모 아이디
+        --output
+            - bool: 사진 업로드 성공 여부
+        """
+        db = get_db_session()
+
+        post = db.query(PostTable).filter(
+            PostTable.post_id == post_id,
+            PostTable.parent_id == parent_id,
+            PostTable.deleteTime == None).first()
+
+        # post가 없을 경우 CustomException을 발생시킵니다.
+        if post is None:
+            raise CustomException("Post not found")
+
+        # 기존 사진 폴더를 삭제합니다.
+        shutil.rmtree(os.path.join(POST_PHOTO_DIR, str(post.post_id)))
+
+        # post 사진에 대한 디렉토리를 생성합니다.
+        os.makedirs(os.path.join(POST_PHOTO_DIR,
+                    str(post.post_id)), exist_ok=True)
+        
+        # 생성된 디렉토리에 사진을 저장합니다.
+        for i, file in enumerate(fileList):
+            file_type = file.content_type.split('/')[1]
+            file_path = os.path.join(POST_PHOTO_DIR, str(
+                post.post_id), f"{post.post_id}-{i + 1}.{file_type}")
+
+            with open(file_path, 'wb') as f:
+                shutil.copyfileobj(file.file, f)
+
+        return True
+
 
     # 게시물 삭제
-
     async def deletePost(self, deletePostInput: DeletePostInput, parent_id: str) -> Optional[Post]:
         """
         게시물 삭제

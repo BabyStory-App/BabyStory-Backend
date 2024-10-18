@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 from error.exception.customerror import *
 
@@ -26,6 +26,7 @@ async def manage_heart(manageCHeartInput: ManageCHeartInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to manage cheart")
     return {"hasCreated": result['hasCreated'], "message": result['message'], "cheart": result['cheart']}
 
+
 # 댓글 하트 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_heart(createCHeartInput: CreateCHeartInput, 
@@ -38,6 +39,7 @@ async def create_heart(createCHeartInput: CreateCHeartInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create cheart")
     return {"success": 200, "message": "Success to create cheart", "cheart": result}
 
+
 # 댓글 하트 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_heart(deleteCHeartInput: DeleteCHeartInput, 
@@ -46,9 +48,21 @@ async def delete_heart(deleteCHeartInput: DeleteCHeartInput,
         result = cheartService.deleteCHeart(deleteCHeartInput, parent_id)
     except CustomException as e:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=str(e))
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(e))
     except Exception as e:
         print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete cheart")
     return {"success": 200, "message": "Success to delete cheart", "cheart": result}
+
+
+# 댓글 하트 조회
+@router.get("/hasHeart/{comment_id}", dependencies=[Depends(JWTBearer())])
+async def has_heart(comment_id: str, parent_id: str = Depends(JWTBearer()))-> HasHeartOutput:
+    try:
+        result = cheartService.hasHeart(comment_id, parent_id)
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get cheart")
+    return {"hasHeart": result}

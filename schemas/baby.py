@@ -3,9 +3,8 @@ from typing import Optional, List
 from datetime import datetime
 from model.baby import *
 
+
 # 아기 생성
-
-
 class CreateBabyInput(BaseModel):
     obn: str
     name: Optional[str] = None
@@ -15,7 +14,6 @@ class CreateBabyInput(BaseModel):
     cm: Optional[float] = None
     kg: Optional[float] = None
     photoId: Optional[str] = None
-
 
 class CreateBabyOutput(BaseModel):
     baby: Optional[Baby] = None
@@ -38,7 +36,6 @@ class UpdateBabyInput(BaseModel):
     kg: Optional[float] = None
     photoId: Optional[str] = None
 
-
 class UpdateBabyOutput(BaseModel):
     success: int
     baby: Optional[Baby] = None
@@ -47,7 +44,6 @@ class UpdateBabyOutput(BaseModel):
 # 아기 삭제
 class DeleteBabyOutput(BaseModel):
     success: int
-
 
 class GetBabyOutput(BaseModel):
     baby: List[Baby]

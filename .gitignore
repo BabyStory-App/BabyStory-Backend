@@ -151,3 +151,4 @@ logs/
 
 
 services/cry_predict.py
+assets/crnn.h5

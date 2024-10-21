@@ -9,9 +9,9 @@ import os
 import pandas as pd
 from langchain_openai import ChatOpenAI
 from langchain.docstore.document import Document
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.vectorstores.utils import DistanceStrategy
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores.utils import DistanceStrategy
 from core.env import env
 
 

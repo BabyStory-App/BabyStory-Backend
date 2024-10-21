@@ -447,59 +447,110 @@ END $$
 
 DELIMITER ;
 
+-- Parent 데이터 업데이트 (P001 주소 유지)
+UPDATE parent
+SET mainAddr = '기흥구', subAddr = '구갈동'
+WHERE parent_id = 'P001';
+
+-- Parent 데이터 추가
 INSERT INTO parent (parent_id, password, email, name, nickname, gender, signInMethod, emailVerified, photoId, description, mainAddr, subAddr, hashList)
 VALUES
-('P001', 'hash_password1', 'importjaewone@gmail.com', '김철수', '철수아빠', 1, 'google', 1, 'P001.jpg', '쌍둥이 아기의 사랑하는 아빠', NULL, NULL, '가족,신생아'),
-('P002', 'hash_password2', 'parent2@email.com', '이영희', '영희맘', 0, 'email', 1, 'P002.jpg', '6개월 아기 키우는 워킹맘', NULL, NULL, '워킹맘,영아'),
-('P003', 'hash_password3', 'parent3@gmail.com', '박민수', '민수파파', 1, 'email', 1, 'P003.jpg', '12개월 아기 돌보는 전업 아빠', NULL, NULL, '전업아빠,이유식'),
-('P004', 'hash_password4', 'parent4@naver.com', '정미영', '미영맘', 0, 'email', 0, NULL, '조언을 구하는 신생아 부모', NULL, NULL, '신생아,초보부모'),
-('P005', 'hash_password5', 'parent5@naver.com', '이대현', '대현아빠', 1, 'email', 1, 'P005.jpg', '18개월 아기 아빠', NULL, NULL, '육아,걸음마');
+('P001', 'hash_password1', 'importjaewone@gmail.com', '김철수', '딱풀이아빠', 1, 'google', 1, 'P001.jpg', '쌍둥이 아기의 사랑하는 아빠', '기흥구', '구갈동', '초음파, 가족, 태명'),
+('P002', 'hash_password2', 'parent2@email.com', '이영희', '튼튼이맘', 0, 'email', 1, 'P002.jpg', '첫 아기를 임신중인 워킹맘', '기흥구', NULL, '가족,영아'),
+('P003', 'hash_password3', 'parent3@gmail.com', '박민수', '열무아빠', 1, 'google', 1, 'P003.jpg', '신생아 돌보는 전업 아빠', '기흥구', NULL, '신생아,이유식'),
+('P004', 'hash_password4', 'parent4@naver.com', '정미영', '두리맘', 0, 'naver', 0, NULL, '조언을 구하는 신생아 부모', '서초구', '잠원동', '신생아,초보부모'),
+('P005', 'hash_password5', 'parent5@naver.com', '이대현', '보리아빠', 1, 'naver', 1, 'P005.jpg', '18개월 아기 아빠', '기흥구', NULL, '육아,걸음마'),
+('P006', 'hash_password6', 'parent6@gmail.com', '김나영', '별이맘', 0, 'google', 1, 'P006.jpg', '둘째 출산을 앞둔 엄마', '기흥구', NULL, '출산준비,산모'),
+('P010', 'hash_password10', 'parent10@gmail.com', '박수진', '딱풀맘', 0, 'google', 0, NULL, '막내딸 출산 예정', '기흥구', NULL, '출산준비,둘째');
 
-INSERT INTO post (parent_id, reveal, title, createTime, modifyTime, deleteTime, pHeart, pScript, pView, pComment, hashList)
-VALUES
-('P001', 3, '아기 첫 이유식 도전', NOW(), NULL, NULL, 32, 40, 842, 496, '이유식,가족,신생아'),
-('P001', 2, '아기와 함께하는 첫 여행 계획', NOW(), NULL, NULL, 79, 28, 406, 466, '여행,영아'),
-('P001', 1, '신생아 육아 팁', NOW(), NULL, NULL, 57, 2, 724, 175, '육아,신생아'),
-('P001', 0, '아기를 위한 건강식 아이디어', NOW(), NULL, NULL, 18, 74, 387, 366, '이유식,건강,영아'),
-('P001', 3, '아기 육아와 일 병행하기', NOW(), NULL, NULL, 100, 69, 16, 91, '워라밸,육아');
 
+-- Friend 데이터 추가
 INSERT INTO friend (parent_id, friend)
 VALUES 
 ('P001', 'P002'), ('P002', 'P001'),
-('P001', 'P003'), ('P001', 'P004');
+('P001', 'P003'), ('P001', 'P004')
+('P005','P001');
 
+
+-- Baby 데이터 추가
 INSERT INTO baby (baby_id, obn, name, gender, birthDate, bloodType, cm, kg, photoId)
 VALUES
-('b-5116', '하늘', '민준', 0, '2022-04-27 12:12:25', 'A-', 46.2, 10.6, 'b-5116.jpg'),
-('b-7201', '다은', '서연', 1, '2022-04-26 13:14:25', 'AB+', 42.6, 9.8, 'b-7201.jpg'),
-('b-6677', '애국', '지후', 2, '2023-07-25 18:17:25', 'O+', 57.3, 7.4, 'b-6677.jpg');
+('b-5116', '딱풀이', NULL, NULL, NULL, NULL, 46.2, 10.6, 'b-5116.jpg'),
+('b-7201', '튼튼이', '서연', 1, '2022-04-26 13:14:25', 'AB+', 42.6, 9.8, 'b-7201.jpg'),
+('b-6677', '열무', '지후', 2, '2023-07-25 18:17:25', 'O+', 57.3, 7.4, 'b-6677.jpg');
 
-INSERT INTO pbconnect (parent_id, baby_id) VALUES 
-('P001', 'b-5116'), 
-('P001', 'b-7201'), 
+
+-- Parent와 Baby 연결
+INSERT INTO pbconnect (parent_id, baby_id)
+VALUES
+('P001', 'b-5116'),
+('P010', 'b-5116'),
+('P001', 'b-7201'),
+('P010', 'b-7201'),
 ('P001', 'b-6677');
+('P010', 'b-6677');
 
+
+-- Post 데이터 추가
+INSERT INTO post (parent_id, reveal, title, createTime, modifyTime, deleteTime, pHeart, pScript, pView, pComment, hashList)
+VALUES
+('P001', 3, '아기 첫 이유식 도전', NOW() - INTERVAL 14 DAY, NULL, NULL, 2, 6, 6, NULL, '이유식,가족,신생아'),
+('P001', 2, '아기와 함께하는 첫 여행 계획', NOW() - INTERVAL 12 DAY - INTERVAL 8 HOUR, NULL, NULL, 6, 3, 6, NULL, '여행,영아'),
+('P001', 1, '신생아 육아 팁', NOW() - INTERVAL 10 DAY - INTERVAL 16 HOUR, NULL, NULL, 4, 5, 6, NULL, '육아,신생아'),
+('P001', 0, '아기를 위한 건강식 아이디어', NOW() - INTERVAL 9 DAY - INTERVAL 4 HOUR, NULL, NULL, 6, 5, 6, NULL, '이유식,건강,영아'),
+('P001', 3, '아기 육아와 일 병행하기', NOW() - INTERVAL 7 DAY - INTERVAL 12 HOUR, NULL, NULL, 3, 4, 6, NULL, '워라밸,육아'),
+('P002', 3, '임테기 두줄 !!!', NOW() - INTERVAL 6 DAY - INTERVAL 3 HOUR, NULL, NULL, 1, 1, NULL, NULL, '임신테스트기,임테기,두줄'),
+('P002', 3, '첫 초음파', NOW() - INTERVAL 4 DAY - INTERVAL 9 HOUR, NULL, NULL, NULL, 1, 1, NULL, '초음파,산부인과'),
+('P002', 3, '태명 짓기', NOW() - INTERVAL 2 DAY - INTERVAL 18 HOUR, NULL, NULL, 1, NULL, 1, NULL, '태명,초음파'),
+('P002', 3, '첫 특별검사', NOW() - INTERVAL 2 DAY - INTERVAL 6 HOUR, NULL, NULL, NULL, 1, NULL, NULL, '특별검사,산부인과,초음파'),
+('P002', 3, '드디어 성별 확인했어요 !', NOW() - INTERVAL 1 DAY - INTERVAL 1 HOUR, NULL, NULL, 1, NULL, NULL, NULL, '산부인과,초음파'),
+('P003', 3, '첫 모유 수유를 했어요 !', NOW() - INTERVAL 5 DAY - INTERVAL 7 HOUR, NULL, NULL, NULL, 1, 1, NULL, '모유,수유,신생아'),
+('P003', 3, '분유 도전', NOW() - INTERVAL 3 DAY - INTERVAL 14 HOUR, NULL, NULL, 1, NULL, 1, NULL, '분유,수유,신생아'),
+('P003', 3, '첫 옹알이', NOW() - INTERVAL 1 DAY - INTERVAL 20 HOUR, NULL, NULL, 1, 1, 1, NULL, '신생아,옹알이,가족,영아기'),
+('P003', 3, '첫 이유식 도전기', NOW() - INTERVAL 1 DAY - INTERVAL 5 HOUR, NULL, NULL, NULL, 1, NULL, NULL, '이유식,영아기'),
+('P003', 3, '아기들이 잘 먹는 이유식 만들기', NOW(), NULL, NULL, 1, NULL, 1, NULL, '이유식,레시피,가족');
+
+
+-- Post Heart 데이터 추가
 INSERT INTO pheart (parent_id, post_id, createTime)
 VALUES 
-('P001', 1, NOW()),
-('P001', 2, NOW()),
-('P001', 3, NOW());
+('P001', 6, NOW()), ('P001', 8, NOW()), ('P001', 10, NOW()), ('P001', 12, NOW()), ('P001', 13, NOW()),  ('P001', 15, NOW()),
+('P002', 2, NOW()), ('P002', 3, NOW()), ('P002', 4, NOW())
+('P003', 2, NOW()), ('P003', 4, NOW()), ('P003', 5, NOW()),
+('P004', 1, NOW()), ('P004', 3, NOW()), ('P004', 4, NOW()), ('P004', 2, NOW()), ('P004', 5, NOW()),
+('P005', 1, NOW()), ('P005', 3, NOW()), ('P005', 4, NOW()), ('P005', 2, NOW()), ('P005', 5, NOW()),
+('P006', 2, NOW()), ('P006', 4, NOW()),
+('P010', 2, NOW()), ('P010', 3, NOW()), ('P010', 4, NOW())
 
+
+-- Post Script 데이터 추가
 INSERT INTO pscript (parent_id, post_id, createTime)
 VALUES 
-('P001', 1, NOW()),
-('P001', 3, NOW()),
-('P001', 5, NOW());
+('P001', 6, NOW()), ('P001', 7, NOW()), ('P001', 9, NOW()), ('P001', 11, NOW()), ('P001', 13, NOW()),  ('P001', 14, NOW()),
+('P002', 1, NOW()), ('P002', 3, NOW()), ('P002', 4, NOW()), ('P002', 5, NOW()),
+('P003', 1, NOW()), ('P003', 3, NOW()), ('P003', 4, NOW()),
+('P004', 1, NOW()), ('P004', 3, NOW()), ('P004', 4, NOW()), ('P004', 2, NOW()), ('P004', 5, NOW()),
+('P005', 1, NOW()), ('P005', 3, NOW()), ('P005', 4, NOW()), ('P005', 2, NOW()), ('P005', 5, NOW()),
+('P006', 1, NOW()), ('P006', 2, NOW()),
+('P010', 1, NOW()), ('P010', 3, NOW()), ('P010', 4, NOW()), ('P010', 5, NOW());
 
+
+-- Post View 데이터 추가
 INSERT INTO pview (parent_id, post_id, createTime)
 VALUES 
-('P001', 2, NOW()),
-('P001', 3, NOW()),
-('P001', 4, NOW());
+('P001', 7, NOW()), ('P001', 8, NOW()), ('P001', 11, NOW()), ('P001', 12, NOW()), ('P001', 13, NOW()),  ('P001', 15, NOW()),
+('P002', 1, NOW()), ('P002', 3, NOW()), ('P002', 4, NOW()), ('P002', 2, NOW()), ('P002', 5, NOW()),
+('P003', 1, NOW()), ('P003', 3, NOW()), ('P003', 4, NOW()), ('P003', 2, NOW()), ('P003', 5, NOW()),
+('P004', 1, NOW()), ('P004', 3, NOW()), ('P004', 4, NOW()), ('P004', 2, NOW()), ('P004', 5, NOW()),
+('P005', 1, NOW()), ('P005', 3, NOW()), ('P005', 4, NOW()), ('P005', 2, NOW()), ('P005', 5, NOW()),
+('P006', 1, NOW()), ('P006', 3, NOW()), ('P006', 4, NOW()), ('P006', 2, NOW()), ('P006', 5, NOW()),
+('P010', 1, NOW()), ('P010', 3, NOW()), ('P010', 4, NOW()), ('P010', 2, NOW()), ('P010', 5, NOW());
 
+
+-- Post Comment 데이터 추가
 INSERT INTO pcomment (parent_id, post_id, reply_id, content, createTime, modifyTime, deleteTime, cheart)
 VALUES
-('P001', 1, NULL, '정말 좋은 글이네요!', NOW(), NULL, NULL, 0),
+('P004', 1, NULL, '정말 좋은 글이네요!', NOW(), NULL, NULL, 0),
 ('P002', 1, NULL, '읽는 동안 정말 즐거웠어요!', NOW() + INTERVAL 10 SECOND, NULL, NULL, 0),
 ('P002', 1, 1, '맞아요 좋은 글이네요!', NOW() + INTERVAL 20 SECOND, NULL, NULL, 0),
 ('P003', 1, 1, '저도 즐겁게 읽었어요', NOW() + INTERVAL 30 SECOND, NULL, NULL, 0);

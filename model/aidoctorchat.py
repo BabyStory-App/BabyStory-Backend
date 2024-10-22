@@ -1,10 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, JSON
 from typing import Optional, Dict, Any
 from datetime import datetime
-from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from model.parent import ParentTable
 
 
 # AI 의사 채팅 테이블
@@ -28,7 +26,7 @@ class AIDoctorChat(BaseModel):
     createTime: datetime
     ask: str
     res: str
-    hospital: Optional[Dict[str, Any]]
+    hospital: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True

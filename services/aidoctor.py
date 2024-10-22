@@ -10,8 +10,9 @@ import json
 import urllib.request
 import requests
 
-from model.aidoctorroom import AIDoctorRoomTable
-from model.aidoctorchat import AIDoctorChatTable
+from model.aidoctorroom import AIDoctorRoomTable, AIDoctorRoom
+from model.aidoctorchat import AIDoctorChatTable, AIDoctorChat
+from schemas.aidoctor import *
 from error.exception.customerror import *
 
 
@@ -94,7 +95,7 @@ class AiDoctorService:
 
         return response
 
-    def create_aichatroom(self, parent_id: str, room_id: int):
+    def create_aichatroom(self, parent_id: str, room_id: Optional[int]) -> int:
         """
         AI 의사 채팅방 생성
         --input
@@ -135,7 +136,7 @@ class AiDoctorService:
 
             return room.id
 
-    def kakao_api_request(self, region: str, query: str):
+    def kakao_api_request(self, region: str, query: str) -> dict:
         """
         카카오 API를 통해 병원 정보를 가져오는 함수
         --input
@@ -163,7 +164,7 @@ class AiDoctorService:
         else:
             raise CustomException("Failed to request kakao api")
 
-    def add_chat(self, parent_id: str, room_id: int, ask: str, res: str, region: str):
+    def add_chat(self, parent_id: str, room_id: int, ask: str, res: str, region: str) -> AIDoctorChat:
         """
         AI 의사 채팅방에 질문,답변 추가
         --input
@@ -187,6 +188,7 @@ class AiDoctorService:
                 1].split("를")[0].split("을")[0]
 
             hospital = self.kakao_api_request(region, hospital)
+            hospital = hospital[0]
 
         try:
             # 질문 추가
@@ -209,7 +211,7 @@ class AiDoctorService:
 
         return chat
 
-    def get_chatroom_list(self, parent_id: str):
+    def get_chatroom_list(self, parent_id: str) -> List[AIDoctorRoom]:
         """
         AI 의사 채팅방 리스트 조회
         --input
@@ -237,7 +239,7 @@ class AiDoctorService:
 
         return chatrooms
 
-    def load_chat_history(self, parent_id: str, chatroom_id: int):
+    def load_chat_history(self, parent_id: str, chatroom_id: int) -> Optional[LoadChatHistoryServiceOutput]:
         """
         채팅방의 채팅 내역 조회
         --input
@@ -249,23 +251,25 @@ class AiDoctorService:
 
         db = get_db_session()
 
+        result = None
+
         # chatroom_id로 채팅방이 존재하는지 확인
-        if db.query(AIDoctorRoomTable).filter(AIDoctorRoomTable.id == chatroom_id).first() is None:
-            raise CustomException("Chatroom not found")
+        if db.query(AIDoctorRoomTable).filter(AIDoctorRoomTable.id == chatroom_id
+                                              ).first() is not None:
 
-        # parent_id와 chatroom_id의 parent_id가 일치하는지 확인
-        if db.query(AIDoctorRoomTable).filter(
-                AIDoctorRoomTable.id == chatroom_id, AIDoctorRoomTable.parent_id == parent_id).first() is None:
-            raise CustomException("Not your chatroom")
+            # parent_id와 chatroom_id의 parent_id가 일치하는지 확인
+            if db.query(AIDoctorRoomTable).filter(
+                    AIDoctorRoomTable.id == chatroom_id, AIDoctorRoomTable.parent_id == parent_id).first() is None:
+                raise CustomException("Not your chatroom")
 
-        # 채팅방 아이디로 채팅 내역 조회
-        chat_history = db.query(AIDoctorChatTable).filter(
-            AIDoctorChatTable.room_id == chatroom_id).order_by(AIDoctorChatTable.createTime.asc()).all()
+            # 채팅방 아이디로 채팅 내역 조회
+            chat_history = db.query(AIDoctorChatTable).filter(
+                AIDoctorChatTable.room_id == chatroom_id).order_by(AIDoctorChatTable.createTime.asc()).all()
 
-        roomCreateTime = db.query(AIDoctorRoomTable).filter(
-            AIDoctorRoomTable.id == chatroom_id).first().createTime
+            roomCreateTime = db.query(AIDoctorRoomTable).filter(
+                AIDoctorRoomTable.id == chatroom_id).first().createTime
 
-        result = {"roomCreateTime": roomCreateTime,
-                  "chat_history": chat_history}
+            result = {"roomCreateTime": roomCreateTime,
+                      "chat_history": chat_history}
 
         return result

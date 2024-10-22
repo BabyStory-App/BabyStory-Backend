@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_406_NOT_ACCEPTABLE
 from auth.auth_bearer import JWTBearer
 from services.aidoctor import AiDoctorService
+from schemas.aidoctor import *
+from typing import Optional
 
 from error.exception.customerror import *
 from constants.path import *
@@ -68,36 +70,8 @@ llm = ChatOpenAI(
 aiDoctorService = AiDoctorService()
 
 
-@router.post("/create")
-async def aidoc(query: str, k: int):
-    '''
-    AI 의사의 답변을 얻기 위한 API
-    - query: 질문
-    - k: RAG로부터 나올 output 개수
-    '''
-
-    try:
-        # RAG 생성
-        result = aiDoctorService.search_in_rag(
-            vectorstore, query, k)
-
-        # 프롬프트의 context 부분 생성
-        llm_prompt = aiDoctorService.format_for_llm_prompt(result)
-
-        response = aiDoctorService.ask_gpt(llm, llm_prompt, query)
-
-    except CustomException as error:
-        raise HTTPException(
-            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
-    except Exception as e:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get response aidoctor")
-
-    return {'aidoctor': response}
-
-
-@router.post("/{chatroom_id}")
-async def new_ai_chat(region: str, chatroom_id: int, ask: str, parent_id: str = Depends(JWTBearer())):
+@router.post("/chat")
+async def new_ai_chat(newAiChatInput: NewAiChatInput, parent_id: str = Depends(JWTBearer())) -> NewAiChatOutput:
     '''
     AI 의사와의 채팅방 생성
     - chatroom_id: 채팅방 아이디
@@ -107,18 +81,19 @@ async def new_ai_chat(region: str, chatroom_id: int, ask: str, parent_id: str = 
 
     try:
         # 채팅방 유무 확인(존재하지 않을 경우 생성, 존재할 경우 가져오기)
-        room_id = aiDoctorService.create_aichatroom(parent_id, chatroom_id)
+        room_id = aiDoctorService.create_aichatroom(
+            parent_id, newAiChatInput.chatroom_id)
 
         # RAG에서 k는 5로 설정되어 있음 수정 가능
         result = aiDoctorService.search_in_rag(
-            vectorstore, ask, 5)
+            vectorstore, newAiChatInput.ask, 5)
 
         # 프롬프트의 context 부분 생성
         llm_prompt = aiDoctorService.format_for_llm_prompt(result)
 
         # 이전 채팅 내역 가져오기
         previos_chat = aiDoctorService.load_chat_history(
-            parent_id, chatroom_id)
+            parent_id, newAiChatInput.chatroom_id)
 
         previos_prompt = "이전 채팅 내역:\n"
 
@@ -131,11 +106,11 @@ async def new_ai_chat(region: str, chatroom_id: int, ask: str, parent_id: str = 
 
             llm_prompt = previos_prompt + "\n" + llm_prompt
 
-        response = aiDoctorService.ask_gpt(llm, llm_prompt, ask)
+        response = aiDoctorService.ask_gpt(llm, llm_prompt, newAiChatInput.ask)
 
         # 채팅방에 채팅 추가
         chat = aiDoctorService.add_chat(
-            parent_id, room_id, ask, response, region)
+            parent_id, room_id, newAiChatInput.ask, response, "강남대학교")
 
     except CustomException as error:
         raise HTTPException(
@@ -153,7 +128,7 @@ async def new_ai_chat(region: str, chatroom_id: int, ask: str, parent_id: str = 
 
 
 @router.get("/mychatroom", dependencies=[Depends(JWTBearer())])
-async def get_chatroom_list(parent_id: str = Depends(JWTBearer())):
+async def get_chatroom_list(parent_id: str = Depends(JWTBearer())) -> GetChatroomListOutput:
     '''
     부모의 채팅방 리스트 가져오기
     - parent_id: 부모 아이디
@@ -177,7 +152,8 @@ async def get_chatroom_list(parent_id: str = Depends(JWTBearer())):
 
 
 @router.get("/chatroom/{chatroom_id}", dependencies=[Depends(JWTBearer())])
-async def load_chat_history(chatroom_id: int, parent_id: str = Depends(JWTBearer())):
+async def load_chat_history(chatroom_id: int,
+                            parent_id: str = Depends(JWTBearer())) -> LoadChatHistoryOutput:
     '''
     채팅방의 채팅 내역 가져오기
     - chatroom_id: 채팅방 아이디
@@ -190,6 +166,9 @@ async def load_chat_history(chatroom_id: int, parent_id: str = Depends(JWTBearer
 
         result = aiDoctorService.load_chat_history(
             parent_id, chatroom_id)
+
+        if result is None:
+            raise CustomException("Chatroom Not found")
 
     except CustomException as error:
         raise HTTPException(

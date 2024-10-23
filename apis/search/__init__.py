@@ -18,9 +18,8 @@ router = APIRouter(
 searchService = SearchService()
 postMainService = PostMainService()
 
+
 # 추천 페이지 생성
-
-
 @router.post("/recommend", dependencies=[Depends(JWTBearer())])
 async def create_recommend(createSearchRecommendInput: CreateSearchRecommendInput, parent_id: str = Depends(JWTBearer())):
     """

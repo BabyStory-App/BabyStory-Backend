@@ -12,12 +12,11 @@ class CreatePostInput(BaseModel):
     content: str
     hashList: Optional[str] = None
 
-
 class CreatePostOutput(BaseModel):
     post: Optional[Post] = None
 
 
-# 게시물 사진
+# 게시물 사진 업로드
 class UploadPhotoOutput(BaseModel):
     success: bool
 
@@ -46,24 +45,27 @@ class UpdatePostInput(BaseModel):
     content: str
     hashList: Optional[str] = None
 
-
 class UpdatePostOutput(BaseModel):
     success: int
     post: Post
+
+
+# 게시물 사진 업데이트
+class UpdatePhotoOutput(BaseModel):
+    success: bool
+    message: str
 
 
 # 게시물 삭제
 class DeletePostInput(BaseModel):
     post_id: int
 
-
 class DeletePostOutput(BaseModel):
     success: int
     post: Optional[Post] = None
 
+
 # poster/profile
-
-
 class GetPosterProfileParent(BaseModel):
     parentId: str
     photoId: str
@@ -73,7 +75,6 @@ class GetPosterProfileParent(BaseModel):
     friendCount: int
     myStoryCount: int
 
-
 class GetPosterProfilePost(BaseModel):
     postid: int
     photoId: str
@@ -82,7 +83,6 @@ class GetPosterProfilePost(BaseModel):
     pHeart: int
     comment: int
     author_name: str
-
 
 class GetPosterProfileOutput(BaseModel):
     parent: GetPosterProfileParent

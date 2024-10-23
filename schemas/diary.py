@@ -32,6 +32,7 @@ class GDiary(BaseModel):
     modifyTime: Optional[datetime] = None
     cover: Optional[str] = None
 
+
 # 아기의 모든 다이어리 가져오기
 class GetDiaryOutput(BaseModel):
     success: int

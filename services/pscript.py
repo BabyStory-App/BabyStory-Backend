@@ -54,6 +54,7 @@ class PScriptService:
             except Exception as e:
                 db.rollback()
 
+
     # 스크립트 생성
     def createPScript(self, createPScriptInput: CreatePScriptInput, parent_id: str) -> Optional[PScript]:
         """
@@ -79,7 +80,6 @@ class PScriptService:
         return pscript
 
 
-        
     # 스크립트 삭제
     def deletePScript(self, deletePScriptInput: DeletePScriptInput, parent_id: str) -> Optional[PScript]:
         """
@@ -111,3 +111,24 @@ class PScriptService:
             pscripts.append(pscript)
 
         return pscripts
+    
+
+    # 스크립트 조회
+    def hasScript(self, post_id: int, parent_id: str) -> HasScriptOutput:
+        """
+        스크립트 조회
+        --input
+            - post_id: 게시물 아이디
+        --output
+            - status: 상태 코드
+            - message: 메시지
+            - state: 스크립트 상태
+        """
+        db = get_db_session()
+
+        pscript = db.query(PScriptTable).filter(
+            PScriptTable.post_id == post_id,
+            PScriptTable.parent_id == parent_id
+        ).first()
+        
+        return True if pscript else False

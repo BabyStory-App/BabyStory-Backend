@@ -113,3 +113,23 @@ class PHeartService:
             phearts.append(pheart)
 
         return phearts
+    
+
+    # 하트 조회
+    def hasPHeart(self, post_id: int, parent_id: str) -> bool:
+        """
+        하트 조회
+        --input
+            - post_id: 게시물 아이디
+            - parent_id: 하트 누른 부모 아이디
+        --output
+            - bool: 하트가 있으면 True, 없으면 False
+        """
+        db = get_db_session()
+
+        pheart = db.query(PHeartTable).filter(
+            PHeartTable.post_id == post_id,
+            PHeartTable.parent_id == parent_id
+        ).first()
+
+        return True if pheart else False

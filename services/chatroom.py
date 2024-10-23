@@ -42,6 +42,8 @@ class ChatRoomService:
             db.rollback()
             raise HTTPException(status_code=400, detail="Failed to create chatroom")
     
+
+    # 채팅방 목록 조회
     def getChatRoomList(self, parent_id: str) -> List[ChatRoom]:
         """
         채팅방 목록 조회
@@ -66,6 +68,7 @@ class ChatRoomService:
             c.chatCount = chat_count
 
         return chatroom
+
 
     # 채팅방 초대
     def inviteChatRoom(self, invite_id: str, room_id: str, parent_id: str) -> PCConnectTable:
@@ -121,6 +124,7 @@ class ChatRoomService:
             db.rollback()
             raise HTTPException(status_code=400, detail="Failed to invite chatroom")
         
+
     # 채팅방 나가기
     def exitChatRoom(self,  room_id: int, parent_id: str) -> bool:
         """
@@ -163,6 +167,7 @@ class ChatRoomService:
             db.rollback()
             raise HTTPException(status_code=400, detail="Failed to leave chatroom")
         
+
     # 채팅방 수정
     def updateChatRoom(self, room_id: str, name: str, parent_id: str) -> ChatRoom:
         """
@@ -197,6 +202,7 @@ class ChatRoomService:
             db.rollback()
             raise HTTPException(status_code=400, detail="Failed to update chatroom")
         
+
     # 채팅 내용 가져오기
     def getChat(self, room_id: int, chat_id: str ,parent_id: str) -> List[Chat]:
         """
@@ -256,6 +262,5 @@ class ChatRoomService:
 
         #채팅방 목록 조회
         chatroom = db.query(ChatRoomTable).filter(ChatRoomTable.room_id.in_(room_ids)).all()
-        
 
         return chatroom

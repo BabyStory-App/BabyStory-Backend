@@ -52,6 +52,7 @@ class FriendService:
             except Exception as e:
                 db.rollback()
 
+
     # 친구 관계 생성
     def createFriend(self, createFriendInput: CreateFriendInput,
                      parent_id: str) -> Optional[Friend]:
@@ -73,6 +74,7 @@ class FriendService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to create friend")
+        
         
     # 친구 관계 삭제
     def deleteFriend(self, deleteFriendInput: DeleteFriendInput,

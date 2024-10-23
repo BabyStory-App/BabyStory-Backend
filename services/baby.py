@@ -13,6 +13,7 @@ from model.pbconnect import *
 
 class BabyService:
 
+    # 아기 생성
     def createBaby(self, createBabyInput: CreateBabyInput) -> Baby:
         '''
         아기 생성
@@ -43,6 +44,8 @@ class BabyService:
 
         return baby
 
+
+    # 아기-부모 관계 생성
     def createPbconnect(self, parent_id: str, baby_id: str) -> Optional[PBConnect]:
         '''
         아기-부모 관계 생성
@@ -67,6 +70,8 @@ class BabyService:
 
         return pbconnect
 
+
+    # 아기 사진 업로드
     def uploadProfileImage(self, file: UploadFile, baby_id: str, parent_id: str) -> bool:
         '''
         아기 사진 업로드
@@ -112,6 +117,8 @@ class BabyService:
 
         return True
 
+
+    # 아기 정보 가져오기
     def getBaby(self, parent_id: str) -> List[Baby]:
         '''
         아기 정보 가져오기
@@ -138,6 +145,8 @@ class BabyService:
 
         return baby
 
+
+    # 아기 정보 수정
     def updateBaby(self, updateBabyInput: UpdateBabyInput, parent_id: str) -> Optional[Baby]:
         '''
         아기 정보 수정
@@ -171,6 +180,8 @@ class BabyService:
 
         return baby
 
+
+    # 아기 삭제
     def deleteBaby(self, baby_id: str,
                    parent_id: str) -> bool:
         '''

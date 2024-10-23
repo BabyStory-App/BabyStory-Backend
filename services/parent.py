@@ -82,6 +82,7 @@ class ParentService:
             raise HTTPException(
                 status_code=400, detail="Failed to create parent")
 
+
     # 부모 정보 조회
     def getParent(self, parent_id: str) -> Optional[Parent]:
         '''
@@ -97,6 +98,7 @@ class ParentService:
             ParentTable.parent_id == parent_id).first()
 
         return parent
+
 
     # 부모 정보 수정
     def updateParent(self, parent_id: str,
@@ -156,6 +158,8 @@ class ParentService:
             raise HTTPException(
                 status_code=400, detail="Failed to update parent")
 
+
+    # 프로필 사진 업로드
     def uploadProfileImage(self, file: UploadFile, parent_id: str) -> bool:
         """
         생성된 post에 대한 사진 업로드
@@ -199,8 +203,8 @@ class ParentService:
 
         return True
 
-    # 부모 삭제
 
+    # 부모 삭제
     def deleteParent(self, parent_id: str) -> bool:
         '''
         부모 삭제
@@ -226,6 +230,7 @@ class ParentService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to delete parent")
+
 
     # 이메일리스트를 입력 받아 해당 부모의 특정 정보 가져오기
     def getFriends(self, emails: Optional[List[str]]) -> dict:
@@ -267,6 +272,7 @@ class ParentService:
     #         raise HTTPException(
     #             status_code=400, detail="Failed to get parent")
 
+
     # 다른 아기-부모 연결 생성
     def create_pbconnect(self, baby_id: str, parent_id: str) -> Optional[PBConnect]:
         '''
@@ -297,6 +303,7 @@ class ParentService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to create pbconnect")
+
 
     # 부모 로그인
     def createLogin(self, createLoginInput: CreateLoginInput) -> Optional[Parent]:

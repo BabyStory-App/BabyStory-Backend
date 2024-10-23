@@ -4,6 +4,7 @@ from typing import Optional, List
 from model.pview import *
 
 
+# 포스트 조회
 class ManagePViewInput(BaseModel):
     post_id: int
 
@@ -13,6 +14,7 @@ class ManagePViewOutput(BaseModel):
     pview: Optional[PView] = None
 
 
+# 포스트 조회 생성
 class CreatePViewInput(BaseModel):
     post_id: int
 
@@ -22,6 +24,7 @@ class CreatePViewOutput(BaseModel):
     pview: Optional[PView] = None
 
 
+# 포스트 조회 삭제
 class DeletePViewInput(BaseModel):
     post_id: str
 

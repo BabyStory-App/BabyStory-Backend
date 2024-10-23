@@ -1,32 +1,32 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
-from typing import Optional
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, JSON
+from typing import Optional, Dict, Any
 from datetime import datetime
-from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 from db import DB_Base
-from model.parent import ParentTable
 
 
-# AI 의사 테이블
+# AI 의사 채팅 테이블
 # +------------+--------------+------+-----+---------+----------------+
 # | Field      | Type         | Null | Key | Default | Extra          |
 # +------------+--------------+------+-----+---------+----------------+
-# | ai_id      | int(11)      | NO   | PRI | NULL    | auto_increment |
+# | id         | int          | NO   | PRI | NULL    | auto_increment |
 # | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | room_id    | int          | NO   | MUL | NULL    |                |
 # | createTime | datetime     | NO   |     | NULL    |                |
 # | ask        | text         | NO   |     | NULL    |                |
 # | res        | text         | NO   |     | NULL    |                |
-# | hAddr      | text         | YES  |     | NULL    |                |
+# | hospital   | json         | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
 
 
-class AIDoctor(BaseModel):
-    ai_id: int
+class AIDoctorChat(BaseModel):
+    id: int
     parent_id: str
+    room_id: int
     createTime: datetime
     ask: str
     res: str
-    hAddr: Optional[str]
+    hospital: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True
@@ -38,17 +38,16 @@ class AIDoctor(BaseModel):
         super().__init__(**kwargs)
 
 
-class AIDoctorTable(DB_Base):
-    __tablename__ = 'aidoctor'
+class AIDoctorChatTable(DB_Base):
+    __tablename__ = 'aidoctorchat'
 
-    ai_id = Column(Integer, primary_key=True,
-                   nullable=False, autoincrement=True)
+    id = Column(Integer, primary_key=True,
+                nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey(
         'parent.parent_id'), nullable=False)
+    room_id = Column(Integer, ForeignKey(
+        'aidoctorroom.id'), nullable=False)
     createTime = Column(DateTime, nullable=False)
-    ask_id = Column(Text, nullable=False)
-    res_id = Column(Text, nullable=False)
-    hAddr = Column(Text, nullable=True)
-
-    parent = relationship(
-        ParentTable, back_populates='aidoctor', passive_deletes=True)
+    ask = Column(Text, nullable=False)
+    res = Column(Text, nullable=False)
+    hospital = Column(JSON, nullable=True)

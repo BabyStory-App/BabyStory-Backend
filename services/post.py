@@ -145,6 +145,8 @@ class PostService:
 
         return post
 
+
+    #
     def _get_photoId_and_desc(self, content: str):
         # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
         photoIdRex = re.search(r'!\[\[(.*?)\]\]', content)
@@ -280,6 +282,47 @@ class PostService:
         db.refresh(post)
 
         return post
+    
+
+    # 게시물 post 사진 업데이트
+    async def updatePhoto(self, fileList: List[UploadFile], post_id: int, parent_id: str) -> UpdatePhotoOutput:
+        """
+        게시물 post 사진 업데이트
+        --input
+            - fileList: 업로드할 파일 리스트
+            - post_id: 게시물 아이디
+            - parent_id: 부모 아이디
+        --output
+            - bool: 사진 업로드 성공 여부
+        """
+        db = get_db_session()
+
+        post = db.query(PostTable).filter(
+            PostTable.post_id == post_id,
+            PostTable.parent_id == parent_id,
+            PostTable.deleteTime == None).first()
+
+        # post가 없을 경우 CustomException을 발생시킵니다.
+        if post is None:
+            raise CustomException("Post not found")
+
+        # 기존 사진 폴더를 삭제합니다.
+        shutil.rmtree(os.path.join(POST_PHOTO_DIR, str(post.post_id)))
+
+        # post 사진에 대한 디렉토리를 생성합니다.
+        os.makedirs(os.path.join(POST_PHOTO_DIR,
+                    str(post.post_id)), exist_ok=True)
+        
+        # 생성된 디렉토리에 사진을 저장합니다.
+        for i, file in enumerate(fileList):
+            file_type = file.content_type.split('/')[1]
+            file_path = os.path.join(POST_PHOTO_DIR, str(
+                post.post_id), f"{post.post_id}-{i + 1}.{file_type}")
+
+            with open(file_path, 'wb') as f:
+                shutil.copyfileobj(file.file, f)
+
+        return True
 
 
     # 게시물 삭제

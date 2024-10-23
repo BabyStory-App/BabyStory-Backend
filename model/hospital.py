@@ -25,6 +25,7 @@ from model.dday import DdayTable
 # +-------------+--------------+------+-----+---------+----------------+
 
 class Hospital(BaseModel):
+    hospital_id: int
     diary_id: int
     baby_id: str
     createTime: Optional[datetime]
@@ -33,7 +34,7 @@ class Hospital(BaseModel):
     bpressure: float
     baby_kg: Optional[float]
     baby_cm: Optional[int]
-    special: str
+    special: Optional[str]
     next_day: Optional[datetime]
 
     class Config:

@@ -15,7 +15,6 @@ from model.diary import DiaryTable
 # | diary_id   | int(11)      | NO   | MUL | NULL    |                |
 # | parent_id  | varchar(255) | NO   |     | NULL    |                |
 # | title      | varchar(50)  | NO   |     | NULL    |                |
-# | post       | text         | YES  |     | NULL    |                |
 # | createTime | datetime     | NO   |     | NULL    |                |
 # | modifyTime | datetime     | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
@@ -24,7 +23,6 @@ class Dday(BaseModel):
     diary_id: int
     parent_id: str
     title: str
-    post: str
     createTime: Optional[datetime]
     modifyTime: Optional[datetime]
 
@@ -45,7 +43,6 @@ class DdayTable(DB_Base):
     diary_id = Column(Integer, ForeignKey('diary.diary_id'), nullable=False)
     parent_id = Column(String(255), nullable=False)
     title = Column(String(50), nullable=False)
-    post = Column(TEXT, nullable=True)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
 

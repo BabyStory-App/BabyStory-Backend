@@ -95,12 +95,12 @@ async def new_ai_chat(newAiChatInput: NewAiChatInput, parent_id: str = Depends(J
         # 이전 채팅 내역 가져오기
         previos_chat = aiDoctorService.load_chat_history(
             parent_id, newAiChatInput.chatroom_id)
-        print(previos_chat)
+        print("previos_chat", previos_chat)
 
         previos_prompt = "이전 채팅 내역:\n"
 
         # 이전 채팅 내역이 있을 경우 이전 채팅 내역을 추가하여 질문 생성
-        if previos_chat and 'chat_history' in previos_chat:
+        if previos_chat != None and 'chat_history' in previos_chat:
             print("previos_chat", previos_chat)
             # 각 chat의 ask와 res를 가져와서 previos_prompt에 추가
             for chat in previos_chat["chat_history"]:
@@ -153,7 +153,7 @@ async def get_chatroom_list(parent_id: str = Depends(JWTBearer())) -> GetChatroo
             }
 
 
-@router.get("/chatroom/{chatroom_id}", dependencies=[Depends(JWTBearer())])
+@router.get("/chatroom", dependencies=[Depends(JWTBearer())])
 async def load_chat_history(chatroom_id: int,
                             parent_id: str = Depends(JWTBearer())) -> LoadChatHistoryOutput:
     '''

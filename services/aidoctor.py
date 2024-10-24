@@ -184,12 +184,16 @@ class AiDoctorService:
         hospital = None
         # region = "강남대학교"
 
-        if "더 정확한 진단과 치료가 필요하시면 가까운" in res:
-            hospital = res.split("더 정확한 진단과 치료가 필요하시면 가까운")[
+        try:
+            hospital_name = res.split("더 정확한 진단과 치료가 필요하시면 가까운")[
                 1].split("를")[0].split("을")[0]
+        except:
+            hospital_name = "대학병원"
+        print("hospital_name", hospital_name)
+        hospital = self.kakao_api_request(region, hospital_name)
+        hospital = hospital[0]
 
-            hospital = self.kakao_api_request(region, hospital)
-            hospital = hospital[0]
+        print("hospital", hospital)
 
         try:
             # 질문 추가

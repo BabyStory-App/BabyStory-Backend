@@ -70,7 +70,7 @@ llm = ChatOpenAI(
 aiDoctorService = AiDoctorService()
 
 
-@router.post("/chat")
+@router.post("/chat", dependencies=[Depends(JWTBearer())])
 async def new_ai_chat(newAiChatInput: NewAiChatInput, parent_id: str = Depends(JWTBearer())) -> NewAiChatOutput:
     '''
     AI 의사와의 채팅방 생성
@@ -80,6 +80,7 @@ async def new_ai_chat(newAiChatInput: NewAiChatInput, parent_id: str = Depends(J
     '''
 
     try:
+        print("newAiChatInput", newAiChatInput)
         # 채팅방 유무 확인(존재하지 않을 경우 생성, 존재할 경우 가져오기)
         room_id = aiDoctorService.create_aichatroom(
             parent_id, newAiChatInput.chatroom_id)
@@ -94,12 +95,13 @@ async def new_ai_chat(newAiChatInput: NewAiChatInput, parent_id: str = Depends(J
         # 이전 채팅 내역 가져오기
         previos_chat = aiDoctorService.load_chat_history(
             parent_id, newAiChatInput.chatroom_id)
+        print(previos_chat)
 
         previos_prompt = "이전 채팅 내역:\n"
 
         # 이전 채팅 내역이 있을 경우 이전 채팅 내역을 추가하여 질문 생성
-        if 'chat_history' in previos_chat:
-
+        if previos_chat and 'chat_history' in previos_chat:
+            print("previos_chat", previos_chat)
             # 각 chat의 ask와 res를 가져와서 previos_prompt에 추가
             for chat in previos_chat["chat_history"]:
                 previos_prompt += f"\n질문: {chat.ask}\n답변: {chat.res}\n"

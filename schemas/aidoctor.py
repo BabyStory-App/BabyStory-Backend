@@ -6,7 +6,7 @@ from model.aidoctorroom import *
 
 
 class NewAiChatInput(BaseModel):
-    chatroom_id: Optional[int]
+    chatroom_id: Optional[int] = None
     ask: str
 
 

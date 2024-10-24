@@ -31,7 +31,6 @@ class AiDoctorService:
                 - 질문: 질문 내용
                 - 답변: 답변 내용
         """
-
         retriever = vectorstore.as_retriever(
             search_type='mmr',
             search_kwargs={'k': k, 'lambda_mult': 0.9}
@@ -108,8 +107,10 @@ class AiDoctorService:
         db = get_db_session()
 
         # room_id로 채팅방 정보 조회
-        room = db.query(AIDoctorRoomTable).filter(
-            AIDoctorRoomTable.id == room_id).first()
+        room = None
+        if room_id is not None:
+            room = db.query(AIDoctorRoomTable).filter(
+                AIDoctorRoomTable.id == room_id).first()
 
         if room is None:
             try:

@@ -137,7 +137,7 @@ class AiDoctorService:
 
             return room.id
 
-    def kakao_api_request(self, region: str, query: str) -> dict:
+    def kakao_api_request(self, region: str, query: str) -> Optional[dict]:
         """
         카카오 API를 통해 병원 정보를 가져오는 함수
         --input
@@ -157,13 +157,10 @@ class AiDoctorService:
             "Authorization": "KakaoAK " + kakao_api_key
         }
 
-        response = requests.get(url, headers=headers).json()['documents']
+        response = requests.get(url, headers=headers).json()
+        response = response['documents']
 
-        if response is not None:
-
-            return response
-        else:
-            raise CustomException("Failed to request kakao api")
+        return response[0] if response != None and len(response) > 0 else None
 
     def add_chat(self, parent_id: str, room_id: int, ask: str, res: str, region: str) -> AIDoctorChat:
         """
@@ -187,12 +184,14 @@ class AiDoctorService:
         try:
             hospital_name = res.split("더 정확한 진단과 치료가 필요하시면 가까운")[
                 1].split("를")[0].split("을")[0]
+            if hospital_name.find("나 ") != -1:
+                hospital_name = hospital_name.split("나 ")[0]
+            if hospital_name.find(" 또는 ") != -1:
+                hospital_name = hospital_name.split(" 또는 ")[0]
         except:
             hospital_name = "대학병원"
         print("hospital_name", hospital_name)
         hospital = self.kakao_api_request(region, hospital_name)
-        hospital = hospital[0]
-
         print("hospital", hospital)
 
         try:

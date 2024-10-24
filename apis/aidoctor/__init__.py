@@ -62,7 +62,7 @@ vectorstore = create_vectordb()
 
 
 llm = ChatOpenAI(
-    model='gpt-3.5-turbo-0125',
+    model='gpt-4o',
     temperature=0,
     max_tokens=500,
     openai_api_key=env.get("OPEN_API_KEY")

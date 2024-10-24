@@ -42,13 +42,13 @@ app.include_router(postmain_router)
 
 app.include_router(search_router)
 app.include_router(setting_router)
-app.include_router(chat_router) 
+app.include_router(chat_router)
 app.include_router(chatroom_router)
 app.include_router(diary_router)
 app.include_router(dday_router)
 app.include_router(hospital_router)
 app.mount("/qq", StaticFiles(directory="static", html=True), name="static")
-# app.include_router(aidoctor_router)
+app.include_router(aidoctor_router)
 
 
 if __name__ == "__main__":

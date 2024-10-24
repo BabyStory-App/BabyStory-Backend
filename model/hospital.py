@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from db import DB_Base
 from datetime import datetime
 from typing import Optional
-from model.dday import DdayTable
+from model.diary import DiaryTable
 
 
 # 산모수첩 테이블
@@ -50,7 +50,8 @@ class Hospital(BaseModel):
 class HospitalTable(DB_Base):
     __tablename__ = 'hospital'
 
-    hospital_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    hospital_id = Column(Integer, primary_key=True,
+                         nullable=False, autoincrement=True)
     diary_id = Column(Integer, ForeignKey('diary.diary_id'), nullable=False)
     baby_id = Column(String(255), nullable=False)
     createTime = Column(DateTime, nullable=False)
@@ -62,4 +63,5 @@ class HospitalTable(DB_Base):
     special = Column(TEXT, nullable=True)
     next_day = Column(DateTime, nullable=True)
 
-    diary = relationship(DdayTable, backref='hospital', passive_deletes=True)
+    # diary = relationship(DdayTable, backref='hospital', passive_deletes=True)
+    diary = relationship(DiaryTable, backref='hospital', passive_deletes=True)

@@ -4,8 +4,11 @@ from typing import Optional, Dict
 from model.friend import Friend
 
 # 친구관계 관리
+
+
 class ManageFriendInput(BaseModel):
     friend: str
+
 
 class ManageFriendOutput(BaseModel):
     hasCreated: bool
@@ -17,6 +20,7 @@ class ManageFriendOutput(BaseModel):
 class CreateFriendInput(BaseModel):
     friend: str
 
+
 class CreateFriendOutput(BaseModel):
     success: int
     message: str
@@ -27,7 +31,14 @@ class CreateFriendOutput(BaseModel):
 class DeleteFriendInput(BaseModel):
     friend: str
 
+
 class DeleteFriendOutput(BaseModel):
     success: int
     message: str
     friend: Optional[list[Friend]] = None
+
+
+class IsFriendOutput(BaseModel):
+    success: int
+    message: str
+    state: bool

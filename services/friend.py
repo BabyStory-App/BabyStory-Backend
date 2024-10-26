@@ -38,22 +38,22 @@ class FriendService:
                 db.commit()
                 db.refresh(new_friend)
                 return {'hasCreated': True, 'message': 'Success to create friend', 'friend': new_friend}
-            
+
             except Exception as e:
                 db.rollback()
                 raise e
-            
+
         else:
             try:
                 db.delete(friend)
                 db.commit()
                 return {'hasCreated': False, 'message': 'Success to delete friend', 'friend': friend}
-            
+
             except Exception as e:
                 db.rollback()
 
-
     # 친구 관계 생성
+
     def createFriend(self, createFriendInput: CreateFriendInput,
                      parent_id: str) -> Optional[Friend]:
         db = get_db_session()
@@ -74,9 +74,9 @@ class FriendService:
             print(e)
             raise HTTPException(
                 status_code=400, detail="Failed to create friend")
-        
-        
+
     # 친구 관계 삭제
+
     def deleteFriend(self, deleteFriendInput: DeleteFriendInput,
                      parent_id: str) -> Optional[list[Friend]]:
         """
@@ -91,7 +91,9 @@ class FriendService:
         if ',' not in deleteFriendInput.friend:
             friend = [str(deleteFriendInput.friend)]
         else:
-            friend = [friend.strip() for friend in deleteFriendInput.friend.split(',')]  # 쉼표로 나누어 리스트 생성
+            # 쉼표로 나누어 리스트 생성
+            friend = [friend.strip()
+                      for friend in deleteFriendInput.friend.split(',')]
 
         friends = []
         for i in friend:
@@ -102,10 +104,32 @@ class FriendService:
 
             if parent is None:
                 raise CustomException("Friend not found")
-            
+
             db.delete(parent)
             db.commit()
 
             friends.append(parent)
 
         return friends
+
+    # 친구인지 확인
+    def is_friend(self, parent_id: str, my_parent_id: str) -> bool:
+        '''
+        친구인지 확인
+        input:
+            - parent_id: 확인할 부모 id
+            - my_parent_id: 내 id
+        output:
+            - boolean: 친구 여부
+        '''
+        db = get_db_session()
+
+        parent = db.query(FriendTable).filter(
+            FriendTable.parent_id == my_parent_id,
+            FriendTable.friend == parent_id
+        ).first()
+
+        if parent is None:
+            return False
+
+        return True

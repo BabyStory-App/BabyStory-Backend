@@ -304,14 +304,24 @@ CREATE TABLE joint (
 CREATE TABLE alert (
     alert_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     parent_id VARCHAR(255) NOT NULL,
-    target VARCHAR(255),
-    message TEXT NOT NULL,
-    click boolean NOT NULL,
+    createTime DATETIME NOT NULL,
+    hasChecked TINYINT NOT NULL,
+    createrId VARCHAR(255),
+    alert_type VARCHAR(255),
+    message VARCHAR(255) NOT NULL,
+	action JSON,
     FOREIGN KEY (parent_id) REFERENCES parent(parent_id),
-    FOREIGN KEY (target) REFERENCES parent(parent_id)
+    FOREIGN KEY (createrId) REFERENCES parent(parent_id)
 );
 
-
+CREATE TABLE alertsub (
+    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    creater_id VARCHAR(255) NOT NULL,
+    subscriber_id VARCHAR(255) NOT NULL,
+    createTime DATETIME NOT NULL,
+    FOREIGN KEY (creater_id) REFERENCES parent(parent_id),
+    FOREIGN KEY (subscriber_id) REFERENCES parent(parent_id)
+);
 
 
 
@@ -443,6 +453,156 @@ BEGIN
     UPDATE pcomment
     SET cheart = IFNULL(cheart, 0) - 1
     WHERE comment_id = OLD.comment_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER alert_createPost
+AFTER INSERT ON post
+FOR EACH ROW
+BEGIN
+    DECLARE post_owner_nickname VARCHAR(255);
+    SELECT nickname INTO post_owner_nickname
+    FROM parent
+    WHERE parent_id = NEW.parent_id;
+
+    INSERT INTO alert (parent_id, createTime, hasChecked, createrId, alert_type, message, action)
+    SELECT 
+        sub.subscriber_id,
+        CURRENT_TIMESTAMP,
+        FALSE,
+        NEW.parent_id,
+        'subscribe_post',
+        CONCAT(post_owner_nickname, '님이 새로운 이야기를 작성하셨어요!'),
+        JSON_OBJECT('post_id', NEW.post_id)
+    FROM alertsub as sub
+    WHERE sub.creater_id = NEW.parent_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER alert_friendHeart
+AFTER INSERT ON pheart
+FOR EACH ROW
+BEGIN
+    DECLARE post_owner_id VARCHAR(255);
+    DECLARE post_owner_nickname VARCHAR(255);
+    
+    SELECT parent_id INTO post_owner_id
+    FROM post
+    WHERE post_id = NEW.post_id;
+
+    SELECT nickname INTO post_owner_nickname
+    FROM parent
+    WHERE parent_id = NEW.parent_id;
+
+    INSERT INTO alert (parent_id, createTime, hasChecked, createrId, alert_type, message, action)
+    SELECT 
+        fr.parent_id,
+        CURRENT_TIMESTAMP,
+        FALSE,
+        NEW.parent_id,
+        'post_heart',
+        CONCAT(post_owner_nickname, '님이 새로운 좋아요를 하셨어요!'),
+        JSON_OBJECT('post_id', NEW.post_id)
+    FROM friend as fr
+    WHERE fr.parent_id = post_owner_id
+    AND fr.friend = NEW.parent_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER alert_friendScript
+AFTER INSERT ON pscript
+FOR EACH ROW
+BEGIN
+    DECLARE post_owner_id VARCHAR(255);
+    DECLARE post_owner_nickname VARCHAR(255);
+    
+    SELECT parent_id INTO post_owner_id
+    FROM post
+    WHERE post_id = NEW.post_id;
+
+    SELECT nickname INTO post_owner_nickname
+    FROM parent
+    WHERE parent_id = NEW.parent_id;
+
+    INSERT INTO alert (parent_id, createTime, hasChecked, createrId, alert_type, message, action)
+    SELECT 
+        fr.parent_id,
+        CURRENT_TIMESTAMP,
+        FALSE,
+        NEW.parent_id,
+        'post_script',
+        CONCAT(post_owner_nickname, '님이 새로운 스크랩을 하셨어요!'),
+        JSON_OBJECT('post_id', NEW.post_id)
+    FROM friend as fr
+    WHERE fr.parent_id = post_owner_id
+    AND fr.friend = NEW.parent_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER alert_newFriend
+AFTER INSERT ON friend
+FOR EACH ROW
+BEGIN
+    DECLARE post_owner_nickname VARCHAR(255);
+    SELECT nickname INTO post_owner_nickname
+    FROM parent
+    WHERE parent_id = NEW.parent_id;
+
+    INSERT INTO alert (parent_id, createTime, hasChecked, createrId, alert_type, message, action)
+    VALUES (
+        NEW.friend,
+        CURRENT_TIMESTAMP,
+        FALSE,
+        NEW.parent_id,
+        'new_friend',
+        CONCAT(post_owner_nickname, '님과 친구가 되었어요!'),
+        JSON_OBJECT('parent_id', NEW.parent_id)
+    );
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER alert_postComment
+AFTER INSERT ON pcomment
+FOR EACH ROW
+BEGIN
+    DECLARE post_owner_id VARCHAR(255);
+    DECLARE post_owner_nickname VARCHAR(255);
+
+    SELECT parent_id INTO post_owner_id
+    FROM post
+    WHERE post_id = NEW.post_id;
+
+    SELECT nickname INTO post_owner_nickname
+    FROM parent
+    WHERE parent_id = NEW.parent_id;
+
+    INSERT INTO alert (parent_id, createTime, hasChecked, createrId, alert_type, message, action)
+    VALUES (
+    post_owner_id,
+    CURRENT_TIMESTAMP,
+    FALSE,
+    NEW.parent_id,
+    'new_comment',
+    CONCAT(post_owner_nickname, '님의 댓글: ', NEW.content),
+    JSON_OBJECT(
+        'post_id', NEW.post_id,
+        'message', NEW.content)
+    );
 END $$
 
 DELIMITER ;

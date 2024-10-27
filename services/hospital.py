@@ -111,8 +111,8 @@ class HospitalService:
         db = get_db_session()
 
         diary = db.execute(text(
-            f"SELECT * FROM diary 
-            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) 
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
         
         if diary is None:
@@ -134,8 +134,8 @@ class HospitalService:
         db = get_db_session()
 
         diary = db.execute(text(
-            f"SELECT * FROM diary 
-            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {updateHospitalInput.hospital_id}) 
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {updateHospitalInput.hospital_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
         
         if diary is None:
@@ -175,8 +175,8 @@ class HospitalService:
         db = get_db_session()
 
         diary = db.execute(text(
-            f"SELECT * FROM diary 
-            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) 
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
         
         if diary is None:

@@ -123,8 +123,8 @@ class MilkService:
         db = get_db_session()
 
         diary = db.execute(text(
-            f"SELECT * FROM diary 
-            WHERE diary_id = (SELECT diary_id FROM milk WHERE milk_id = {UpdateMilkInput.milk_id}) 
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM milk WHERE milk_id = {UpdateMilkInput.milk_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
         
         if diary is None:
@@ -164,8 +164,8 @@ class MilkService:
         db = get_db_session()
 
         diary = db.execute(text(
-            f"SELECT * FROM diary 
-            WHERE diary_id = (SELECT diary_id FROM milk WHERE milk_id = {milk_id}) 
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM milk WHERE milk_id = {milk_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
         
         if diary is None:

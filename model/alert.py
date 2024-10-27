@@ -1,30 +1,33 @@
-from sqlalchemy import Column, String, Integer, TEXT
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import ForeignKey
-from typing import Optional
+from sqlalchemy import Column, String, Integer, TEXT, DateTime, Boolean, JSON, ForeignKey
+from typing import Optional, Dict, Any
 from pydantic import BaseModel
 from db import DB_Base
-from model.parent import ParentTable
+from datetime import datetime
 
-
-# 알람 테이블
-# +-----------+--------------+------+-----+---------+----------------+
-# | Field     | Type         | Null | Key | Default | Extra          |
-# +-----------+--------------+------+-----+---------+----------------+
-# | alert_id  | int(11)      | NO   | PRI | NULL    | auto_increment |
-# | parent_id | varchar(255) | NO   | MUL | NULL    |                |
-# | target    | varchar(255) | YES  | MUL | NULL    |                |
-# | message   | text         | NO   |     | NULL    |                |
-# | click     | tinyint(1)   | YES  |     | NULL    |                |
-# +-----------+--------------+------+-----+---------+----------------+
+# 알림 테이블
+# +------------+--------------+------+-----+---------+----------------+
+# | Field      | Type         | Null | Key | Default | Extra          |
+# +------------+--------------+------+-----+---------+----------------+
+# | alert_id   | int          | NO   | PRI | NULL    | auto_increment |
+# | parent_id  | varchar(255) | NO   | MUL | NULL    |                |
+# | createTime | datetime     | NO   |     | NULL    |                |
+# | hasChecked | tinyint      | NO   |     | NULL    |                |
+# | createrId  | varchar(255) | YES  | MUL | NULL    |                |
+# | alert_type | varchar(255) | YES  |     | NULL    |                |
+# | message    | varchar(255) | NO   |     | NULL    |                |
+# | action     | json         | YES  |     | NULL    |                |
+# +------------+--------------+------+-----+---------+----------------+
 
 
 class Alert(BaseModel):
     alert_id: int
     parent_id: str
-    target: Optional[str]
+    createTime: datetime
+    hasChecked: bool
+    createrId: Optional[str]
+    alert_type: Optional[str]
     message: str
-    click: Optional[int]
+    action: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True
@@ -43,9 +46,10 @@ class AlertTable(DB_Base):
                       nullable=False, autoincrement=True)
     parent_id = Column(String(255), ForeignKey(
         'parent.parent_id'), nullable=False)
-    target = Column(String(255), nullable=True)
-    message = Column(TEXT, nullable=False)
-    click = Column(Integer, nullable=True)
-
-    parent = relationship(
-        ParentTable, back_populates='alert', passive_deletes=True)
+    createTime = Column(DateTime, nullable=False)
+    hasChecked = Column(Boolean, nullable=False)
+    createrId = Column(String(255), ForeignKey(
+        'parent.parent_id'), nullable=True)
+    alert_type = Column(String(255), nullable=True)
+    message = Column(String(255), nullable=False)
+    action = Column(JSON, nullable=True)

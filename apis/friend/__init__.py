@@ -14,9 +14,11 @@ router = APIRouter(
 friendService = FriendService()
 
 # 친구관계 관리
+
+
 @router.post("/", dependencies=[Depends(JWTBearer())])
 async def manage_friend(manageFriendInput: ManageFriendInput,
-                        parent_id: str = Depends(JWTBearer()))-> ManageFriendOutput:
+                        parent_id: str = Depends(JWTBearer())) -> ManageFriendOutput:
     try:
         result = friendService.manageFriend(manageFriendInput, parent_id)
     except Exception as e:
@@ -29,8 +31,8 @@ async def manage_friend(manageFriendInput: ManageFriendInput,
 # 친구관계 생성
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_post(createFriendInput: CreateFriendInput,
-                parent_id: str = Depends(JWTBearer())) -> CreateFriendOutput:
-    
+                      parent_id: str = Depends(JWTBearer())) -> CreateFriendOutput:
+
     # 부모 아이디가 없으면 에러
     if parent_id is None:
         raise HTTPException(
@@ -41,18 +43,36 @@ async def create_post(createFriendInput: CreateFriendInput,
     if friend is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Friend not found")
-    
+
     return {"success": 200, "message": "Success to create friend", "friend": friend}
 
 
 # 친구관계 삭제
 @router.delete("/delete", dependencies=[Depends(JWTBearer())])
 async def delete_post(deleteFriendInput: DeleteFriendInput,
-                parent_id: str = Depends(JWTBearer())) -> DeleteFriendOutput:
-    
+                      parent_id: str = Depends(JWTBearer())) -> DeleteFriendOutput:
+
     friend = friendService.deleteFriend(deleteFriendInput, parent_id)
-    
+
     if friend is None:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Friend not found")
-    return { "success": 200, "message": "Success to delete friend", "friend": friend }
+    return {"success": 200, "message": "Success to delete friend", "friend": friend}
+
+
+# 친구인지 확인
+@router.get("/isFriend/{parent_id}", dependencies=[Depends(JWTBearer())])
+async def is_friend(parent_id: str,
+                    my_parent_id: str = Depends(JWTBearer())) -> IsFriendOutput:
+    '''
+    친구인지 확인
+    input:
+        - parent_id: 확인할 부모 id
+        - my_parent_id: 내 부모 id
+    '''
+
+    result = friendService.is_friend(parent_id, my_parent_id)
+
+    return {"success": 200,
+            "message": f"Successfully check {parent_id} is friend or not",
+            "state": result}

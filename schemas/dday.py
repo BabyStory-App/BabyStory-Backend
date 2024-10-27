@@ -25,7 +25,8 @@ class getdday(BaseModel):
     dday_id: int
     diary_id: int
     title: str
-    post: str
+    content: str
+    photoId: str
     createTime: datetime
     modifyTime: Optional[datetime] = None
     hospital_id: Optional[int] = None

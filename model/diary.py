@@ -23,6 +23,7 @@ from model.baby import BabyTable
 # +------------+--------------+------+-----+---------+----------------+
 
 class Diary(BaseModel):
+    diary_id: int
     parent_id: str
     baby_id: str
     born: int

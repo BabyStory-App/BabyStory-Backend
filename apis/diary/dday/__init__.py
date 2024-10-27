@@ -47,12 +47,14 @@ async def add_dday_image(dday_id: int,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to add dday image")
     return {'success': ddayImage}
 
+
 # DDay 가져오기
 @router.get("/{diary_id}/{create_time}", dependencies=[Depends(JWTBearer())])
 async def get_dday(diary_id: int,
-                    create_time: datetime,
+                    create_time: str,
                     parent_id: str = Depends(JWTBearer())) -> GetDDayOutput:
     try:
+        create_time = datetime.strptime(create_time, "%Y-%m-%d")
         dday = ddayService.getDDay(parent_id, diary_id, create_time)
     except CustomException as error:
         raise HTTPException(

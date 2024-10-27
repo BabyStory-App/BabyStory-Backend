@@ -10,8 +10,7 @@ import shutil
 
 from schemas.dday import *
 from model.dday import *
-# from model.pbconnect import *
-# from model.diary import *
+from model.hospital import *
 from db import get_db_session
 from error.exception.customerror import *
 
@@ -139,19 +138,20 @@ class DdayService:
             raise CustomException("DDay does not exist")
         
         
-        # hospital = db.query(HospitalTable.hospital_id).filter(
-        #     HospitalTable.diary_id == day.diary_id,
-        #     func.date(HospitalTable.createTime) == create_time).first()
+        hospital = db.query(HospitalTable.hospital_id).filter(
+            HospitalTable.diary_id == day.diary_id,
+            func.date(HospitalTable.createTime) == create_time).first()
         
         dday = []
         dday.append({
             "dday_id": day.dday_id,
             "diary_id": day.diary_id,
             "title": day.title,
-            "post": day.post,
+            "content": str(day.dday_id),
+            "photoId": str(day.dday_id),
             "createTime": day.createTime,
             "modifyTime": day.modifyTime,
-            "hospital_id": 1
+            "hospital_id": hospital[0] if hospital is not None else None
         })
         
         return dday

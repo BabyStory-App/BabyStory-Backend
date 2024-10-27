@@ -182,25 +182,24 @@ def deleteHospital(parent_id: str, hospital_id: int) -> bool:
 
     db = get_db_session()
 
-        diary = db.execute(text(
-            f"SELECT * FROM diary \
-            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
-            AND parent_id = '{parent_id}'")).fetchone()
+    diary = db.execute(text(f"SELECT * FROM diary \
+        WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
+        AND parent_id = '{parent_id}'")).fetchone()
         
-        if diary is None:
-            raise CustomException("Diary does not exist")
-        
-        hospital = db.query(HospitalTable).filter(
-            HospitalTable.hospital_id == hospital_id).first()
-        
-        if hospital is None:
-            raise CustomException("Hospital does not exist")
-        
-        try:
-            db.delete(hospital)
-            db.commit()
-        except Exception as e:
-            db.rollback()
-            raise HTTPException("Failed to delete hospital")
-        
-        return True
+    if diary is None:
+        raise CustomException("Diary does not exist")
+    
+    hospital = db.query(HospitalTable).filter(
+        HospitalTable.hospital_id == hospital_id).first()
+    
+    if hospital is None:
+        raise CustomException("Hospital does not exist")
+    
+    try:
+        db.delete(hospital)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException("Failed to delete hospital")
+    
+    return True

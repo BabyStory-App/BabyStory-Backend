@@ -117,10 +117,10 @@ class HospitalService:
         print("parent_id", parent_id)
 
         diary = db.execute(text(
-            f"""SELECT * FROM diary
-            WHERE diary_id=(SELECT diary_id FROM hospital WHERE hospital_id={hospital_id})
-            AND parent_id='{parent_id}'""")).fetchone()
-
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
+            AND parent_id = '{parent_id}'")).fetchone()
+        
         if diary is None:
             raise CustomException("Diary does not exist")
 
@@ -140,10 +140,10 @@ class HospitalService:
         db = get_db_session()
 
         diary = db.execute(text(
-            f"""SELECT * FROM diary
-            WHERE diary_id=(SELECT diary_id FROM hospital WHERE hospital_id={updateHospitalInput.hospital_id})
-            AND parent_id='{parent_id}'""")).fetchone()
-
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {updateHospitalInput.hospital_id}) \
+            AND parent_id = '{parent_id}'")).fetchone()
+        
         if diary is None:
             raise CustomException("Diary does not exist")
 
@@ -182,33 +182,25 @@ def deleteHospital(parent_id: str, hospital_id: int) -> bool:
 
     db = get_db_session()
 
-    diary = db.execute(
-        text("""
-            SELECT * FROM diary
-            WHERE diary_id = (
-                SELECT diary_id FROM hospital WHERE hospital_id = :hospital_id
-            )
-            AND parent_id = :parent_id
-        """),
-        {"hospital_id": hospital_id, "parent_id": parent_id}
-    ).fetchone()
-
-    if diary is None:
-        raise CustomException("Diary does not exist")
-
-    hospital = db.query(HospitalTable).filter(
-        HospitalTable.hospital_id == hospital_id
-    ).first()
-
-    if hospital is None:
-        raise CustomException("Hospital does not exist")
-
-    try:
-        db.delete(hospital)
-        db.commit()
-    except SQLAlchemyError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=500, detail="Failed to delete hospital")
-
-    return True
+        diary = db.execute(text(
+            f"SELECT * FROM diary \
+            WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
+            AND parent_id = '{parent_id}'")).fetchone()
+        
+        if diary is None:
+            raise CustomException("Diary does not exist")
+        
+        hospital = db.query(HospitalTable).filter(
+            HospitalTable.hospital_id == hospital_id).first()
+        
+        if hospital is None:
+            raise CustomException("Hospital does not exist")
+        
+        try:
+            db.delete(hospital)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise HTTPException("Failed to delete hospital")
+        
+        return True

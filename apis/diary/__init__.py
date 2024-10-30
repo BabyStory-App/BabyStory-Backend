@@ -33,7 +33,7 @@ async def create_diary(createDiaryInput: CreateDiaryInput,
 
 
 # 다이어리 표지 사진 업로드
-@router.post("/upload/{diary_id}", dependencies=[Depends(JWTBearer())])
+@router.post("/coverUpload/{diary_id}", dependencies=[Depends(JWTBearer())])
 async def upload_diary_cover_image(file: UploadFile,
                                    diary_id: int,
                                    parent_id: str = Depends(JWTBearer())) -> UploadDiaryCoverOutput:
@@ -92,7 +92,7 @@ async def update_diary(updateDiaryInput: UpdateDiaryInput,
 
 
 # 다이어리 표지 사진 수정
-@router.put("/updateCover/{diary_id}", dependencies=[Depends(JWTBearer())])
+@router.put("/coverUpdate/{diary_id}", dependencies=[Depends(JWTBearer())])
 async def update_diary_cover_image(file: UploadFile,
                                       diary_id: int,
                                       parent_id: str = Depends(JWTBearer())) -> UploadDiaryCoverOutput:

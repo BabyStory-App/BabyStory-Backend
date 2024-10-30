@@ -24,17 +24,19 @@ async def create_hospital(createHospitalInput: CreateHospitalInput,
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create hospital")
     return {'success': 200, 'message': 'Success to create hospital', 'hospital': hospital}
 
 
 # 다이어리에 대한 전체 산모수첩 조회
-@router.post("/all", dependencies=[Depends(JWTBearer())])
-async def get_all_hospital(getHospitalInput: GetHospitalInput,
-                       parent_id: str = Depends(JWTBearer())) -> List[GetHospitalOutput]:
+@router.get("/{diary_id}/{start}/{end}", dependencies=[Depends(JWTBearer())])
+async def get_all_hospital(diary_id: int, start: str, end: str,
+                       parent_id: str = Depends(JWTBearer())) -> GetHospitalOutput:
     try:
-        hospitals = hospitalService.getAllHospital(parent_id, getHospitalInput)
+        hospitals = hospitalService.getAllHospital(parent_id, diary_id, start, end)
+        print(type(hospitals))
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
@@ -45,7 +47,7 @@ async def get_all_hospital(getHospitalInput: GetHospitalInput,
 
 
 # 하나의 산모수첩 조회
-@router.post("/get/{hospital_id}", dependencies=[Depends(JWTBearer())])
+@router.get("/get/{hospital_id}", dependencies=[Depends(JWTBearer())])
 async def get_hospital(hospital_id: int,
                        parent_id: str = Depends(JWTBearer())) -> GetHospitalOutput:
     try:

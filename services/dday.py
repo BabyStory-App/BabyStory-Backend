@@ -7,6 +7,7 @@ from datetime import datetime
 from sqlalchemy import func
 import os
 import shutil
+import re
 
 from schemas.dday import *
 from model.dday import *
@@ -29,6 +30,8 @@ class DdayService:
         
         db = get_db_session()
 
+        createTime = datetime.strptime(createDDayInput.createTime, "%Y-%m-%d")
+        
         diary = db.query(DiaryTable).filter(
             DiaryTable.diary_id == createDDayInput.diary_id,
             DiaryTable.parent_id == parent_id).first()
@@ -38,7 +41,7 @@ class DdayService:
         
         ddays = db.query(DdayTable).filter(
             DdayTable.diary_id == createDDayInput.diary_id,
-            func.date(DdayTable.createTime) == datetime.now().date()).first()
+            func.date(DdayTable.createTime) == createTime).first()
 
         
         if ddays is not None:
@@ -48,7 +51,7 @@ class DdayService:
             diary_id=createDDayInput.diary_id,
             parent_id=parent_id,
             title=createDDayInput.title,
-            createTime=datetime.now(),
+            createTime=createTime,
             modifyTime=None
         )
 
@@ -73,7 +76,7 @@ class DdayService:
     
     
     # DDay 사진 추가
-    def addDDayImage(self, parent_id: str, dday_id: int, fileList: List[UploadFile]) -> UploadImageOutput:
+    def uploadDDayPhoto(self, parent_id: str, dday_id: int, fileList: List[UploadFile]) -> PhotoUploadOutput:
         """
         DDay 사진 추가
         - input
@@ -100,7 +103,7 @@ class DdayService:
         for i, file in enumerate(fileList):
             file_type = file.content_type.split('/')[1]
             file_path = os.path.join(DIARY_DAY_PHOTO_DIR, str(
-                dday.dday_id), f"{dday.dday_id}_{i + 1}.{file_type}")
+                dday.dday_id), f"{dday.dday_id}-{i + 1}.{file_type}")
             
             with open(file_path, 'wb') as f:
                 shutil.copyfileobj(file.file, f)
@@ -109,7 +112,7 @@ class DdayService:
 
 
     # DDay 가져오기
-    def getDDay(self, parent_id: str, diary_id: int, create_time: str) -> getdday:
+    def getOneDDay(self, parent_id: str, diary_id: int, create_time: str) -> List:
         """
         DDay 가져오기
         - input
@@ -134,24 +137,149 @@ class DdayService:
             DdayTable.parent_id == parent_id,
             func.date(DdayTable.createTime) == create_time).first()
         
+        dday = []
+
         if day is None:
-            raise CustomException("DDay does not exist")
-        
+            return dday
         
         hospital = db.query(HospitalTable.hospital_id).filter(
             HospitalTable.diary_id == day.diary_id,
             func.date(HospitalTable.createTime) == create_time).first()
         
-        dday = []
+        content = ''
+        content = open(os.path.join(DIARY_DAY_CONTENT_DIR, 
+                    str(day.dday_id) + '.txt'), 'r', encoding='UTF-8').read()
+        match = re.findall(r'!\[\[(.*?)\]\]', content)
+        
         dday.append({
             "dday_id": day.dday_id,
             "diary_id": day.diary_id,
             "title": day.title,
-            "content": str(day.dday_id),
-            "photoId": str(day.dday_id),
+            "content": content,
+            "photoId": match if match else None,
             "createTime": day.createTime,
             "modifyTime": day.modifyTime,
             "hospital_id": hospital[0] if hospital is not None else None
         })
         
         return dday
+    
+
+    # DDay 수정
+    def updateDDay(self, parent_id: str, updateDDayInput: UpdateDDayInput) -> getdday:
+        """
+        DDay 수정
+        - input
+            - parent_id (str): 부모 아이디
+            - updateDDayInput (UpdateDDayInput): DDay 수정 정보
+        - output
+            - dday (getdday): DDay 딕셔너리
+        """
+        
+        db = get_db_session()
+
+        day = db.query(DdayTable).filter(
+            DdayTable.dday_id == updateDDayInput.dday_id,
+            DdayTable.parent_id == parent_id).first()
+        
+        if day is None:
+            raise CustomException("DDay does not exist")
+        
+        day.title = updateDDayInput.title
+        day.modifyTime = datetime.now()
+
+        try:
+            db.commit()
+            db.refresh(day)
+        except Exception as e:
+            db.rollback()
+            raise e
+        
+        file_path = os.path.join(DIARY_DAY_CONTENT_DIR, str(day.dday_id) + '.txt')
+        with open(file_path, 'w', encoding='UTF-8') as f:
+            f.write(updateDDayInput.content)
+
+        create_time = day.createTime.strftime("%Y-%m-%d")
+
+        hospital = db.query(HospitalTable.hospital_id).filter(
+        HospitalTable.diary_id == day.diary_id,
+        func.date(HospitalTable.createTime) == create_time).first()
+
+        dday = {
+            "dday_id": day.dday_id,
+            "diary_id": day.diary_id,
+            "title": day.title,
+            "content": updateDDayInput.content,
+            "createTime": day.createTime,
+            "modifyTime": day.modifyTime,
+            "hospital_id": hospital[0] if hospital is not None else None
+        }
+
+        return dday
+    
+
+    # DDay 사진 수정
+    def updateDDayPhoto(self, parent_id: str, dday_id: int, fileList: List[UploadFile]) -> PhotoUpdateOutput:
+        """
+        DDay 사진 수정
+        - input
+            - parent_id (str): 부모 아이디
+            - dday_id (int): DDay 아이디
+            - image (UploadFile): 이미지 파일
+        - output
+            - ddayImage (DdayImage): DDay 이미지 딕셔너리
+        """
+        
+        db = get_db_session()
+
+        dday = db.query(DdayTable).filter(
+            DdayTable.dday_id == dday_id,
+            DdayTable.parent_id == parent_id).first()
+        
+        if dday is None:
+            raise CustomException("DDay does not exist")
+
+        # DDay 사진 중 마지막 사진의 번호를 가져온다.
+        num = len(os.listdir(os.path.join(DIARY_DAY_PHOTO_DIR, str(dday_id))))
+        
+        # 생성된 디렉토리에 사진을 저장합니다.
+        for i, file in enumerate(fileList):
+            file_type = file.content_type.split('/')[1]
+            file_path = os.path.join(DIARY_DAY_PHOTO_DIR, str(
+                dday.dday_id), f"{dday.dday_id}-{num + 1}.{file_type}")
+            num += 1
+
+            with open(file_path, 'wb') as f:
+                shutil.copyfileobj(file.file, f)
+
+        return True
+    
+
+    # DDay 삭제
+    def deleteDDay(self, parent_id: str, dday_id: int) -> int:
+        """
+        DDay 삭제
+        - input
+            - parent_id (str): 부모 아이디
+            - dday_id (int): DDay 아이디
+        - output
+            - success (bool): 성공 여부
+        """
+        
+        db = get_db_session()
+
+        dday = db.query(DdayTable).filter(
+            DdayTable.dday_id == dday_id,
+            DdayTable.parent_id == parent_id).first()
+        
+        if dday is None:
+            raise CustomException("DDay does not exist")
+        
+        try:
+            db.delete(dday)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise e
+
+        return 200

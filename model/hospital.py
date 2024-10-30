@@ -28,7 +28,7 @@ class Hospital(BaseModel):
     hospital_id: int
     diary_id: int
     baby_id: str
-    createTime: Optional[datetime]
+    createTime: datetime
     modifyTime: Optional[datetime]
     parent_kg: float
     bpressure: float
@@ -50,8 +50,7 @@ class Hospital(BaseModel):
 class HospitalTable(DB_Base):
     __tablename__ = 'hospital'
 
-    hospital_id = Column(Integer, primary_key=True,
-                         nullable=False, autoincrement=True)
+    hospital_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     diary_id = Column(Integer, ForeignKey('diary.diary_id'), nullable=False)
     baby_id = Column(String(255), nullable=False)
     createTime = Column(DateTime, nullable=False)

@@ -8,36 +8,43 @@ from model.hospital import *
 class CreateHospitalInput(BaseModel):
     diary_id: int
     baby_id: str
+    createTime: str
     parent_kg: float
     bpressure: float
-    baby_kg: Optional[float] = None
+    baby_kg: Optional[float] = None 
     baby_cm: Optional[int] = None
     special: Optional[str] = None
-    next_day: Optional[datetime] = None
+    next_day: Optional[str] = None
 
 class CreateHospitalOutput(BaseModel):
     success: int
     message: str
     hospital: Hospital
 
+class Hospitals(BaseModel):
+    hospital_id: int
+    diary_id: int
+    baby_id: str
+    createTime: datetime
+    modifyTime: Optional[datetime]
+    parent_kg: float
+    bpressure: float
+    baby_kg: Optional[float]
+    baby_cm: Optional[int]
+    special: Optional[dict]
+    next_day: Optional[datetime]
 
 # 다이어리에 대한 전체 산모수첩 조회
-class GetHospitalInput(BaseModel):
-    diary_id: int
-    start_time: datetime
-    end_time: datetime
-
 class GetHospitalOutput(BaseModel):
     success: int
     message: str
-    hospitals: List[Hospital]
-
+    hospitals: List[Hospitals]
 
 # 하나의 산모수첩 조회
 class GetHospitalOutput(BaseModel):
     success: int
     message: str
-    hospital: Hospital
+    hospital: Hospitals
 
 
 # 산모수첩 수정

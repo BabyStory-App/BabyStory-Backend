@@ -20,6 +20,7 @@ from model.diary import DiaryTable
 # +------------+--------------+------+-----+---------+----------------+
 
 class Dday(BaseModel):
+    dday_id: int
     diary_id: int
     parent_id: str
     title: str

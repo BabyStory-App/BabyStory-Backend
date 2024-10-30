@@ -18,7 +18,7 @@ from apis.chat import router as chat_router
 from apis.chat.chatroom import router as chatroom_router
 from apis.diary import router as diary_router
 from apis.diary.dday import router as dday_router
-# from apis.diary.hospital import router as hospital_router
+from apis.diary.hospital import router as hospital_router
 from apis.aidoctor import router as aidoctor_router
 from apis.alert import router as alert_router
 
@@ -47,7 +47,7 @@ app.include_router(chat_router)
 app.include_router(chatroom_router)
 app.include_router(diary_router)
 app.include_router(dday_router)
-# app.include_router(hospital_router)
+app.include_router(hospital_router)
 app.mount("/qq", StaticFiles(directory="static", html=True), name="static")
 app.include_router(aidoctor_router)
 app.include_router(alert_router)

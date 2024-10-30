@@ -10,7 +10,7 @@ class CreateMilkInput(BaseModel):
     baby_id: str
     milk: int
     amount: int
-    mtime: datetime
+    mtime: str
 
 class CreateMilkOutput(BaseModel):
     success: int
@@ -18,20 +18,22 @@ class CreateMilkOutput(BaseModel):
     milk: Milk
 
 
+# 다이어리에 대한 전체 수유일지 조회
+class GetAllMilkOutput(BaseModel):
+    success: int
+    message: str
+    milks: List[Milk]
+
+
 # 해당 날짜의 수유일지 조회
 class GetMilkOutput(BaseModel):
     success: int
     message: str
-    milks: Milk
+    milks: List[Milk]
 
 
-# 다이어리에 대한 전체 수유일지 조회
-class GetMilkInput(BaseModel):
-    diary_id: int
-    start_time: datetime
-    end_time: datetime
-
-class GetMilkOutput(BaseModel):
+# 시작 날짜부터 끝 날짜까지의 수유일지 조회
+class GetMilkRangeOutput(BaseModel):
     success: int
     message: str
     milks: List[Milk]
@@ -42,7 +44,7 @@ class UpdateMilkInput(BaseModel):
     milk_id: int
     milk: int
     amount: int
-    mtime: datetime
+    mtime: str
 
 class UpdateMilkOutput(BaseModel):
     success: int
@@ -52,5 +54,5 @@ class UpdateMilkOutput(BaseModel):
 
 # 수유일지 삭제
 class DeleteMilkOutput(BaseModel):
-    success: bool
+    success: int
     message: str

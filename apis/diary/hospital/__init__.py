@@ -33,7 +33,7 @@ async def create_hospital(createHospitalInput: CreateHospitalInput,
 # 다이어리에 대한 전체 산모수첩 조회
 @router.get("/{diary_id}/{start}/{end}", dependencies=[Depends(JWTBearer())])
 async def get_all_hospital(diary_id: int, start: str, end: str,
-                       parent_id: str = Depends(JWTBearer())) -> GetHospitalOutput:
+                       parent_id: str = Depends(JWTBearer())) -> GetHospitalAllOutput:
     try:
         hospitals = hospitalService.getAllHospital(parent_id, diary_id, start, end)
         print(type(hospitals))
@@ -85,6 +85,7 @@ async def delete_hospital(hospital_id: int, parent_id: str = Depends(JWTBearer()
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete hospital")
-    return {'success': hospital, 'message': 'Success to delete hospital'}
+    return {'success': 200, 'message': 'Success to delete hospital'}

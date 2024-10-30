@@ -30,11 +30,11 @@ async def create_milk(createMilkInput: CreateMilkInput,
 
 
 # 다이어리에 대한 전체 수유일지 조회
-@router.post("/", dependencies=[Depends(JWTBearer())])
-async def get_all_milk(getMilkInput: GetMilkInput,
-                       parent_id: str = Depends(JWTBearer())) -> List[GetMilkOutput]:
+@router.get("/{diary_id}", dependencies=[Depends(JWTBearer())])
+async def get_all_milk(diary_id: int,
+                       parent_id: str = Depends(JWTBearer())) -> GetAllMilkOutput:
     try:
-        milks = milkService.getAllMilk(parent_id, getMilkInput)
+        milks = milkService.getAllMilk(parent_id, diary_id)
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
@@ -45,19 +45,36 @@ async def get_all_milk(getMilkInput: GetMilkInput,
 
 
 # 해당 날짜의 모든 수유일지 조회
-@router.post("/{diary_id}/{create_time}", dependencies=[Depends(JWTBearer())])
+@router.get("/{diary_id}/{mtime}", dependencies=[Depends(JWTBearer())])
 async def get_milk(diary_id: int,
-                    create_time: datetime,
+                    mtime: str,
                     parent_id: str = Depends(JWTBearer())) -> GetMilkOutput:
     try:
-        milk = milkService.getMilk(parent_id, diary_id, create_time)
+        milks = milkService.getMilk(parent_id, diary_id, mtime)
     except CustomException as error:
         raise HTTPException(
             status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get milk")
-    return {'success': 200, 'message': 'Success to get milk', 'milk': milk}
+    return {'success': 200, 'message': 'Success to get milk', 'milks': milks}
+
+
+# 시작 날짜부터 끝 날짜까지의 수유일지 조회
+@router.get("/{diary_id}/{start_time}/{end_time}", dependencies=[Depends(JWTBearer())])
+async def get_milk_range(diary_id: int,
+                            start_time: str,
+                            end_time: str,
+                            parent_id: str = Depends(JWTBearer())) -> GetMilkRangeOutput:
+        try:
+            milks = milkService.getMilkRange(parent_id, diary_id, start_time, end_time)
+        except CustomException as error:
+            raise HTTPException(
+                status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+        except Exception as e:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail="Failed to get milk")
+        return {'success': 200, 'message': 'Success to get milk', 'milks': milks}
 
 
 # 수유일지 수정
@@ -86,4 +103,4 @@ async def delete_milk(milk_id: int, parent_id: str = Depends(JWTBearer())) -> De
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete milk")
-    return {'success': milk, 'message': 'Success to delete milk'}
+    return {'success': 200, 'message': 'Success to delete milk'}

@@ -109,6 +109,10 @@ class HospitalService:
             func.date(HospitalTable.createTime) <= end).all()
         
         hospitals = []
+
+        if hospital is None:
+            return hospitals
+
         for h in hospital:
             special = h.special.split(", ")
             specials = {}
@@ -129,9 +133,6 @@ class HospitalService:
                 'special': specials,
                 'next_day': h.next_day
             })
-
-        if hospitals is None:
-            raise HTTPException("Hospital does not exist")
 
         return hospitals
 
@@ -223,7 +224,7 @@ class HospitalService:
 
 
     # 산모수첩 삭제
-    def deleteHospital(parent_id: str, hospital_id: int) -> bool:
+    def deleteHospital(self, parent_id: str, hospital_id: int) -> bool:
         """
         산모수첩 삭제
         - input
@@ -253,6 +254,6 @@ class HospitalService:
             db.commit()
         except Exception as e:
             db.rollback()
-            raise HTTPException("Failed to delete hospital")
+            raise e
         
         return True

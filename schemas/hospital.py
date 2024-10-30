@@ -4,6 +4,20 @@ from datetime import datetime
 
 from model.hospital import *
 
+class Hospitals(BaseModel):
+    hospital_id: int
+    diary_id: int
+    baby_id: str
+    createTime: datetime
+    modifyTime: Optional[datetime]  = None
+    parent_kg: float
+    bpressure: float
+    baby_kg: Optional[float]
+    baby_cm: Optional[int]
+    special: Optional[dict]
+    next_day: Optional[datetime]
+
+
 # 산모수첩 생성
 class CreateHospitalInput(BaseModel):
     diary_id: int
@@ -21,21 +35,9 @@ class CreateHospitalOutput(BaseModel):
     message: str
     hospital: Hospital
 
-class Hospitals(BaseModel):
-    hospital_id: int
-    diary_id: int
-    baby_id: str
-    createTime: datetime
-    modifyTime: Optional[datetime]
-    parent_kg: float
-    bpressure: float
-    baby_kg: Optional[float]
-    baby_cm: Optional[int]
-    special: Optional[dict]
-    next_day: Optional[datetime]
 
 # 다이어리에 대한 전체 산모수첩 조회
-class GetHospitalOutput(BaseModel):
+class GetHospitalAllOutput(BaseModel):
     success: int
     message: str
     hospitals: List[Hospitals]
@@ -65,5 +67,5 @@ class UpdateHospitalOutput(BaseModel):
 
 # 산모수첩 삭제
 class DeleteHospitalOutput(BaseModel):
-    success: bool
+    success: int
     message: str

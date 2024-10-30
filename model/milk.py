@@ -20,6 +20,7 @@ from model.diary import DiaryTable
 # +----------+--------------+------+-----+---------+----------------+
 
 class Milk(BaseModel):
+    milk_id: int
     diary_id: int
     baby_id: str
     milk: int

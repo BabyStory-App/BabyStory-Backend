@@ -72,6 +72,7 @@ class AlertService:
                    "action": alert.action
                    } for alert in alerts]
 
+        alerts.reverse()
         return alerts
 
     def toggle_subscribe(self, creater_id: str, parent_id: str) -> bool:

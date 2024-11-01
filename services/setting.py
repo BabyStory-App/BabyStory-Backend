@@ -43,8 +43,8 @@ class SettingService:
 
         return {'friendCount': friendCount, 'mateCount': mateCount, 'myStoryCount': myStoryCount}
 
-
     # 내가 친구로 등록한 부모 불러오기
+
     def getMyFriends(self, page: int, parent_id: str) -> Optional[MyFriendsOutputService]:
         """
         친구들 불러오기
@@ -104,8 +104,8 @@ class SettingService:
             'parents': parents
         }
 
-
     # 유저가 조회한 post
+
     def getMyViews(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 조회한 post
@@ -143,7 +143,8 @@ class SettingService:
         # 유저가 조회한 post 데이터
         post = []
         for i in myViews:
-            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = open(os.path.join(POST_CONTENT_DIR, str(
+                i[0]) + '.txt'), 'r', encoding='UTF-8').read()
             content = re.sub(r'!\[\[(.*?)\]\]', '', content)
             content = re.sub(r'\n', '', content)[:101]
 
@@ -165,8 +166,8 @@ class SettingService:
             'post': post
         }
 
-
     # 유저가 script한 post
+
     def getScripts(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 script한 post
@@ -204,10 +205,17 @@ class SettingService:
         # 유저가 script한 post 데이터
         post = []
         for i in scripts:
-            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = open(os.path.join(POST_CONTENT_DIR, str(
+                i[0]) + '.txt'), 'r', encoding='UTF-8').read()
             content = re.sub(r'!\[\[(.*?)\]\]', '', content)
             content = re.sub(r'\n', '', content)[:101]
-        
+
+            photo_path = os.path.join(POST_PHOTO_DIR, str(i[0]))
+            if os.path.exists(photo_path) and len(os.listdir(photo_path)) > 0:
+                photoId = os.listdir(photo_path)[0]
+            else:
+                photoId = None
+
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -217,8 +225,8 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview':content,
-                'photo_id': str(i[0])
+                'contentPreview': content,
+                'photo_id': photoId
             })
 
         return {
@@ -226,8 +234,8 @@ class SettingService:
             'post': post
         }
 
-
     # 유저가 좋아요한 post
+
     def getLikes(self, page: int, parent_id: str) -> Optional[MyViewsPostOutputService]:
         """
         유저가 좋아요한 post
@@ -265,10 +273,11 @@ class SettingService:
         # 유저가 script한 post 데이터
         post = []
         for i in likes:
-            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = open(os.path.join(POST_CONTENT_DIR, str(
+                i[0]) + '.txt'), 'r', encoding='UTF-8').read()
             content = re.sub(r'!\[\[(.*?)\]\]', '', content)
             content = re.sub(r'\n', '', content)[:101]
-        
+
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -278,7 +287,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview':content,
+                'contentPreview': content,
                 'photo_id': str(i[0])
             })
 
@@ -287,8 +296,8 @@ class SettingService:
             'post': post
         }
 
-
     # 유저 post
+
     def getMyStories(self, page: int, parent_id: str) -> Optional[MyStoriesOutputService]:
         """
         유저 post
@@ -330,10 +339,11 @@ class SettingService:
                 print(type(myStories[j][i]), end=', ')
             print()
         for i in myStories:
-            content = open(os.path.join(POST_CONTENT_DIR, str(i[0]) + '.txt'), 'r', encoding='UTF-8').read()
+            content = open(os.path.join(POST_CONTENT_DIR, str(
+                i[0]) + '.txt'), 'r', encoding='UTF-8').read()
             content = re.sub(r'!\[\[(.*?)\]\]', '', content)
             content = re.sub(r'\n', '', content)[:101]
-        
+
             post.append({
                 'post_id': i[0],
                 'title': i[3],
@@ -343,7 +353,7 @@ class SettingService:
                 'pView': i[9],
                 'pComment': i[10],
                 'hashList': i[11],
-                'contentPreview':content,
+                'contentPreview': content,
                 'photo_id': str(i[0])
             })
         return {
@@ -351,8 +361,8 @@ class SettingService:
             'post': post
         }
 
-
     # 짝꿍 불러오기
+
     def getMyMates(self, page: int, parent_id: str) -> Optional[MyMatesOutputService]:
         """
         짝꿍 불러오기

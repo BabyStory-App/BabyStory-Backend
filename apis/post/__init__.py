@@ -172,7 +172,7 @@ async def get_poster_profile(parent_id: str) -> GetPosterProfileOutput:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to get poster profile")
 
-    return {'parent': {
+    result = {'parent': {
         "parentId": parent_id,
         "photoId": parent_id + ".jpeg",
         "parentName": parent.nickname,
@@ -180,14 +180,16 @@ async def get_poster_profile(parent_id: str) -> GetPosterProfileOutput:
         "mateCount": counts['mateCount'],
         "friendCount": counts['friendCount'],
         "myStoryCount": counts['myStoryCount']},
-        'posts': ({"postid": post.post_id,
+        'posts': [{"postid": post.post_id,
                    **dict(zip(["photoId", "desc"], postMainService._get_photoId_and_desc(
                        open(os.path.join(POST_CONTENT_DIR,
                             f"{post.post_id}.txt"), 'r', encoding='UTF-8').read()
                    ))),
                    "title": post.title,
-                   "pHeart": post.pHeart,
-                   "comment": post.pComment,
+                   "pHeart": post.pHeart if post.pHeart else 0,
+                   "comment": post.pComment if post.pComment else 0,
                    "author_name": parent.name
-                   } for post in posts)
+                   } for post in posts]
     }
+
+    return result

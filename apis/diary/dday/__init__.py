@@ -48,9 +48,6 @@ async def upload_dday_photo(dday_id: int,
     return {'success': 200, 'message': 'Success to upload dday image'}
 
 
-# 달력 표시
-
-
 # 산모수첩에 대한 전체 DDay 조회
 @router.get("/all/{diary_id}", dependencies=[Depends(JWTBearer())])
 async def get_all_dday(diary_id: int,

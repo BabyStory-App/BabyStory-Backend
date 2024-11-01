@@ -68,3 +68,10 @@ class UpdateDiaryCoverOutput(BaseModel):
 class DeleteDiaryOutput(BaseModel):
     success: int
     message: str
+
+
+# 달력에 표시할 DDay 가져오기
+class HasDDaysOutput(BaseModel):
+    success: int
+    message: str
+    hasDday: List

@@ -120,3 +120,19 @@ async def delete_diary(diary_id: int,
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete diary")
     return {"success": 200, "message": "Success to delete diary"}
+
+
+# 달력에 표시할 DDay 가져오기
+@router.get("/hasddays/{diary_id}&{year}&{month}", dependencies=[Depends(JWTBearer())])
+async def has_ddays(diary_id: int, year: int, month: int,
+                    parent_id: str = Depends(JWTBearer())) -> HasDDaysOutput:
+    try:
+        hasDday = diaryService.hasDDays(parent_id, diary_id, year, month)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get ddays")
+    return {"success": 200, "message": "Success to get ddays", "hasDday": hasDday}

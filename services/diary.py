@@ -1,18 +1,18 @@
-from fastapi import HTTPException, UploadFile
+from fastapi import UploadFile
 from typing import Optional, List
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from constants.path import *
 import os
-import re
 import shutil
 from uuid import uuid4
 from datetime import datetime
-import random
+from sqlalchemy import func
 
 from schemas.diary import *
 from model.diary import Diary
 from model.pbconnect import *
+from model.dday import *
 from schemas.diary import *
 from db import get_db_session
 from error.exception.customerror import *
@@ -303,3 +303,49 @@ class DiaryService:
                     os.remove(entry.path)
         
         return True
+    
+
+    # 달력에 표시할 DDay 가져오기
+    def hasDDays(self, parent_id: str, diary_id:int, year:int, month: int) -> List:
+        """
+        달력에 표시할 DDay 가져오기
+        - input
+            - diary_id (int): 다이어리 아이디
+            - year (int): 년
+            - month (int): 달
+            - parent_id (str): 부모 아이디
+        - output
+            - ddays (List): DDay 리스트
+        """
+
+        db = get_db_session()
+
+        diary = db.query(DiaryTable).filter(
+            DiaryTable.diary_id == diary_id,
+            DiaryTable.parent_id == parent_id).first()
+        
+        if diary is None or diary.deleteTime is not None:
+            raise CustomException("Diary not found")
+        
+        hasDday = [0] * 31
+        for i in range(1, 32):
+            date_str = f"{year}-{month:02d}-{i:02d}"
+
+            try:
+                date = datetime.strptime(date_str, "%Y-%m-%d")
+                
+                # 데이터베이스 쿼리
+                ddays = db.query(DdayTable).filter(
+                    DdayTable.diary_id == diary_id,
+                    func.date(DdayTable.createTime) == date
+                ).first()
+
+                if ddays is not None:
+                    hasDday[i - 1] = 1
+                else:
+                    hasDday[i - 1] = 0
+                    
+            except ValueError:
+                hasDday[i - 1] = None
+
+        return hasDday

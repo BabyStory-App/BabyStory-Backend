@@ -32,52 +32,17 @@ class PostMainService:
 
         return photoId, descr
 
-
     # 메인 페이지 배너 생성
+
     def createPostMainBanner(self) -> CreatePostMainBannerListOutput:
         """
         메인 페이지 배너 생성
         --output
             - List<{postid, photoId, title, author_name, desc 초반 100자}> : 메인 페이지 배너
         """
-        # 임시로 설정함.
-        db = get_db_session()
-        posts = db.query(PostTable).order_by(
-            desc(PostTable.pHeart)).all()
-        banners = []
-        idx = 0
-        for i in posts:
-            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
-            file_path = os.path.join(
-                POST_CONTENT_DIR, str(i.post_id) + '.txt')
-            with open(file_path, 'r', encoding='UTF-8') as f:
-                content = f.read()
-
-            # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-
-                # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-                content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-                descr = content if len(
-                    content) < 100 else content[:100] + '...'
-                banners.append({
-                    'postid': i.post_id,
-                    'photoId': photoId,
-                    'title': i.title,
-                    'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
-                    'desc': descr
-                })
-                idx += 1
-            if idx == 5:
-                break
-
-        return banners
-        # 실제 코드
-        # 오늘 00시부터 하루 전 23시 59분까지의 시간 간격을 계산합니다.
+        # 오늘 00시부터 3일 전 23시 59분까지의 시간 간격을 계산합니다.
         end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        start = end - timedelta(days=1)
+        start = end - timedelta(days=3)
         file_name = str(start).replace(":", "_") + '.txt'
 
         db = get_db_session()
@@ -85,11 +50,11 @@ class PostMainService:
         # (start)어제의 날짜.txt 라는 파일이 존재하지 않으면
         if not os.path.exists(str(file_name) + '.txt'):
 
-            # 전날 00시부터 23시 59분까지의 하트를 기준으로 상위 5개의 포스트를 가져옵니다.
+            # 전날 00시부터 23시 59분까지의 하트를 기준으로 포스트를 가져옵니다.
             banner = db.query(PostTable).filter(
                 PostTable.createTime <= end,
                 PostTable.createTime >= start
-            ).order_by(desc(PostTable.pHeart)).limit(5).all()
+            ).order_by(desc(PostTable.pHeart)).limit(100).all()
 
             # 각각의 post_id를 리스트에 저장한다
             post_id_list = []
@@ -119,6 +84,7 @@ class PostMainService:
         # banner의 값을 반환:List<{postid, photoId, title, author name, desc 초반 100자}>
         # 이때, desc는 100자로 제한한다.
         banners = []
+        idx = 0
         for i in banner:
             # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
             file_path = os.path.join(
@@ -126,32 +92,31 @@ class PostMainService:
             with open(file_path, 'r', encoding='UTF-8') as f:
                 content = f.read()
 
-            # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
-            content = re.sub(r'!\[\[(.*?)\]\]', '', content)
-            content = re.sub(r'\n', '', content)
-            if len(content) >= 100:
-                descr = content[:100] + '...'
-            else:
-                descr = content
-
             # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
             photoId = re.search(r'!\[\[(.*?)\]\]', content)
             if photoId:
                 photoId = photoId.group(1)
-            else:
-                photoId = None
 
-            banners.append({
-                'post_id': i.post_id,
-                'photoId': photoId,
-                'title': i.title,
-                'author_name': db.query(ParentTable).filter(
-                    ParentTable.parent_id == i.parent_id).first().name,
-                'desc': descr
-            })
+                # 위처럼 개행, 이미지 경로는 제거하고 100자로 자른다.
+                content = re.sub(r'!\[\[(.*?)\]\]', '', content)
+                content = re.sub(r'\n', '', content)
+                descr = content if len(
+                    content) < 100 else content[:100] + '...'
+
+                banners.append({
+                    'post_id': i.post_id,
+                    'photoId': photoId,
+                    'title': i.title,
+                    'author_name': db.query(ParentTable).filter(
+                        ParentTable.parent_id == i.parent_id).first().name,
+                    'desc': descr
+                })
+                idx += 1
+
+            if idx == 5:
+                break
 
         return banners
-
 
     def createPostMainFriend(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendListOutput:
         """
@@ -163,36 +128,6 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, author_photo, author_name}> : 짝꿍이 쓴 게시물
         """
-        # 임시로 설정함.
-        db = get_db_session()
-        posts = db.query(PostTable).all()
-        random.shuffle(posts)
-        idx = 0
-        banners = []
-        for i in posts:
-            photo_file_list = os.listdir(os.path.join(
-                POST_PHOTO_DIR, str(i.post_id)))
-            if len(photo_file_list) > 0:
-                # 유저가 게시물에 하트를 눌렀는지 확인
-                hasHeart = False
-                if db.query(PHeartTable).filter(
-                    PHeartTable.parent_id == createPostMainInput.parent_id,
-                    PHeartTable.post_id == i.post_id
-                ).first() is not None:
-                    hasHeart = True
-                banners.append({
-                    'postid': i.post_id,
-                    'photoId': f"{photo_file_list[0]}",
-                    'hasHeart': hasHeart,
-                    'title': i.title,
-                    'author_photo': f"{i.parent_id}",
-                    'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name
-                })
-                idx += 1
-            if idx == 5:
-                break
-        return banners
-
         # 실제 코드
         db = get_db_session()
 
@@ -280,7 +215,6 @@ class PostMainService:
             })
 
         return banners
-
 
     def createPostMainFriendSearch(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendSearchListOutput:
         """
@@ -292,32 +226,6 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, author_photo, author_name}> : 짝꿍이 쓴 게시물
         """
-        # 임시로 설정함.
-        db = get_db_session()
-        _data = db.query(PostTable).all()
-        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
-        banners = []
-        for i in posts:
-            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
-            file_path = os.path.join(
-                POST_CONTENT_DIR, str(i.post_id) + '.txt')
-            with open(file_path, 'r', encoding='UTF-8') as f:
-                content = f.read()
-
-            photoId, descr = self._get_photoId_and_desc(content)
-
-            banners.append({
-                'postid': i.post_id,
-                'photoId': photoId,
-                'title': i.title,
-                'pHeart': i.pHeart,
-                'comment': i.pComment,
-                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
-                'desc': descr
-            })
-        return banners
-
-        # 실제 코드
         db = get_db_session()
 
         end = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -377,11 +285,9 @@ class PostMainService:
                 content = f.read()
 
             # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
+            photo_path = os.path.join(POST_PHOTO_DIR, str(i.post_id))
+            if os.path.exists(photo_path) and len(os.listdir(photo_path)) > 0:
+                photoId = os.listdir(photo_path)[0]
 
             # 유저가 게시물에 하트를 눌렀는지 확인
             if db.query(PHeartTable).filter(
@@ -405,7 +311,6 @@ class PostMainService:
 
         return banners
 
-
     def createPostMainFriendRead(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainFriendListOutput:
         """
         친구가 쓴 게시물
@@ -416,32 +321,6 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, pHeart, comment, author_name, desc}> : 친구가 쓴 게시물
         """
-        # 임시로 설정함.
-        db = get_db_session()
-        _data = db.query(PostTable).all()
-        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
-        banners = []
-        for i in posts:
-            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
-            file_path = os.path.join(
-                POST_CONTENT_DIR, str(i.post_id) + '.txt')
-            with open(file_path, 'r', encoding='UTF-8') as f:
-                content = f.read()
-
-            photoId, descr = self._get_photoId_and_desc(content)
-
-            banners.append({
-                'postid': i.post_id,
-                'photoId': photoId,
-                'title': i.title,
-                'pHeart': i.pHeart,
-                'comment': i.pComment,
-                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
-                'desc': descr
-            })
-        return banners
-
-        # 실제 코드
         db = get_db_session()
 
         # 어제 시간
@@ -497,11 +376,9 @@ class PostMainService:
                 descr = content
 
             # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
+            photo_path = os.path.join(POST_PHOTO_DIR, str(i.post_id))
+            if os.path.exists(photo_path) and len(os.listdir(photo_path)) > 0:
+                photoId = os.listdir(photo_path)[0]
 
             banners.append({
                 'post_id': i.post_id,
@@ -516,7 +393,6 @@ class PostMainService:
 
         return banners
 
-
     def getNeighbor(self, parent_id: str) -> GetNeighborOutputListOutput:
         """
         친구로 등록되지 않은 이웃목록
@@ -525,23 +401,6 @@ class PostMainService:
         --output
             - List<{parent_id, photoId, name, mainAddr, desc}> : 친구로 등록되지 않은 이웃목록
         """
-        # 임시로 설정함.
-        db = get_db_session()
-        _data = db.query(ParentTable).all()
-        neighbors = random.sample(_data, len(_data) if len(_data) < 10 else 10)
-        banners = []
-        for i in neighbors:
-            banners.append({
-                'parent_id': i.parent_id,
-                'photoId': f"{i.parent_id}",
-                'name': i.name,
-                'mainAddr': i.mainAddr,
-                'desc': i.description[:100]
-            })
-        return banners
-
-        # 실제 코드
-
         db = get_db_session()
 
         # 친구로 등록한 목록
@@ -574,7 +433,6 @@ class PostMainService:
 
         return banners
 
-
     def createPostMainNeighbor(self, createPostMainInput: CreatePostMainInput) -> CreatePostMainNeighborListOutput:
         """
         이웃들이 쓴 게시물
@@ -585,32 +443,6 @@ class PostMainService:
         --output
             - List<{postid, photoId, title, pHeart, comment, author_name, desc}> : 이웃이 쓴 게시물
         """
-        # 임시로 설정함.
-        db = get_db_session()
-        _data = db.query(PostTable).all()
-        posts = random.sample(_data, len(_data) if len(_data) < 5 else 5)
-        banners = []
-        for i in posts:
-            # POST_CONTENT_DIR에 있는 파일 중 post_id경로의 content를 읽어온다.
-            file_path = os.path.join(
-                POST_CONTENT_DIR, str(i.post_id) + '.txt')
-            with open(file_path, 'r', encoding='UTF-8') as f:
-                content = f.read()
-
-            photoId, descr = self._get_photoId_and_desc(content)
-
-            banners.append({
-                'postid': i.post_id,
-                'photoId': photoId,
-                'title': i.title,
-                'pHeart': i.pHeart,
-                'comment': i.pComment,
-                'author_name': db.query(ParentTable).filter(ParentTable.parent_id == i.parent_id).first().name,
-                'desc': descr
-            })
-        return banners
-
-        # 실제 코드
         db = get_db_session()
         if createPostMainInput.size != -1 and createPostMainInput.size < 0:
             raise CustomException("size must be -1 or greater than 0")
@@ -660,11 +492,9 @@ class PostMainService:
                 descr = content
 
             # content에 ![[Image1.jpeg]] 형식의 이미지가 있으면 첫번째 이미지 경로를 가져온다.
-            photoId = re.search(r'!\[\[(.*?)\]\]', content)
-            if photoId:
-                photoId = photoId.group(1)
-            else:
-                photoId = None
+            photo_path = os.path.join(POST_PHOTO_DIR, str(i.post_id))
+            if os.path.exists(photo_path) and len(os.listdir(photo_path)) > 0:
+                photoId = os.listdir(photo_path)[0]
 
             banners.append({
                 'post_id': i.post_id,
@@ -678,7 +508,6 @@ class PostMainService:
             })
 
         return banners
-
 
     def createPostMainHighView(self) -> CreatePostMainHighViewListOutput:
         """
@@ -713,7 +542,6 @@ class PostMainService:
             })
 
         return banners
-
 
     def createPostMainHashtag(self, parent_id: str) -> CreatePostMainHashtagListOutput:
         """

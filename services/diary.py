@@ -334,7 +334,6 @@ class DiaryService:
             try:
                 date = datetime.strptime(date_str, "%Y-%m-%d")
                 
-                # 데이터베이스 쿼리
                 ddays = db.query(DdayTable).filter(
                     DdayTable.diary_id == diary_id,
                     func.date(DdayTable.createTime) == date

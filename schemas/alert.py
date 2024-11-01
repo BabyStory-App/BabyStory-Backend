@@ -34,4 +34,7 @@ class GetAlertOutput(BaseModel):
 
 class GetToggleSubscribeOutput(BaseModel):
     hasSubscribe: bool
-    message: str
+
+
+class GetHasSubscribeOutput(BaseModel):
+    state: bool

@@ -116,3 +116,24 @@ class AlertService:
             db.rollback()
             raise HTTPException(
                 status_code=400, detail="Failed to toggle subscribe")
+
+    def has_subscribe(self, creater_id: str, parent_id: str) -> bool:
+        '''
+        알림 구독 여부
+        input:
+            - creater_id: 구독자 id
+            - parent_id: 부모 id
+        output:
+            - boolean: 성공 여부
+        '''
+
+        db = get_db_session()
+
+        try:
+            # 이미 구독 중인지 확인
+            subscribe = db.query(AlertSubscribeTable).filter(
+                AlertSubscribeTable.creater_id == creater_id, AlertSubscribeTable.subscriber_id == parent_id).first()
+            return subscribe is not None
+        except Exception as e:
+            raise HTTPException(
+                status_code=400, detail="Failed to toggle subscribe")

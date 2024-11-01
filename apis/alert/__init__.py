@@ -103,3 +103,31 @@ async def toggle_subscribe(creater_id: str, parent_id: str = Depends(JWTBearer()
     return {"hasSubscribe": result,
             "message": f"Successfully toggle subscribe {creater_id}" if result else f"Successfully toggle unsubscribe {creater_id}"
             }
+
+
+@router.get("/hasSubscribe/{creater_id}", dependencies=[Depends(JWTBearer())])
+async def has_subscribe(creater_id: str, parent_id: str = Depends(JWTBearer())) -> GetHasSubscribeOutput:
+    '''
+    알림 구독 중인지 확인
+    input:
+        - creater_id: 구독할 대상 id
+        - parent_id: 부모 id
+    output:
+        - 구독 결과
+        - hasSubscribe : 구독 여부
+        - message: 결과 메시지
+    '''
+
+    try:
+        result = alertService.has_subscribe(creater_id, parent_id)
+
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=error.message)
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get subscribe status")
+
+    return {"state": result,
+            "message": f"Successfully get subscribe {creater_id} status" if result else f"Successfully get unsubscribe {creater_id} status"
+            }

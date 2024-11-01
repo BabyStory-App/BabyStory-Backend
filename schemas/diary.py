@@ -18,7 +18,7 @@ class CreateDiaryOutput(BaseModel):
 
 # 다이어리 표지 사진 업로드
 class UploadDiaryCoverOutput(BaseModel):
-    success: bool
+    success: int
     message: str
 
 
@@ -58,7 +58,13 @@ class UpdateDiaryOutput(BaseModel):
     diary: Optional[Diary] = None
 
 
+# 다이어리 표지 사진 수정
+class UpdateDiaryCoverOutput(BaseModel):
+    success: int
+    message: str
+
+
 # 다이어리 삭제
 class DeleteDiaryOutput(BaseModel):
-    success: bool
+    success: int
     message: str

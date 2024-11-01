@@ -17,6 +17,7 @@ from model.diary import DiaryTable
 # | title      | varchar(50)  | NO   |     | NULL    |                |
 # | createTime | datetime     | NO   |     | NULL    |                |
 # | modifyTime | datetime     | YES  |     | NULL    |                |
+# | deleteTime | datetime     | YES  |     | NULL    |                |
 # +------------+--------------+------+-----+---------+----------------+
 
 class Dday(BaseModel):
@@ -26,6 +27,7 @@ class Dday(BaseModel):
     title: str
     createTime: Optional[datetime]
     modifyTime: Optional[datetime]
+    deleteTime: Optional[datetime]
 
     class Config:
         from_attributes = True
@@ -46,5 +48,6 @@ class DdayTable(DB_Base):
     title = Column(String(50), nullable=False)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
+    deleteTime = Column(DateTime, nullable=True)
 
     diary = relationship(DiaryTable, backref='dday', passive_deletes=True)

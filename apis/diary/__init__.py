@@ -45,7 +45,7 @@ async def upload_diary_cover_image(file: UploadFile,
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to upload diary cover image")
-    return {'success': success, 'message': 'Success to upload diary cover image'}
+    return {'success': 200, 'message': 'Success to upload diary cover image'}
 
 
 # 아기의 모든 다이어리 가져오기
@@ -95,7 +95,7 @@ async def update_diary(updateDiaryInput: UpdateDiaryInput,
 @router.put("/coverUpdate/{diary_id}", dependencies=[Depends(JWTBearer())])
 async def update_diary_cover_image(file: UploadFile,
                                       diary_id: int,
-                                      parent_id: str = Depends(JWTBearer())) -> UploadDiaryCoverOutput:
+                                      parent_id: str = Depends(JWTBearer())) -> UpdateDiaryCoverOutput:
      try:
           success = diaryService.updateDiaryCover(parent_id, file, diary_id)
      except CustomException as error:
@@ -104,7 +104,7 @@ async def update_diary_cover_image(file: UploadFile,
      except Exception as e:
           raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST, detail="Failed to update diary cover image")
-     return {'success': success, 'message': 'Success to update diary cover image'}
+     return {'success': 200, 'message': 'Success to update diary cover image'}
 
 
 # 다이어리 삭제
@@ -119,4 +119,4 @@ async def delete_diary(diary_id: int,
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete diary")
-    return {"success": success, "message": "Success to delete diary"}
+    return {"success": 200, "message": "Success to delete diary"}

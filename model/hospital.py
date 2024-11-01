@@ -16,6 +16,7 @@ from model.diary import DiaryTable
 # | baby_id     | varchar(255) | NO   |     | NULL    |                |
 # | createTime  | datetime     | NO   |     | NULL    |                |
 # | modifyTime  | datetime     | YES  |     | NULL    |                |
+# | deleteTime  | datetime     | YES  |     | NULL    |                |
 # | parent_kg   | float        | NO   |     | NULL    |                |
 # | bpressure   | float        | NO   |     | NULL    |                |
 # | baby_kg     | float        | YES  |     | NULL    |                |
@@ -30,6 +31,7 @@ class Hospital(BaseModel):
     baby_id: str
     createTime: datetime
     modifyTime: Optional[datetime]
+    deleteTime: Optional[datetime]
     parent_kg: float
     bpressure: float
     baby_kg: Optional[float]
@@ -55,6 +57,7 @@ class HospitalTable(DB_Base):
     baby_id = Column(String(255), nullable=False)
     createTime = Column(DateTime, nullable=False)
     modifyTime = Column(DateTime, nullable=True)
+    deleteTime = Column(DateTime, nullable=True)
     parent_kg = Column(Integer, nullable=False)
     bpressure = Column(Integer, nullable=False)
     baby_kg = Column(Integer, nullable=True)

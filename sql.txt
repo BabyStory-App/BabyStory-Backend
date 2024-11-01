@@ -194,6 +194,7 @@ CREATE TABLE dday (
     title VARCHAR(50) NOT NULL,
     createTime DATETIME NOT NULL,
     modifyTime DATETIME,
+    deleteTime DATETIME,
     FOREIGN KEY (diary_id) REFERENCES diary(diary_id)
 );
 
@@ -203,6 +204,7 @@ CREATE TABLE hospital (
     baby_id VARCHAR(255) NOT NULL,
     createTime DATETIME NOT NULL,
     modifyTime DATETIME,
+    deleteTime DATETIME,
     parent_kg FLOAT NOT NULL,
     bpressure FLOAT NOT NULL,
     baby_kg FLOAT,

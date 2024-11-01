@@ -11,7 +11,7 @@ class day(BaseModel):
     content: str
     createTime: datetime
     modifyTime: Optional[datetime] = None
-    hospital_id: Optional[int] = None
+    add: Optional[dict] = None
 
 # DDay 생성
 class CreateDDayInput(BaseModel):
@@ -26,9 +26,10 @@ class CreateDDayOutput(BaseModel):
     dday: Dday
 
 
-# DDay 사진 추가
+# DDay 사진 업로드
 class PhotoUploadOutput(BaseModel):
-    success: bool
+    success: int
+    message: str
 
 
 class getdday(BaseModel):
@@ -39,7 +40,18 @@ class getdday(BaseModel):
     photoId: Optional[List[str]]
     createTime: datetime
     modifyTime: Optional[datetime] = None
-    hospital_id: Optional[int] = None
+    add: Optional[dict] = None
+
+class allday(BaseModel):
+    dday_id: int
+    title: str
+    createTime: datetime
+
+# 산모수첩에 대한 전체 DDay 조회
+class GetAllDDayOutput(BaseModel):
+    success: int
+    message: str
+    dday: List[allday]
 
 # DDay 가져오기
 class GetDDayOutput(BaseModel):
@@ -62,7 +74,8 @@ class UpdateDDayOutput(BaseModel):
 
 # DDay 사진 추가
 class PhotoUpdateOutput(BaseModel):
-    success: bool
+    success: int
+    message: str
 
 
 # DDay 삭제

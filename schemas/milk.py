@@ -7,7 +7,6 @@ from model.milk import *
 # 수유일지 생성
 class CreateMilkInput(BaseModel):
     diary_id: int
-    baby_id: str
     milk: int
     amount: int
     mtime: str

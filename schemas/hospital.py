@@ -21,7 +21,6 @@ class Hospitals(BaseModel):
 # 산모수첩 생성
 class CreateHospitalInput(BaseModel):
     diary_id: int
-    baby_id: str
     createTime: str
     parent_kg: float
     bpressure: float
@@ -36,11 +35,19 @@ class CreateHospitalOutput(BaseModel):
     hospital: Hospital
 
 
-# 다이어리에 대한 전체 산모수첩 조회
-class GetHospitalAllOutput(BaseModel):
+# 범위에 대한 전체 산모수첩 조회
+class GetHospitalRangeOutput(BaseModel):
     success: int
     message: str
     hospitals: List[Hospitals]
+
+
+# 모든 산모수첩 조회
+class GetAllHospitalOutput(BaseModel):
+    success: int
+    message: str
+    hospitals: List[Hospitals]
+    
 
 # 하나의 산모수첩 조회
 class GetHospitalOutput(BaseModel):

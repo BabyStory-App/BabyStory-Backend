@@ -32,7 +32,7 @@ async def create_dday(createDDayInput: CreateDDayInput,
     return {'success': 200, 'message': 'Success to create dday', 'dday': dday}
 
 
-# DDay 사진 추가
+# DDay 사진 업로드
 @router.post("/photoUpload/{dday_id}", dependencies=[Depends(JWTBearer())])
 async def upload_dday_photo(dday_id: int,
                          fileList: List[UploadFile],
@@ -45,7 +45,25 @@ async def upload_dday_photo(dday_id: int,
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to add dday image")
-    return {'success': photo}
+    return {'success': 200, 'message': 'Success to upload dday image'}
+
+
+# 달력 표시
+
+
+# 산모수첩에 대한 전체 DDay 조회
+@router.get("/all/{diary_id}", dependencies=[Depends(JWTBearer())])
+async def get_all_dday(diary_id: int,
+                    parent_id: str = Depends(JWTBearer())) -> GetAllDDayOutput:
+    try:
+        dday = ddayService.getAllDDay(parent_id, diary_id)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get dday")
+    return {'success': 200, 'message': 'Success to get dday', 'dday': dday}
 
 
 # DDay 가져오기
@@ -93,7 +111,7 @@ async def update_dday_photo(dday_id: int,
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to update dday image")
-    return {'success': photo}
+    return {'success': 200, 'message': 'Success to update dday image'}
 
 
 # DDay 삭제
@@ -108,4 +126,4 @@ async def delete_dday(dday_id: int,
     except Exception as e:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to delete dday")
-    return {'success': dday, 'message': 'Success to delete dday'}
+    return {'success': 200, 'message': 'Success to delete dday'}

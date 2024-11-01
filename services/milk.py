@@ -43,7 +43,7 @@ class MilkService:
         
         milk = MilkTable(
             diary_id=createMilkInput.diary_id,
-            baby_id=createMilkInput.baby_id,
+            baby_id=diary.baby_id,
             milk=createMilkInput.milk,
             amount=createMilkInput.amount,
             mtime=time
@@ -77,7 +77,7 @@ class MilkService:
             DiaryTable.diary_id == diary_id,
             DiaryTable.parent_id == parent_id).first()
         
-        if diary is None:
+        if diary is None or diary.deleteTime is not None:
             raise CustomException("Diary does not exist")
         
         if diary.born != 1:
@@ -101,11 +101,11 @@ class MilkService:
         return milks
     
 
-    # 해당 날짜의 모든 수유일지 조회
+    # 범위 안에 속해있는 모든 수유일지 조회
     def getMilk(self, parent_id: str,
                 diary_id: str, mtime: str) -> List[Milk]:
         """
-        해당 날짜의 수유일지 조회
+        범위 안에 속해있는 수유일지 조회
         - input
             - parent_id (str): 부모 아이디
             - getMilkInput (GetMilkInput): 수유일지 조회 정보
@@ -119,7 +119,7 @@ class MilkService:
             DiaryTable.diary_id == diary_id,
             DiaryTable.parent_id == parent_id).first()
         
-        if diary is None:
+        if diary is None or diary.deleteTime is not None:
             raise CustomException("Diary does not exist")
         
         if diary.born != 1:

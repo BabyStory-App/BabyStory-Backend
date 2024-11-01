@@ -38,11 +38,12 @@ class HospitalService:
 
         if diary is None:
             raise CustomException("Diary does not exist")
-        
+
         if diary.born != 0:
             raise CustomException("This diary is not a maternity diary")
 
-        createTime = datetime.strptime(createHospitalInput.createTime, "%Y-%m-%d")
+        createTime = datetime.strptime(
+            createHospitalInput.createTime, "%Y-%m-%d")
 
         hospitals = db.query(HospitalTable).filter(
             HospitalTable.diary_id == createHospitalInput.diary_id,
@@ -54,7 +55,8 @@ class HospitalService:
 
         next = None
         if createHospitalInput.next_day:
-            next = datetime.strptime(createHospitalInput.next_day, "%Y-%m-%d, %H:%M")
+            next = datetime.strptime(
+                createHospitalInput.next_day, "%Y-%m-%d, %H:%M")
 
         hospital = HospitalTable(
             diary_id=createHospitalInput.diary_id,
@@ -77,11 +79,11 @@ class HospitalService:
             raise HTTPException("Failed to create hospital")
 
         return hospital
-    
 
     # 범위 대한 전체 산모수첩 조회
+
     def getRangeHospital(self, parent_id: str,
-                       diary_id: int, start: str, end: str) -> List[Hospital]:
+                         diary_id: int, start: str, end: str) -> List[Hospital]:
         """
         다이어리에 대한 전체 산모수첩 조회
         - input
@@ -102,19 +104,19 @@ class HospitalService:
 
         if diary is None:
             raise CustomException("Diary does not exist")
-        
+
         if diary.born != 0:
             raise CustomException("This diary is not a maternity diary")
-        
+
         start = datetime.strptime(start, "%Y-%m-%d")
         end = datetime.strptime(end, "%Y-%m-%d")
-        
+
         hospital = db.query(HospitalTable).filter(
             HospitalTable.diary_id == diary_id,
             func.date(HospitalTable.createTime) >= start,
             func.date(HospitalTable.createTime) <= end,
             HospitalTable.deleteTime == None).all()
-        
+
         hospitals = []
 
         if hospital is None:
@@ -140,12 +142,11 @@ class HospitalService:
                 'special': specials,
                 'next_day': h.next_day
             })
-
+        hospitals.reverse()
         return hospitals
-    
 
     # 모든 산모수첩 조회
-    def getAllHospital(self, parent_id:str, diary_id: int) -> List[Hospital]:
+    def getAllHospital(self, parent_id: str, diary_id: int) -> List[Hospital]:
         """
         모든 산모수첩 조회
         - input
@@ -162,38 +163,40 @@ class HospitalService:
 
         if diary is None or diary.deleteTime is not None:
             raise CustomException("Diary does not exist")
-        
+
+        if diary.born != 0:
+            raise CustomException("This diary is not a maternity diary")
+
+        print(f"diary_id: {diary_id}")
         hospitals = []
-        for d in diary:
-            hospital = db.query(HospitalTable).filter(
-                HospitalTable.diary_id == d.diary_id,
-                HospitalTable.deleteTime == None).all()
-            
-            for h in hospital:
-                special = h.special.split(", ")
-                specials = {}
-                for s in special:
-                    key, value = s.split("=")
-                    specials[key] = value
+        hospital = db.query(HospitalTable).filter(
+            HospitalTable.diary_id == diary_id,
+            HospitalTable.deleteTime == None).all()
 
-                hospitals.append({
-                    'hospital_id': h.hospital_id,
-                    'diary_id': h.diary_id,
-                    'baby_id': h.baby_id,
-                    'createTime': h.createTime,
-                    'modifyTime': h.modifyTime,
-                    'parent_kg': h.parent_kg,
-                    'bpressure': h.bpressure,
-                    'baby_kg': h.baby_kg,
-                    'baby_cm': h.baby_cm,
-                    'special': specials,
-                    'next_day': h.next_day
-                })
+        for h in hospital:
+            special = h.special.split(", ")
+            specials = {}
+            for s in special:
+                key, value = s.split("=")
+                specials[key] = value
 
+            hospitals.append({
+                'hospital_id': h.hospital_id,
+                'diary_id': h.diary_id,
+                'baby_id': h.baby_id,
+                'createTime': h.createTime,
+                'modifyTime': h.modifyTime,
+                'parent_kg': h.parent_kg,
+                'bpressure': h.bpressure,
+                'baby_kg': h.baby_kg,
+                'baby_cm': h.baby_cm,
+                'special': specials,
+                'next_day': h.next_day
+            })
         return hospitals
 
-
     # 하나의 산모수첩 조회
+
     def getHospital(self, parent_id: str, hospital_id: int) -> Hospital:
         """
         하나의 산모수첩 조회
@@ -210,14 +213,14 @@ class HospitalService:
             f"SELECT * FROM diary \
             WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
-        
+
         if diary is None or diary[7] is not None:
             raise CustomException("Diary does not exist")
 
         h = db.query(HospitalTable).filter(
             HospitalTable.hospital_id == hospital_id,
             HospitalTable.deleteTime == None).first()
-        
+
         special = h.special.split(", ")
         specials = {}
         for s in special:
@@ -244,8 +247,8 @@ class HospitalService:
 
         return hospital
 
-
     # 산모수첩 수정
+
     def updateHospital(self, parent_id: str,
                        updateHospitalInput: UpdateHospitalInput) -> Hospital:
 
@@ -255,7 +258,7 @@ class HospitalService:
             f"SELECT * FROM diary \
             WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {updateHospitalInput.hospital_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
-        
+
         if diary is None:
             raise CustomException("Diary does not exist")
 
@@ -279,8 +282,8 @@ class HospitalService:
 
         return hospital
 
-
     # 산모수첩 삭제
+
     def deleteHospital(self, parent_id: str, hospital_id: int) -> bool:
         """
         산모수첩 삭제
@@ -296,16 +299,16 @@ class HospitalService:
         diary = db.execute(text(f"SELECT * FROM diary \
             WHERE diary_id = (SELECT diary_id FROM hospital WHERE hospital_id = {hospital_id}) \
             AND parent_id = '{parent_id}'")).fetchone()
-            
+
         if diary is None:
             raise CustomException("Diary does not exist")
-        
+
         hospital = db.query(HospitalTable).filter(
             HospitalTable.hospital_id == hospital_id).first()
-        
+
         if hospital is None:
             raise CustomException("Hospital does not exist")
-        
+
         hospital.deleteTime = datetime.now()
         try:
             db.add(hospital)
@@ -314,5 +317,5 @@ class HospitalService:
         except Exception as e:
             db.rollback()
             raise e
-        
+
         return True

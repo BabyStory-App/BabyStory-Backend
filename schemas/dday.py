@@ -4,6 +4,7 @@ from datetime import datetime
 
 from model.dday import *
 
+
 class day(BaseModel):
     dday_id: int
     diary_id: int
@@ -14,11 +15,14 @@ class day(BaseModel):
     add: Optional[dict] = None
 
 # DDay 생성
+
+
 class CreateDDayInput(BaseModel):
     diary_id: int
     createTime: str
     title: str
     content: str
+
 
 class CreateDDayOutput(BaseModel):
     success: int
@@ -37,10 +41,11 @@ class getdday(BaseModel):
     diary_id: int
     title: str
     content: str
-    photoId: Optional[List[str]]
+    photoId: Optional[List[str]] = None
     createTime: datetime
     modifyTime: Optional[datetime] = None
     add: Optional[dict] = None
+
 
 class allday(BaseModel):
     dday_id: int
@@ -48,12 +53,16 @@ class allday(BaseModel):
     createTime: datetime
 
 # 산모수첩에 대한 전체 DDay 조회
+
+
 class GetAllDDayOutput(BaseModel):
     success: int
     message: str
     dday: List[allday]
 
 # DDay 가져오기
+
+
 class GetDDayOutput(BaseModel):
     success: int
     message: str
@@ -63,8 +72,9 @@ class GetDDayOutput(BaseModel):
 # DDay 수정
 class UpdateDDayInput(BaseModel):
     dday_id: int
-    title: str
-    content: str
+    title: Optional[str] = None
+    content: Optional[str] = None
+
 
 class UpdateDDayOutput(BaseModel):
     success: int

@@ -24,7 +24,6 @@ import uuid
 # | photoId   | varchar(255) | YES  |     | NULL    |       |
 # +-----------+--------------+------+-----+---------+-------+
 
-
 class Baby(BaseModel):
     baby_id: str
     obn: str

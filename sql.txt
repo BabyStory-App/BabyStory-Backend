@@ -638,8 +638,8 @@ VALUES
 INSERT INTO baby (baby_id, obn, name, gender, birthDate, bloodType, cm, kg, photoId)
 VALUES
 ('b-5116', '딱풀이', NULL, NULL, NULL, NULL, 46.2, 10.6, 'b-5116.jpg'),
-('b-7201', '튼튼이', '서연', 1, '2022-04-26 13:14:25', 'AB+', 42.6, 9.8, 'b-7201.jpg'),
-('b-6677', '열무', '지후', 2, '2023-07-25 18:17:25', 'O+', 57.3, 7.4, 'b-6677.jpg');
+('b-7201', '튼튼이', '서연', 1, '2024-10-01 13:14:25', 'AB+', 42.6, 9.8, 'b-7201.jpg'),
+('b-6677', '열무', '지후', 2, '2023-11-01 18:17:25', 'O+', 57.3, 7.4, 'b-6677.jpg');
 
 
 -- Parent와 Baby 연결
@@ -733,7 +733,7 @@ INSERT INTO diary (parent_id, baby_id, born, title, createTime, modifyTime, dele
 
 
 -- DDay 데이터 추가
-INSERT INTO diary (diary_id, parent_id, title, createTime, modifyTime, deleteTime) VALUES
+INSERT INTO dday (diary_id, parent_id, title, createTime, modifyTime, deleteTime) VALUES
 (2, 'P001', '새로운 시작의 기쁨', '2024-01-23 00:00:00', NULL, NULL),
 (2, 'P001', '입덧의 고통 속에서도', '2024-02-01 00:00:00', NULL, NULL),
 (2, 'P001', '튼튼이의 첫 시작', '2024-02-13 00:00:00', NULL, NULL),
@@ -746,10 +746,10 @@ INSERT INTO diary (diary_id, parent_id, title, createTime, modifyTime, deleteTim
 
 -- Hospital 데이터 추가
 INSERT INTO hospital (diary_id, baby_id, createTime, modifyTime, deleteTime, parent_kg, bpressure, baby_kg, baby_cm, special, next_day) VALUES
-(2, 'b-7201', '2024-01-23 00:00:00', NULL, NULL, '목덜미 투명대 검사 (Nuchal Translucency, NT) = 정상, 초기 기형아 검사 = 정상, NIPT (비침습적 산전검사) = 정상', NULL, NULL, NULL, NULL, '2024-02-13 00:00:00'),
-(2, 'b-7201', '2024-02-13 00:00:00', NULL, NULL, '쿼드 검사 (Quad Test) = 정상, 양수검사 (Amniocentesis) = 정상', NULL, NULL, NULL, NULL, '2024-04-21 00:00:00'),
-(2, 'b-7201', '2024-04-21 00:00:00', NULL, NULL, '당뇨 검사 (Oral Glucose Tolerance Test, OGTT) = 임신성 당뇨, 소변 검사 = 정상, 후기 초음파 검사 = 정상', NULL, NULL, NULL, NULL, '2024-09-21 00:00:00'),
-(2, 'b-7201', '2024-09-21 00:00:00', NULL, NULL, '비수축 검사 (Non-Stress Test, NST) = Non-Reactive, 양수 지수 (Amniotic Fluid Index, AFI) = Polyhydramnios, 분만 준비 검사 = 정상', NULL, NULL, NULL, NULL, NULL);
+(2, 'b-7201', '2024-01-23 00:00:00', NULL, NULL, 62.0, 1.0, 1.0, 1, '목덜미 투명대 검사 (Nuchal Translucency NT) = 정상, 초기 기형아 검사 = 정상, NIPT (비침습적 산전검사) = 정상', '2024-02-13 00:00:00'),
+(2, 'b-7201', '2024-02-13 00:00:00', NULL, NULL, 66.0, 1.0, 1.0, 1, '쿼드 검사 (Quad Test) = 정상, 양수검사 (Amniocentesis) = 정상', '2024-04-21 00:00:00'),
+(2, 'b-7201', '2024-04-21 00:00:00', NULL, NULL, 70.0, 1.0, 1.0, 1, '당뇨 검사 (Oral Glucose Tolerance Test(OGTT)) = 임신성 당뇨, 소변 검사 = 정상, 후기 초음파 검사 = 정상', '2024-09-21 00:00:00'),
+(2, 'b-7201', '2024-09-21 00:00:00', NULL, NULL, 74.0, 1.0, 1.0, 1, '비수축 검사 (Non-Stress Test(NST)) = Non-Reactive, 양수 지수 (Amniotic Fluid IndexAFI) = Polyhydramnios, 분만 준비 검사 = 정상', NULL);
 
 
 -- Milk 데이터 추가

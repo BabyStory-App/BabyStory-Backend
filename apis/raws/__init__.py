@@ -76,6 +76,17 @@ async def read_file(file_id: str):
         return FileResponse(os.path.join(POST_PHOTO_DIR, 'default_post_image.jpeg'))
 
 
+@router.get("/diary/photo/{file_id}")
+async def read_file(file_id: str):
+    file_id = f'{file_id}-1' if file_id.find('-') == -1 else file_id
+    file_path = get_image_path(file_id, os.path.join(
+        DIARY_DAY_PHOTO_DIR, file_id.split('-')[0]))
+    if file_path != None:
+        return FileResponse(file_path)
+    else:
+        return FileResponse(os.path.join(POST_PHOTO_DIR, 'default_post_image.jpeg'))
+
+
 @router.get("/cry/{audioId}")
 async def get_file(audioId: str):
     if audioId is None:

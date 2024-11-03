@@ -69,7 +69,7 @@ class SettingService:
 
         # 내가 친구로 등록한 부모 찾기
         myFriends = db.query(FriendTable).filter(
-            FriendTable.parent_id == parent_id).offset(page).limit(take).all()
+            FriendTable.parent_id == parent_id).offset(page * take).limit(take).all()
 
         paginationInfo = {'page': page, 'take': take, 'total': total}
 

@@ -80,8 +80,8 @@ class HospitalService:
 
         return hospital
 
-    # 범위 대한 전체 산모수첩 조회
 
+    # 범위 대한 전체 산모수첩 조회
     def getRangeHospital(self, parent_id: str,
                          diary_id: int, start: str, end: str) -> List[Hospital]:
         """
@@ -123,10 +123,10 @@ class HospitalService:
             return hospitals
 
         for h in hospital:
-            special = h.special.split(", ")
+            special = h.special.split("/seq ")
             specials = {}
             for s in special:
-                key, value = s.split("=")
+                key, value = s.split("/split ")
                 specials[key] = value
 
             hospitals.append({

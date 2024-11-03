@@ -746,10 +746,10 @@ INSERT INTO dday (diary_id, parent_id, title, createTime, modifyTime, deleteTime
 
 -- Hospital 데이터 추가
 INSERT INTO hospital (diary_id, baby_id, createTime, modifyTime, deleteTime, parent_kg, bpressure, baby_kg, baby_cm, special, next_day) VALUES
-(2, 'b-7201', '2024-01-23 00:00:00', NULL, NULL, 62.0, 1.0, 1.0, 1, '목덜미 투명대 검사 (Nuchal Translucency NT) = 정상, 초기 기형아 검사 = 정상, NIPT (비침습적 산전검사) = 정상', '2024-02-13 00:00:00'),
-(2, 'b-7201', '2024-02-13 00:00:00', NULL, NULL, 66.0, 1.0, 1.0, 1, '쿼드 검사 (Quad Test) = 정상, 양수검사 (Amniocentesis) = 정상', '2024-04-21 00:00:00'),
-(2, 'b-7201', '2024-04-21 00:00:00', NULL, NULL, 70.0, 1.0, 1.0, 1, '당뇨 검사 (Oral Glucose Tolerance Test(OGTT)) = 임신성 당뇨, 소변 검사 = 정상, 후기 초음파 검사 = 정상', '2024-09-21 00:00:00'),
-(2, 'b-7201', '2024-09-21 00:00:00', NULL, NULL, 74.0, 1.0, 1.0, 1, '비수축 검사 (Non-Stress Test(NST)) = Non-Reactive, 양수 지수 (Amniotic Fluid IndexAFI) = Polyhydramnios, 분만 준비 검사 = 정상', NULL);
+(2, 'b-7201', '2024-01-23 00:00:00', NULL, NULL, 62.0, 1.0, 1.0, 1, '목덜미 투명대 검사 (Nuchal Translucency, NT) /split 정상 /seq 초기 기형아 검사 /split 정상 /seq NIPT (비침습적 산전검사) /split 정상', '2024-02-13 00:00:00'),
+(2, 'b-7201', '2024-02-13 00:00:00', NULL, NULL, 66.0, 1.0, 1.0, 1, '쿼드 검사 (Quad Test) /split 정상 /seq 양수검사 (Amniocentesis) /split 정상', '2024-04-21 00:00:00'),
+(2, 'b-7201', '2024-04-21 00:00:00', NULL, NULL, 70.0, 1.0, 1.0, 1, '당뇨 검사 (Oral Glucose Tolerance Test, OGTT) /split 임신성 당뇨 /seq 소변 검사 /split 정상 /seq 후기 초음파 검사 /split 정상', '2024-09-21 00:00:00'),
+(2, 'b-7201', '2024-09-21 00:00:00', NULL, NULL, 74.0, 1.0, 1.0, 1, '비수축 검사 (Non-Stress Test, NST) /split Non-Reactive /seq 양수 지수 (Amniotic Fluid IndexAFI) /split Polyhydramnios /seq 분만 준비 검사 /split 정상', NULL);
 
 
 -- Milk 데이터 추가

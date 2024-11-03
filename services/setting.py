@@ -61,42 +61,49 @@ class SettingService:
             raise CustomException("page must be -1 or greater than 0")
         take = 10
 
+        if page == -1:
+            page = 0
+
         total = db.query(FriendTable).filter(
             FriendTable.parent_id == parent_id).count()
 
         # 내가 친구로 등록한 부모 찾기
-        myFriends = db.execute(text(
-            f"select p.* from friend f inner join parent p on p.parent_id = f.friend \
-                where f.parent_id = :parent_id LIMIT :limit OFFSET :offset"),
-            {"parent_id": parent_id, "limit": (page + 1) * take, "offset": page * 10}).fetchall()
+        myFriends = db.query(FriendTable).filter(
+            FriendTable.parent_id == parent_id).offset(page).limit(take).all()
 
         paginationInfo = {'page': page, 'take': take, 'total': total}
 
-        if not myFriends:
+        if myFriends is None:
             return {
                 'paginationInfo': paginationInfo,
                 'parents': []
             }
 
         # 짝꿍
-        mate = db.execute(text(
-            f"select f.parent_id from friend p inner join friend f \
-            ON p.parent_id = f.friend AND p.friend = f.parent_id \
-            where p.parent_id = \"{parent_id}\"")).fetchall()
+        temp = db.query(FriendTable).filter(
+            FriendTable.friend == parent_id
+        ).all()
 
-        ismate = []
-        for i in mate:
-            ismate.append(i[0])
+        temp_ids = [friend.parent_id for friend in temp]
+
+        mate = db.query(FriendTable).filter(
+            FriendTable.parent_id == parent_id,
+            FriendTable.friend.in_(temp_ids)
+        ).all()
+
+        mate = [i.friend for i in mate]
 
         # 친구들 데이터
         parents = []
         for i in myFriends:
+            temp = db.query(ParentTable).filter(
+                ParentTable.parent_id == i.friend).first()
             parents.append({
-                'parent_id': i[0],
-                'nickname': i[4],
-                'photoId': i[8],
-                'description': i[9],
-                'isMate': True if i[0] in ismate else False
+                'parent_id': i.friend,
+                'nickname': temp.nickname,
+                'photoId': f"{i.friend}.jpeg",
+                'description': temp.description,
+                'isMate': True if i.friend in mate else False
             })
 
         return {

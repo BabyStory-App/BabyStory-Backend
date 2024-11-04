@@ -24,7 +24,13 @@ def pytest_collection_modifyitems(session, config, items):
     # 원하는 테스트 폴더 순서 지정 (절대 경로로 변환)
     folder_order = [
         os.path.abspath(os.path.join(config.rootdir, 'tests/parent')),
-        os.path.abspath(os.path.join(config.rootdir, 'tests/post'))
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/test_post.py')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pheart')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pscript')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pview')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment/test_pcomment.py')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment/cheart')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/postmain'))
     ]
 
     def get_folder_index(item):

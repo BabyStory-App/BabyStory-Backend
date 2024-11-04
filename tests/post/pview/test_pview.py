@@ -133,3 +133,18 @@ async def test_deletePView_fail():
         client.request("DELETE", "pview/delete", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to delete pview"
+
+
+def test_create_pview_save(client, test_jwt):
+    response = client.post(
+        "pview/create",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_jwt["post_id"]
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pview 객체 확인
+    assert response_json["pview"]["post_id"] == test_jwt["post_id"]

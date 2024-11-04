@@ -24,14 +24,17 @@ def pytest_collection_modifyitems(session, config, items):
     # 원하는 테스트 폴더 순서 지정 (절대 경로로 변환)
     folder_order = [
         os.path.abspath(os.path.join(config.rootdir, 'tests/parent')),
-        os.path.abspath(os.path.join(config.rootdir, 'tests/post/test_post.py')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/postmain')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pview')),
         os.path.abspath(os.path.join(config.rootdir, 'tests/post/pheart')),
         os.path.abspath(os.path.join(config.rootdir, 'tests/post/pscript')),
-        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pview')),
-        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment/test_pcomment.py')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment')),
         os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment/cheart')),
-        os.path.abspath(os.path.join(config.rootdir, 'tests/post/postmain'))
+        os.path.abspath(os.path.join(config.rootdir, 'tests/setting'))
     ]
+
+    items[:] = [item for item in items if os.path.isfile(item.fspath)]
 
     def get_folder_index(item):
         # item.fspath.dirname을 절대 경로로 변환하고, folder_order에서 해당 경로의 인덱스 반환
@@ -39,4 +42,4 @@ def pytest_collection_modifyitems(session, config, items):
         return folder_order.index(item_dir) if item_dir in folder_order else len(folder_order)
 
     # items를 folder_order에 따라 정렬
-    items[:] = sorted(items, key=get_folder_index)
+    items.sort(key=get_folder_index)

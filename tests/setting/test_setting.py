@@ -32,7 +32,6 @@ async def test_get_overview_fail():
     assert err.value.detail == "Failed to get overview"
 
 
-
 """ Get my friends """
 def test_get_my_friends(client, test_jwt):
     response = client.get(
@@ -42,10 +41,11 @@ def test_get_my_friends(client, test_jwt):
 
     assert response.status_code == 200
     response_json = response.json()
+    print(response_json)
     assert "parents" in response_json
     assert "paginationInfo" in response_json
 
-    assert response_json["post"]["post_id"] == test_jwt["post_id"]
+    assert response_json["parents"][0]["parent_id"] == test_jwt["friend"]
     assert len(response_json["post"]["contentPreview"]) == 100
 
 # test_get_my_friends ( 잘못된 jwt )
@@ -55,7 +55,6 @@ async def test_get_my_friends_fail():
         client.get("/setting/myfriends/0", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to get my friends"
-
 
 
 """ Get my views """
@@ -82,7 +81,6 @@ async def test_get_my_views_fail():
     assert err.value.detail == "Failed to get view post"
 
 
-
 """ Get my scripts """
 def test_get_scripts(client, test_jwt):
     response = client.get(
@@ -105,7 +103,6 @@ async def test_get_scripts_fail():
         client.get("/setting/scripts/0", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to get script post"
-
 
 
 """ Get my likes """
@@ -132,7 +129,6 @@ async def test_get_likes_fail():
     assert err.value.detail == "Failed to get like post"
 
 
-
 """ Get my post """
 def test_get_my_post(client, test_jwt):
     response = client.get(
@@ -155,7 +151,6 @@ async def test_get_my_post_fail():
         client.get("/setting/mystories/0", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to get my post"
-
 
 
 """ Get my mates """

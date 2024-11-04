@@ -102,10 +102,7 @@ def test_delete_pheart(client, test_jwt):
     response = client.request(
         method="DELETE",
         url="pheart/delete",
-        headers={
-            "Authorization": f"Bearer {test_jwt['access_token']}",
-            "Content-Type": "application/json"
-        },
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
         json=test_DeletePHeartInput
     )
 

@@ -245,8 +245,14 @@ async def test_deletePost_fail(client):
     assert err.value.detail == "Failed to delete post"
 
 # get_poster_profile test
-def test_get_poster_profile(client):
-    response = client.get("/post/poster/profile/P001")
+
+
+def test_get_poster_profile(client, test_jwt):
+
+    response = client.get(
+        "/post/poster/profile/P001",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
     assert response.status_code == 200
     response_json = response.json()
 
@@ -256,17 +262,17 @@ def test_get_poster_profile(client):
     # parent 객체 확인
     assert response_json["parent"]["parentId"] == "P001"
     assert response_json["parent"]["photoId"] == "P001.jpeg"
-    assert response_json["parent"]["parentName"] == "김철수"
+    assert response_json["parent"]["parentName"] == "딱풀이아빠"
     assert response_json["parent"]["parentDesc"] == "쌍둥이 아기의 사랑하는 아빠"
     assert response_json["parent"]["mateCount"] == 1
     assert response_json["parent"]["friendCount"] == 3
     assert response_json["parent"]["myStoryCount"] == 5
 
     # posts 첫번째 객체 확인
-    assert response_json["posts"][0]["post_id"] == 1
-    assert response_json["posts"][0]["photoId"] == "1_1.png"
+    assert response_json["posts"][0]["postid"] == 1
+    assert response_json["posts"][0]["photoId"] == "1-1.png"
     assert response_json["posts"][0]["desc"] == "아이를 키우면서 육아 일기를 꾸준히 쓰는 건 꽤나 피곤한 일이긴 하다. 주변에 비슷한 개월 수의 친구들이 많 은데, 육아일기를 쓰는 친구는 나 밖에 없는 걸 보면.. 확실하게 써야..."
     assert response_json["posts"][0]["title"] == "아기 첫 이유식 도전"
-    assert response_json["posts"][0]["pHeart"] == 33
-    assert response_json["posts"][0]["comment"] == 500
+    assert response_json["posts"][0]["pHeart"] == 4
+    assert response_json["posts"][0]["comment"] == 4
     assert response_json["posts"][0]["author_name"] == "김철수"

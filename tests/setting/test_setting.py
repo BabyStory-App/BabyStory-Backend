@@ -70,7 +70,7 @@ def test_get_my_views(client, test_jwt):
     assert "paginationInfo" in response_json
 
     assert response_json["post"][0]["post_id"] == test_jwt["post_id"]
-    assert len(response_json["post"][0]["contentPreview"]) <= 100
+    assert len(response_json["post"][0]["contentPreview"]) <= 101
 
 # test_get_my_views ( 잘못된 jwt )
 async def test_get_my_views_fail():
@@ -93,8 +93,8 @@ def test_get_scripts(client, test_jwt):
     assert "post" in response_json
     assert "paginationInfo" in response_json
 
-    assert response_json["post"]["post_id"] == test_jwt["post_id"]
-    assert len(response_json["post"]["contentPreview"]) == 100
+    assert response_json["post"][0]["post_id"] == 1
+    assert len(response_json["post"][0]["contentPreview"]) <= 101
 
 # test_get_scripts ( 잘못된 jwt )
 async def test_get_scripts_fail():

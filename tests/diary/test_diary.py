@@ -23,6 +23,11 @@ test_cover = {
     "file": "test1.png"
 }
 
+test_diary_update = {
+    "diary_id": "test_diary_id",
+    "title": "test_title"
+}
+
 
 """ Create diary """
 # 산모수첩 생성
@@ -93,3 +98,64 @@ def test_get_all_diary(client, test_jwt):
     assert "diary" in response_json
 
     assert response_json["diary"][0]["baby_id"] == test_jwt["baby"]
+
+
+""" get diary by diary_id """
+def test_get_diary(client, test_jwt):
+    diary_id = test_jwt["parenting_diary"]
+    response = client.get(
+        f"/diary/get/{diary_id}",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"
+    })
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "diary" in response_json
+
+    assert response_json["diary"][0]["baby_id"] == test_jwt["baby"]
+
+
+""" update diary """
+def test_update_diary(client, test_jwt):
+    test_diary_update["diary_id"] = test_jwt["parenting_diary"]
+    response = client.put(
+        "/diary/update",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_diary_update
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "diary" in response_json
+
+    assert response_json["diary"]["title"] == test_diary_update["title"]
+
+
+""" delete diary """
+def test_delete_diary(client, test_jwt):
+    diary_id = test_jwt["parenting_diary"]
+    response = client.delete(
+        f"/diary/delete/{diary_id}",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"
+    })
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "success" in response_json
+
+
+# 육아일지 생성
+def test_create_diary3(client, test_jwt):
+    test_ParentingDiary["baby_id"] = test_jwt["baby"]
+    response = client.post(
+        "/diary/create",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_ParentingDiary
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "diary" in response_json
+
+    assert response_json["diary"]["baby_id"] == test_jwt["baby"]
+    test_jwt["parenting_diary"] = response_json["diary"]["diary_id"]

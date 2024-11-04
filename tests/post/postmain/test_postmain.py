@@ -83,9 +83,8 @@ test_CreatePostInput_friend = {
     "createTime": test_time,
     "hashList": "qw"
 }
+
 # 친구유저생성
-
-
 def test_create_friend(client):
     response = client.post(
         "/parent",
@@ -118,9 +117,8 @@ def test_update_friend(client):
 
     assert response_json["parent"]["mainAddr"] == test_friend_data_update["mainAddr"]
 
+
 # 이웃유저생성
-
-
 def test_create_neighbor(client):
     response = client.post(
         "/parent",
@@ -148,9 +146,8 @@ def test_update_neighbor(client):
 
     assert response_json["parent"]["mainAddr"] == test_neighbor_data_update["mainAddr"]
 
+
 # 유저가 친구를 등록
-
-
 def test_create_friend_relation1(client, test_jwt):
     response = client.post(
         "/friend/create",
@@ -193,10 +190,9 @@ def test_create_friend_relation1_not_exist_id(client, test_jwt):
     assert response.status_code == 400
     assert response.json() == {"detail": "Failed to create friend"}
 
+
 # 친구가 유저를 등록
-
-
-def test_create_friend_relation2(client):
+def test_create_friend_relation2(client, test_jwt):
     global test_friend_jwt
     print(test_friend_jwt)
     response = client.post(
@@ -213,6 +209,9 @@ def test_create_friend_relation2(client):
     assert "friend" in response_json
     assert response_json["friend"]["parent_id"] == check_id
     assert response_json["friend"]["friend"] == json_user["friend"]
+
+    # friend_id 저장
+    test_jwt["friend"] = json_user["friend"]
 
 
 # 유저 게시물 생성
@@ -233,9 +232,11 @@ def test_create_post(client, test_jwt):
     assert response_json["post"]["title"] == test_CreatePostInput["title"]
     assert response_json["post"]["hashList"] == test_CreatePostInput["hashList"]
 
+    # post_id 저장
+    test_jwt["post_id"] = response_json["post"]["post_id"]
+
+
 # 친구 게시물 생성
-
-
 def test_create_post_friend(client):
     global test_friend_jwt
     response = client.post(
@@ -254,9 +255,8 @@ def test_create_post_friend(client):
     assert response_json["post"]["title"] == test_CreatePostInput_friend["title"]
     assert response_json["post"]["hashList"] == test_CreatePostInput_friend["hashList"]
 
+
 # 메인페이지 생성
-
-
 def test_create_postmain(client, test_jwt):
     response = client.post(
         "/main/create",

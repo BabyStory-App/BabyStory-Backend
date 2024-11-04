@@ -127,14 +127,12 @@ async def test_get_all_comment_fail():
 """ Get reply pcomment test """
 def test_get_reply_comment(client, test_jwt):
     test_GetReplyComment["comment_id"] = test_jwt["comment_id"]
-    print(test_GetReplyComment)
 
     response = client.get(
         "/pcomment/reply",
         params=test_GetReplyComment,
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
     )
-    print(response.json())
 
     assert response.status_code == 200
     response_json = response.json()

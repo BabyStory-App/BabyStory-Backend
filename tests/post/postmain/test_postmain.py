@@ -211,7 +211,7 @@ def test_create_friend_relation2(client, test_jwt):
     assert response_json["friend"]["friend"] == json_user["friend"]
 
     # friend_id 저장
-    test_jwt["friend"] = json_user["friend"]
+    test_jwt["friend"] = check_id
 
 
 # 유저 게시물 생성

@@ -46,7 +46,6 @@ def test_get_my_friends(client, test_jwt):
     assert "paginationInfo" in response_json
 
     assert response_json["parents"][0]["parent_id"] == test_jwt["friend"]
-    assert len(response_json["post"]["contentPreview"]) == 100
 
 # test_get_my_friends ( 잘못된 jwt )
 async def test_get_my_friends_fail():

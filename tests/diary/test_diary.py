@@ -78,3 +78,18 @@ def test_upload_diary_cover_image(client, test_jwt):
     file_type = test_cover["file"].split(".")[-1]
     assert create_file_exist(os.path.join(
         DIARY_COVER_PATH, f"{test_jwt['parenting_diary']}.{file_type}"))
+    
+
+""" get all diary by baby_id """
+def test_get_all_diary(client, test_jwt):
+    baby_id = test_jwt["baby"]
+    response = client.get(
+        f"/diary/{baby_id}",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"
+    })
+
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "diary" in response_json
+
+    assert response_json["diary"][0]["baby_id"] == test_jwt["baby"]

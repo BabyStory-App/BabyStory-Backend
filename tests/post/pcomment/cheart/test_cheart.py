@@ -101,9 +101,10 @@ def test_delete_cheart(client, test_jwt):
     assert response.status_code == 200
     response_json = response.json()
     assert isinstance(response_json["cheart"], dict)
+    print(response_json["cheart"])
 
     # cheart 객체 확인
-    assert response_json["cheart"]["comment_id"] == test_jwt["comment_id"]
+    assert response_json["cheart"]["comment_id"] == test_CreateCHeartInput["comment_id"]
 
 # Delete comment heart test fail ( comment_id가 없는 경우 )
 async def test_deleteCHeart_fail():

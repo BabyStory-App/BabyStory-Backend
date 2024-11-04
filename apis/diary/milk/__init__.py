@@ -15,8 +15,6 @@ router = APIRouter(
 milkService = MilkService()
 
 # 수유일지 생성
-
-
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_milk(createMilkInput: CreateMilkInput,
                       parent_id: str = Depends(JWTBearer())) -> CreateMilkOutput:

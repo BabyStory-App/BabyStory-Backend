@@ -123,10 +123,10 @@ class HospitalService:
             return hospitals
 
         for h in hospital:
-            special = h.special.split("/seq ")
+            special = h.special.split(" /seq ")
             specials = {}
             for s in special:
-                key, value = s.split("/split ")
+                key, value = s.split(" /split ")
                 specials[key] = value
 
             hospitals.append({
@@ -174,10 +174,10 @@ class HospitalService:
             HospitalTable.deleteTime == None).all()
 
         for h in hospital:
-            special = h.special.split(", ")
+            special = h.special.split(" /seq ")
             specials = {}
             for s in special:
-                key, value = s.split("=")
+                key, value = s.split(" /split ")
                 specials[key] = value
 
             hospitals.append({
@@ -221,10 +221,10 @@ class HospitalService:
             HospitalTable.hospital_id == hospital_id,
             HospitalTable.deleteTime == None).first()
 
-        special = h.special.split(", ")
+        special = h.special.split(" /seq ")
         specials = {}
         for s in special:
-            key, value = s.split("=")
+            key, value = s.split(" /split ")
             specials[key] = value
 
         hospital = {

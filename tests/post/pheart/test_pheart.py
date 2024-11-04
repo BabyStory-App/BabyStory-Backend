@@ -65,7 +65,6 @@ async def test_managePHeartd_fail():
     assert err.value.detail == "Failed to manage pheart"
 
 
-
 """ Create post heart test """
 def test_create_pheart(client, test_jwt):
     response = client.post(
@@ -103,7 +102,10 @@ def test_delete_pheart(client, test_jwt):
     response = client.request(
         method="DELETE",
         url="pheart/delete",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        headers={
+            "Authorization": f"Bearer {test_jwt['access_token']}",
+            "Content-Type": "application/json"
+        },
         json=test_DeletePHeartInput
     )
 
@@ -129,3 +131,17 @@ async def test_deletePHeart_fail():
         client.delete("pheart/delete", headers=headers)
     assert err.value.status_code == HTTP_400_BAD_REQUEST
     assert err.value.detail == "Failed to delete pheart"
+
+def test_create_pheart(client, test_jwt):
+    response = client.post(
+        "pheart/create",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json={"post_id": test_jwt["post_id"]}
+    )
+    
+    assert response.status_code == 200
+    response_json = response.json()
+    assert isinstance(response_json, dict)
+
+    # pheart 객체 확인
+    assert response_json["pheart"]["post_id"] == test_jwt["post_id"]

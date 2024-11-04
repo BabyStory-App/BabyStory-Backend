@@ -139,7 +139,7 @@ def test_create_pview_save(client, test_jwt):
     response = client.post(
         "pview/create",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        json=test_jwt["post_id"]
+        json={"post_id": test_jwt["post_id"]}
     )
     
     assert response.status_code == 200

@@ -101,21 +101,19 @@ async def test_create_reply_fail():
 """ Get all pcomment test """
 def test_get_all_comment(client, test_jwt):
     response = client.get(
-        "/pcomment/all",
+        "/pcomment/all/2",
         params={"post_id": 2},
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
     )
     assert response.status_code == 200
     response_json = response.json()
-    assert isinstance(response_json, list)
-
-    print(response_json)
+    assert isinstance(response_json, dict)
 
     # pcomment 객체 확인
-    if response_json[0]["reply_id"] is None:
-        assert response_json[0]["comment_id"] == test_jwt["comment_id"]
+    if len(response_json["comments"]) > 0:
+        assert response_json["comments"][0]["comment_id"] == test_jwt["comment_id"]
     else:
-        assert response_json[0]["reply_id"] == test_jwt["comment_id"]
+        assert response_json["comments"][0]["reply_id"] == test_jwt["comment_id"]
 
 # Get all pcomment test fail ( post_id가 없는 경우 )
 async def test_get_all_comment_fail():

@@ -256,8 +256,11 @@ async def test_deletePost_fail(client):
 
 
 # get_poster_profile test
-def test_get_poster_profile(client):
-    response = client.get("/post/poster/profile/P001")
+def test_get_poster_profile(client, test_jwt):
+    response = client.get(
+        "/post/poster/profile/P001",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
     assert response.status_code == 200
     response_json = response.json()
 

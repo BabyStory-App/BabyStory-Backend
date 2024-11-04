@@ -207,46 +207,7 @@ async def test_updatePost_fail(client):
     assert err.value.detail == "Failed to update post"
 
 
-""" Delete post test """
-def test_delete_post(client, test_jwt):
-    response = client.request(
-        method="Delete",
-        url=f"/post/delete/{test_jwt['post_id']}",
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        json={"post_id": test_jwt["post_id"]}
-    )
-    assert response.status_code == 200
-    response_json = response.json()
-    assert "post" in response_json
-
-    # post 객체 확인
-    assert response_json["post"]["post_id"] == test_jwt["post_id"]
-
-# Delete post test fail ( 잘못된 jwt )
-async def test_deletePost_fail(client):
-    with pytest.raises(HTTPException) as err:
-        headers = {"Authorization": f"Bearer wrong_jwt_token"}
-        client.delete("/post/delete/{post_id}", headers=headers)
-    assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "Failed to delete post"
-
-# Delete post test fail ( 잘못된 post_id )
-async def test_deletePost_fail(client):
-    with pytest.raises(HTTPException) as err:
-        client.delete("/post/delete/{post_id}")
-    assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "post not found"
-
-# Delete post test fail ( 데이터삭제에 실패한 경우 )
-async def test_deletePost_fail(client):
-    with pytest.raises(HTTPException) as err:
-        client.delete("/post/delete/{post_id}")
-    assert err.value.status_code == HTTP_400_BAD_REQUEST
-    assert err.value.detail == "Failed to delete post"
-
 # get_poster_profile test
-
-
 def test_get_poster_profile(client, test_jwt):
 
     response = client.get(

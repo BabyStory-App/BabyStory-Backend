@@ -31,7 +31,9 @@ def pytest_collection_modifyitems(session, config, items):
         os.path.abspath(os.path.join(config.rootdir, 'tests/post/pscript')),
         os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment')),
         os.path.abspath(os.path.join(config.rootdir, 'tests/post/pcomment/cheart')),
-        os.path.abspath(os.path.join(config.rootdir, 'tests/setting'))
+        os.path.abspath(os.path.join(config.rootdir, 'tests/setting')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/baby')),
+        os.path.abspath(os.path.join(config.rootdir, 'tests/diary')),
     ]
 
     items[:] = [item for item in items if os.path.isfile(item.fspath)]

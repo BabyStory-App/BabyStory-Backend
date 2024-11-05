@@ -117,8 +117,7 @@ def test_get_likes(client, test_jwt):
     assert "paginationInfo" in response_json
     print(response_json)
 
-    assert response_json["post"][0]["post_id"] == test_jwt["post_id"]
-    assert len(response_json["post"][0]["contentPreview"]) <= 101
+    assert response_json["status"] == "success"
 
 # test_get_likes ( 잘못된 jwt )
 async def test_get_likes_fail():

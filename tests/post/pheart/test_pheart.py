@@ -99,13 +99,14 @@ async def test_createPHeart_fail():
 
 """ Delete post heart test """
 def test_delete_pheart(client, test_jwt):
+    test_DeletePHeartInput["post_id"] = str(test_jwt["post_id"])
     response = client.request(
         method="DELETE",
         url="pheart/delete",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
         json=test_DeletePHeartInput
     )
-
+    print(response.text)
     assert response.status_code == 200
     response_json = response.json()
     assert isinstance(response_json['pheart'], list)

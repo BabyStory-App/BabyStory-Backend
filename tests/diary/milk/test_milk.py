@@ -15,7 +15,7 @@ test_milk = {
     "mtime": "2024-11-04, 12:30"
 }
 
-test_update_milk = {
+update_milk = {
     "milk_id": 1,
     "milk": 1,
     "amount": 120,
@@ -87,12 +87,12 @@ def test_get_milk_range(client, test_jwt):
 
 
 """ Update milk """
-def test_updates_milk(client, test_jwt):
-    test_update_milk["milk_id"] = test_jwt["milk"]
+def test_update_milk(client, test_jwt):
+    update_milk["milk_id"] = test_jwt["milk"]
     response = client.put(
         "/milk/update",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-        json=test_update_milk
+        json=update_milk
     )
 
     assert response.status_code == 200

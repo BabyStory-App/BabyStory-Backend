@@ -80,6 +80,21 @@ async def get_one_dday(diary_id: int,
     return {'success': 200, 'message': 'Success to get dday', 'dday': dday}
 
 
+# DDay 가져오기
+@router.get("/{dday_id}", dependencies=[Depends(JWTBearer())])
+async def get_one_dday(dday_id: int,
+                       parent_id: str = Depends(JWTBearer())) -> GetDDayOutput:
+    try:
+        dday = ddayService.getOneDDayById(parent_id, dday_id)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to get dday")
+    return {'success': 200, 'message': 'Success to get dday', 'dday': dday}
+
+
 # DDay 수정
 @router.put("/update", dependencies=[Depends(JWTBearer())])
 async def update_dday(updateDDayInput: UpdateDDayInput,

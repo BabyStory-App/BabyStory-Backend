@@ -15,6 +15,8 @@ class day(BaseModel):
     add: Optional[dict] = None
 
 # DDay 생성
+
+
 class CreateDDayInput(BaseModel):
     diary_id: int
     createTime: str
@@ -51,6 +53,8 @@ class allday(BaseModel):
     createTime: datetime
 
 # 산모수첩에 대한 전체 DDay 조회
+
+
 class GetAllDDayOutput(BaseModel):
     success: int
     message: str
@@ -61,7 +65,7 @@ class GetAllDDayOutput(BaseModel):
 class GetDDayOutput(BaseModel):
     success: int
     message: str
-    dday: List[getdday]
+    dday: getdday
 
 
 # DDay 수정

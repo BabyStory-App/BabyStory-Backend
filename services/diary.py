@@ -17,6 +17,7 @@ from schemas.diary import *
 from db import get_db_session
 from error.exception.customerror import *
 
+
 class DiaryService:
 
     # 다이어리 생성
@@ -30,19 +31,19 @@ class DiaryService:
         - output
             - diary (Diary): 다이어리 딕셔너리
         """
-        
+
         db = get_db_session()
 
         # 아기에 대한 산모수첩이 이미 존재하는지 확인
         if createDiaryInput.born == 0:
             pregnancy = db.query(DiaryTable).filter(
-            DiaryTable.baby_id == createDiaryInput.baby_id,
-            DiaryTable.born == createDiaryInput.born,
-            DiaryTable.deleteTime == None).first()
-        
+                DiaryTable.baby_id == createDiaryInput.baby_id,
+                DiaryTable.born == createDiaryInput.born,
+                DiaryTable.deleteTime == None).first()
+
             if pregnancy is not None:
                 raise CustomException("Pregnancy Diary already exists")
-            
+
         # born이 산모수첩 또는 육아일기가 아닌 경우
         if createDiaryInput.born not in [0, 1]:
             raise CustomException("Invalid born value")
@@ -64,11 +65,11 @@ class DiaryService:
         except Exception as e:
             db.rollback()
             raise e
-        
+
         return diary
-    
 
     # 다이어리 표지 사진 업로드
+
     def uploadDiaryCover(self, parent_id: str,
                          file: UploadFile,
                          diary_id: int) -> bool:
@@ -86,11 +87,11 @@ class DiaryService:
             DiaryTable.parent_id == parent_id,
             DiaryTable.diary_id == diary_id,
             DiaryTable.deleteTime == None).first()
-        
+
         # 다이어리가 없을 경우 CustomException을 발생
         if diary is None:
             raise CustomException("Diary not found")
-        
+
         # 다이어리 표지 사진이 이미 존재할 경우 에러 발생
         with os.scandir(DIARY_COVER_PATH) as entries:
             for entry in entries:
@@ -100,14 +101,14 @@ class DiaryService:
         # 생성된 디렉토리에 사진을 저장
         file_type = file.filename.split('.')[-1]
         file_path = os.path.join(DIARY_COVER_PATH, f'{diary_id}.{file_type}')
-        
+
         with open(file_path, 'wb') as f:
             shutil.copyfileobj(file.file, f)
 
         return True
-    
 
     # 아기의 모든 다이어리 가져오기
+
     def getAllDiary(self, parent_id: str, baby_id: str) -> Optional[GetDiaryOutput]:
         """
         아기의 모든 다이어리 가져오기
@@ -121,19 +122,19 @@ class DiaryService:
 
         baby = db.query(BabyTable).filter(
             BabyTable.baby_id == baby_id).first()
-        
+
         # 해당 부모에게 아기가 없는 경우
         if baby is None:
             raise CustomException("Baby not found")
-        
+
         # 해당 부모와 아기가 연결되어있지 않는 경우
         pbconnect = db.query(PBConnectTable).filter(
             PBConnectTable.parent_id == parent_id,
             PBConnectTable.baby_id == baby_id).first()
-        
+
         if pbconnect is None:
             raise CustomException("parent and baby are not connected")
-        
+
         _data = db.query(DiaryTable).filter(
             DiaryTable.parent_id == parent_id,
             DiaryTable.baby_id == baby_id,
@@ -154,9 +155,9 @@ class DiaryService:
             })
 
         return diary
-    
 
     # 하나의 다이어리 가져오기
+
     def getDiary(self, parent_id: str, diary_id: int) -> GetDiaryOutput:
         """
         하나의 다이어리 가져오기
@@ -172,7 +173,7 @@ class DiaryService:
             DiaryTable.parent_id == parent_id,
             DiaryTable.diary_id == diary_id,
             DiaryTable.deleteTime == None).first()
-        
+
         diary = []
         diary.append({
             'diary_id': _data.diary_id,
@@ -186,9 +187,9 @@ class DiaryService:
         })
 
         return diary
-    
 
     # 다이어리 수정
+
     def updateDiary(self, parent_id: str,
                     updateDiaryInput: UpdateDiaryInput) -> UpdateDiaryOutput:
         """
@@ -205,10 +206,10 @@ class DiaryService:
             DiaryTable.parent_id == parent_id,
             DiaryTable.diary_id == updateDiaryInput.diary_id,
             DiaryTable.deleteTime == None).first()
-        
+
         if diary is None:
             raise CustomException("Diary not found")
-        
+
         diary.title = updateDiaryInput.title
         diary.modifyTime = datetime.now()
 
@@ -218,11 +219,11 @@ class DiaryService:
         except Exception as e:
             db.rollback()
             raise e
-        
+
         return diary
-    
 
     # 다이어리 표지 사진 수정
+
     def updateDiaryCover(self, parent_id: str,
                          file: UploadFile,
                          diary_id: int) -> bool:
@@ -241,10 +242,10 @@ class DiaryService:
             DiaryTable.parent_id == parent_id,
             DiaryTable.diary_id == diary_id,
             DiaryTable.deleteTime == None).first()
-        
+
         if diary is None:
             raise CustomException("Diary not found")
-        
+
         found = False
         # 현재 존재하는 다이어리 표지 사진 삭제
         with os.scandir(DIARY_COVER_PATH) as entries:
@@ -260,14 +261,15 @@ class DiaryService:
         # 다이어리 표지 사진 저장
         file_type = file.filename.split('.')[-1]
         file_path = os.path.join(DIARY_COVER_PATH, f'{diary_id}.{file_type}')
+        print("file_path: ", file_path)
 
         with open(file_path, 'wb') as f:
             shutil.copyfileobj(file.file, f)
 
         return True
-    
 
     # 다이어리 삭제
+
     def deleteDiary(self, parent_id: str, diary_id: int) -> bool:
         """
         다이어리 삭제
@@ -283,10 +285,10 @@ class DiaryService:
             DiaryTable.parent_id == parent_id,
             DiaryTable.diary_id == diary_id,
             DiaryTable.deleteTime == None).first()
-        
+
         if diary is None:
             raise CustomException("Diary not found")
-        
+
         diary.deleteTime = datetime.now()
 
         try:
@@ -295,18 +297,17 @@ class DiaryService:
         except Exception as e:
             db.rollback()
             raise e
-        
+
         # 다이어리 표지 사진 삭제
         with os.scandir(DIARY_COVER_PATH) as entries:
             for entry in entries:
                 if entry.name.startswith(str(diary_id) + '.'):
                     os.remove(entry.path)
-        
+
         return True
-    
 
     # 달력에 표시할 DDay 가져오기
-    def hasDDays(self, parent_id: str, diary_id:int, year:int, month: int) -> List:
+    def hasDDays(self, parent_id: str, diary_id: int, year: int, month: int) -> List:
         """
         달력에 표시할 DDay 가져오기
         - input
@@ -323,17 +324,17 @@ class DiaryService:
         diary = db.query(DiaryTable).filter(
             DiaryTable.diary_id == diary_id,
             DiaryTable.parent_id == parent_id).first()
-        
+
         if diary is None or diary.deleteTime is not None:
             raise CustomException("Diary not found")
-        
+
         hasDday = [0] * 31
         for i in range(1, 32):
             date_str = f"{year}-{month:02d}-{i:02d}"
 
             try:
                 date = datetime.strptime(date_str, "%Y-%m-%d")
-                
+
                 ddays = db.query(DdayTable).filter(
                     DdayTable.diary_id == diary_id,
                     func.date(DdayTable.createTime) == date
@@ -343,7 +344,7 @@ class DiaryService:
                     hasDday[i - 1] = 1
                 else:
                     hasDday[i - 1] = 0
-                    
+
             except ValueError:
                 hasDday[i - 1] = None
 

@@ -1,6 +1,6 @@
 from fastapi import HTTPException, UploadFile
 from typing import Optional, List
-from sqlalchemy import text
+from sqlalchemy import text, desc
 from sqlalchemy.orm import joinedload
 from constants.path import *
 from datetime import datetime
@@ -141,7 +141,7 @@ class DdayService:
         ddays = db.query(DdayTable).filter(
             DdayTable.diary_id == diary_id,
             DdayTable.parent_id == parent_id,
-            DdayTable.deleteTime == None).all()
+            DdayTable.deleteTime == None).order_by(desc(DdayTable.createTime)).all()
 
         if ddays is None:
             return []
@@ -153,12 +153,74 @@ class DdayService:
                 "title": d.title,
                 "createTime": d.createTime
             })
-        dday.reverse()
         return dday
 
-    # DDay 가져오기
+    def getOneDDayById(self, parent_id: str, dday_id: int) -> getdday:
+        """
+        DDay 가져오기
+        - input
+            - parent_id (str): 부모 아이디
+            - dday_id (int): dday 아이디
+        - output
+            - dday (getdday): DDay 딕셔너리
+        """
 
-    def getOneDDay(self, parent_id: str, diary_id: int, create_time: str) -> List:
+        db = get_db_session()
+
+        day = db.query(DdayTable).filter(
+            DdayTable.dday_id == dday_id,
+            DdayTable.parent_id == parent_id,
+            DdayTable.deleteTime == None).first()
+
+        if day is None:
+            raise CustomException("DDay does not exist")
+
+        content = ''
+        content_file_path = os.path.join(DIARY_DAY_CONTENT_DIR,
+                                         str(day.dday_id) + '.txt')
+        if os.path.exists(content_file_path):
+            content = open(content_file_path, 'r', encoding='UTF-8').read()
+        match = re.findall(r'!\[\[(.*?)\]\]', content)
+
+        dday = {
+            "dday_id": day.dday_id,
+            "diary_id": day.diary_id,
+            "title": day.title,
+            "content": content,
+            "photoId": match if match else None,
+            "createTime": day.createTime,
+            "modifyTime": day.modifyTime,
+        }
+
+        diary = db.query(DiaryTable).filter(
+            DiaryTable.diary_id == day.diary_id,
+            DiaryTable.parent_id == parent_id,
+            DiaryTable.deleteTime == None).first()
+
+        # 산모수첩인 경우
+        if diary.born == 0:
+            hospital = db.query(HospitalTable.hospital_id).filter(
+                HospitalTable.diary_id == day.diary_id,
+                func.date(HospitalTable.createTime) == day.createTime).first()
+
+            dday['add'] = {"hospital": hospital[0]
+                           if hospital is not None else None}
+
+        # 육아수첩인 경우
+        else:
+            milks = db.query(MilkTable).filter(
+                MilkTable.diary_id == day.diary_id,
+                func.date(MilkTable.mtime) == day.createTime).all()
+
+            milk = [None] * len(milks)
+            for m in range(len(milks)):
+                milk[m] = milks[m].milk_id
+
+            dday['add'] = {"milk": milk if milk is not [] else None}
+
+        return dday
+
+    def getOneDDay(self, parent_id: str, diary_id: int, create_time: str) -> getdday:
         """
         DDay 가져오기
         - input
@@ -185,15 +247,25 @@ class DdayService:
             func.date(DdayTable.createTime) == create_time,
             DdayTable.deleteTime == None).first()
 
-        dday = []
-
         if day is None:
-            return dday
+            raise CustomException("DDay does not exist")
 
         content = ''
-        content = open(os.path.join(DIARY_DAY_CONTENT_DIR,
-                                    str(day.dday_id) + '.txt'), 'r', encoding='UTF-8').read()
+        content_file_path = os.path.join(DIARY_DAY_CONTENT_DIR,
+                                         str(day.dday_id) + '.txt')
+        if os.path.exists(content_file_path):
+            content = open(content_file_path, 'r', encoding='UTF-8').read()
         match = re.findall(r'!\[\[(.*?)\]\]', content)
+
+        dday = {
+            "dday_id": day.dday_id,
+            "diary_id": day.diary_id,
+            "title": day.title,
+            "content": content,
+            "photoId": match if match else None,
+            "createTime": day.createTime,
+            "modifyTime": day.modifyTime,
+        }
 
         # 산모수첩인 경우
         if diary.born == 0:
@@ -201,16 +273,8 @@ class DdayService:
                 HospitalTable.diary_id == day.diary_id,
                 func.date(HospitalTable.createTime) == create_time).first()
 
-            dday.append({
-                "dday_id": day.dday_id,
-                "diary_id": day.diary_id,
-                "title": day.title,
-                "content": content,
-                "photoId": match if match else None,
-                "createTime": day.createTime,
-                "modifyTime": day.modifyTime,
-                "add": {"hospital": hospital[0] if hospital is not None else None}
-            })
+            dday['add'] = {"hospital": hospital[0]
+                           if hospital is not None else None}
 
         # 육아수첩인 경우
         else:
@@ -222,16 +286,7 @@ class DdayService:
             for m in range(len(milks)):
                 milk[m] = milks[m].milk_id
 
-            dday.append({
-                "dday_id": day.dday_id,
-                "diary_id": day.diary_id,
-                "title": day.title,
-                "content": content,
-                "photoId": match if match else None,
-                "createTime": day.createTime,
-                "modifyTime": day.modifyTime,
-                "add": {"milk": milk if milk is not [] else None}
-            })
+            dday['add'] = {"milk": milk if milk is not [] else None}
 
         return dday
 

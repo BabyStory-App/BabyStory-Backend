@@ -33,11 +33,13 @@ async def create_diary(createDiaryInput: CreateDiaryInput,
 
 
 # 다이어리 표지 사진 업로드
-@router.post("/coverUpload/{diary_id}", dependencies=[Depends(JWTBearer())])
-async def upload_diary_cover_image(file: UploadFile,
-                                   diary_id: int,
+@router.post("/coverUpload", dependencies=[Depends(JWTBearer())])
+async def upload_diary_cover_image(file: Optional[UploadFile] = None,
+                                   diary_id: int = Form(...),
                                    parent_id: str = Depends(JWTBearer())) -> UploadDiaryCoverOutput:
     try:
+        if file == None:
+            raise CustomException("No file")
         success = diaryService.uploadDiaryCover(parent_id, file, diary_id)
     except CustomException as error:
         raise HTTPException(
@@ -92,19 +94,21 @@ async def update_diary(updateDiaryInput: UpdateDiaryInput,
 
 
 # 다이어리 표지 사진 수정
-@router.put("/coverUpdate/{diary_id}", dependencies=[Depends(JWTBearer())])
-async def update_diary_cover_image(file: UploadFile,
-                                      diary_id: int,
-                                      parent_id: str = Depends(JWTBearer())) -> UpdateDiaryCoverOutput:
-     try:
-          success = diaryService.updateDiaryCover(parent_id, file, diary_id)
-     except CustomException as error:
-          raise HTTPException(
-                status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
-     except Exception as e:
-          raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail="Failed to update diary cover image")
-     return {'success': 200, 'message': 'Success to update diary cover image'}
+@router.post("/coverUpdate", dependencies=[Depends(JWTBearer())])
+async def update_diary_cover_image(file: Optional[UploadFile] = None,
+                                   diary_id: int = Form(...),
+                                   parent_id: str = Depends(JWTBearer())) -> UpdateDiaryCoverOutput:
+    try:
+        if file == None:
+            raise CustomException("No file")
+        success = diaryService.updateDiaryCover(parent_id, file, diary_id)
+    except CustomException as error:
+        raise HTTPException(
+            status_code=HTTP_406_NOT_ACCEPTABLE, detail=str(error))
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail="Failed to update diary cover image")
+    return {'success': 200, 'message': 'Success to update diary cover image'}
 
 
 # 다이어리 삭제

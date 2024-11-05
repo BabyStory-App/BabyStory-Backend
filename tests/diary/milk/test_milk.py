@@ -72,8 +72,10 @@ def test_get_milk_by_mtime(client, test_jwt):
 
 """ Get milk by range """
 def test_get_milk_range(client, test_jwt):
+    start = "2024-11-04"
+    end = "2024-11-05"
     response = client.get(
-        f"/milk/{test_jwt['parenting_diary']}/{test_milk['mtime']}/{datetime.now().strftime('%Y-%m-%d, %H:%M')}",
+        f"/milk/{test_jwt['parenting_diary']}/{start}/{end}",
         headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
     )
 
@@ -85,21 +87,19 @@ def test_get_milk_range(client, test_jwt):
 
 
 """ Update milk """
-# def test_update_milk(client, test_jwt):
-#     print(test_jwt)
-#     test_update_milk["milk_id"] = test_jwt["milk"]
-#     response = client.put(
-#         "/milk/update",
-#         headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
-#         json=test_update_milk
-#     )
+def test_updates_milk(client, test_jwt):
+    test_update_milk["milk_id"] = test_jwt["milk"]
+    response = client.put(
+        "/milk/update",
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"},
+        json=test_update_milk
+    )
 
-#     assert response.status_code == 200
-#     response_json = response.json()
-#     assert "milk" in response_json
-#     print(response_json)
+    assert response.status_code == 200
+    response_json = response.json()
+    assert "milk" in response_json
 
-#     assert response_json["milk"]["baby_id"] == test_jwt["baby"]
+    assert response_json["milk"]["baby_id"] == test_jwt["baby"]
 
 
 """ Delete milk """

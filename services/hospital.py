@@ -123,11 +123,12 @@ class HospitalService:
             return hospitals
 
         for h in hospital:
-            special = h.special.split(" /seq ")
             specials = {}
-            for s in special:
-                key, value = s.split(" /split ")
-                specials[key] = value
+            if any(special_string in h.special for special_string in [" /seq ", " /split "]):
+                special = h.special.split(" /seq ")
+                for s in special:
+                    key, value = s.split(" /split ")
+                    specials[key] = value
 
             hospitals.append({
                 'hospital_id': h.hospital_id,
@@ -173,12 +174,16 @@ class HospitalService:
             HospitalTable.diary_id == diary_id,
             HospitalTable.deleteTime == None).all()
 
+        if hospital is None:
+            return hospitals
+
         for h in hospital:
-            special = h.special.split(" /seq ")
             specials = {}
-            for s in special:
-                key, value = s.split(" /split ")
-                specials[key] = value
+            if any(special_string in h.special for special_string in [" /seq ", " /split "]):
+                special = h.special.split(" /seq ")
+                for s in special:
+                    key, value = s.split(" /split ")
+                    specials[key] = value
 
             hospitals.append({
                 'hospital_id': h.hospital_id,
@@ -221,11 +226,13 @@ class HospitalService:
             HospitalTable.hospital_id == hospital_id,
             HospitalTable.deleteTime == None).first()
 
-        special = h.special.split(" /seq ")
+
         specials = {}
-        for s in special:
-            key, value = s.split(" /split ")
-            specials[key] = value
+        if any(special_string in h.special for special_string in [" /seq ", " /split "]):
+            special = h.special.split(" /seq ")
+            for s in special:
+                key, value = s.split(" /split ")
+                specials[key] = value
 
         hospital = {
             'hospital_id': h.hospital_id,

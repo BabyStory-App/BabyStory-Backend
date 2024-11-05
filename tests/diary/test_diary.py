@@ -44,6 +44,7 @@ def test_create_diary1(client, test_jwt):
     assert "diary" in response_json
 
     assert response_json["diary"]["baby_id"] == test_jwt["foetus"]
+    test_jwt["maternity_diary"] = response_json["diary"]["diary_id"]
 
 
 # 육아일기 생성

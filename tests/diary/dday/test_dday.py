@@ -60,8 +60,8 @@ def test_upload_dday_photo(client, test_jwt):
 def test_get_all_dday(client, test_jwt):
     response = client.get(
         f'/dday/all/{test_jwt["parenting_diary"]}',
-        headers={"Authorization": f"Bearer {test_jwt['access_token']}"
-    })
+        headers={"Authorization": f"Bearer {test_jwt['access_token']}"}
+    )
 
     assert response.status_code == 200
     response_json = response.json()

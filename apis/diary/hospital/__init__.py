@@ -15,8 +15,6 @@ router = APIRouter(
 hospitalService = HospitalService()
 
 # 산모수첩 생성
-
-
 @router.post("/create", dependencies=[Depends(JWTBearer())])
 async def create_hospital(createHospitalInput: CreateHospitalInput,
                           parent_id: str = Depends(JWTBearer())) -> CreateHospitalOutput:
@@ -32,9 +30,8 @@ async def create_hospital(createHospitalInput: CreateHospitalInput,
             status_code=HTTP_400_BAD_REQUEST, detail="Failed to create hospital")
     return {'success': 200, 'message': 'Success to create hospital', 'hospital': hospital}
 
+
 # 모든 산모수첩 조회
-
-
 @router.get("/all/{diary_id}", dependencies=[Depends(JWTBearer())])
 async def get_all_hospital(diary_id: int,
                            parent_id: str = Depends(JWTBearer())) -> GetAllHospitalOutput:

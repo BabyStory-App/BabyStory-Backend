@@ -341,11 +341,11 @@ class DiaryService:
                 ).first()
 
                 if ddays is not None:
-                    hasDday[i - 1] = 1
+                    hasDday[i - 1] = ddays.dday_id
                 else:
                     hasDday[i - 1] = 0
 
             except ValueError:
-                hasDday[i - 1] = None
+                hasDday[i - 1] = 0
 
         return hasDday

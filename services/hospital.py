@@ -30,6 +30,7 @@ class HospitalService:
         """
 
         db = get_db_session()
+        print("createHospitalInput: ", createHospitalInput)
 
         diary = db.query(DiaryTable).filter(
             DiaryTable.diary_id == createHospitalInput.diary_id,
@@ -37,9 +38,11 @@ class HospitalService:
             DiaryTable.deleteTime == None).first()
 
         if diary is None:
+            print("Diary does not exist")
             raise CustomException("Diary does not exist")
 
         if diary.born != 0:
+            print("This diary is not a maternity diary")
             raise CustomException("This diary is not a maternity diary")
 
         createTime = datetime.strptime(
@@ -51,6 +54,7 @@ class HospitalService:
             HospitalTable.deleteTime == None).first()
 
         if hospitals is not None:
+            print("Hospital already exists")
             raise CustomException("Hospital already exists")
 
         next = None
@@ -80,8 +84,8 @@ class HospitalService:
 
         return hospital
 
-
     # 범위 대한 전체 산모수첩 조회
+
     def getRangeHospital(self, parent_id: str,
                          diary_id: int, start: str, end: str) -> List[Hospital]:
         """
@@ -179,11 +183,14 @@ class HospitalService:
 
         for h in hospital:
             specials = {}
-            if any(special_string in h.special for special_string in [" /seq ", " /split "]):
-                special = h.special.split(" /seq ")
-                for s in special:
-                    key, value = s.split(" /split ")
-                    specials[key] = value
+            try:
+                if any(special_string in h.special for special_string in [" /seq ", " /split "]):
+                    special = h.special.split(" /seq ")
+                    for s in special:
+                        key, value = s.split(" /split ")
+                        specials[key] = value
+            except:
+                pass
 
             hospitals.append({
                 'hospital_id': h.hospital_id,
@@ -225,7 +232,6 @@ class HospitalService:
         h = db.query(HospitalTable).filter(
             HospitalTable.hospital_id == hospital_id,
             HospitalTable.deleteTime == None).first()
-
 
         specials = {}
         if any(special_string in h.special for special_string in [" /seq ", " /split "]):

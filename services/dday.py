@@ -155,7 +155,7 @@ class DdayService:
             })
         return dday
 
-    def getOneDDayById(self, parent_id: str, dday_id: int) -> getdday:
+    def getOneDDayById(self, parent_id: str, dday_id: int) -> Optional[getdday]:
         """
         DDay 가져오기
         - input
@@ -173,7 +173,7 @@ class DdayService:
             DdayTable.deleteTime == None).first()
 
         if day is None:
-            raise CustomException("DDay does not exist")
+            return None
 
         content = ''
         content_file_path = os.path.join(DIARY_DAY_CONTENT_DIR,
@@ -220,7 +220,7 @@ class DdayService:
 
         return dday
 
-    def getOneDDay(self, parent_id: str, diary_id: int, create_time: str) -> getdday:
+    def getOneDDay(self, parent_id: str, diary_id: int, create_time: str) -> Optional[getdday]:
         """
         DDay 가져오기
         - input
@@ -247,8 +247,8 @@ class DdayService:
             func.date(DdayTable.createTime) == create_time,
             DdayTable.deleteTime == None).first()
 
-        if day is None:
-            raise CustomException("DDay does not exist")
+        if day == None:
+            return None
 
         content = ''
         content_file_path = os.path.join(DIARY_DAY_CONTENT_DIR,

@@ -65,7 +65,7 @@ class GetAllDDayOutput(BaseModel):
 class GetDDayOutput(BaseModel):
     success: int
     message: str
-    dday: getdday
+    dday: Optional[getdday]
 
 
 # DDay 수정

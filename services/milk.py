@@ -99,6 +99,7 @@ class MilkService:
                 "mtime": m.mtime
             })
 
+        milks.reverse()
         return milks
 
     # 범위 안에 속해있는 모든 수유일지 조회

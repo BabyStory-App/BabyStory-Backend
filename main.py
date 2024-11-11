@@ -20,7 +20,7 @@ from apis.diary import router as diary_router
 from apis.diary.dday import router as dday_router
 from apis.diary.hospital import router as hospital_router
 from apis.diary.milk import router as milk_router
-# from apis.aidoctor import router as aidoctor_router
+from apis.aidoctor import router as aidoctor_router
 from apis.alert import router as alert_router
 
 from fastapi.staticfiles import StaticFiles
@@ -51,7 +51,7 @@ app.include_router(dday_router)
 app.include_router(hospital_router)
 app.include_router(milk_router)
 app.mount("/qq", StaticFiles(directory="static", html=True), name="static")
-# app.include_router(aidoctor_router)
+app.include_router(aidoctor_router)
 app.include_router(alert_router)
 
 

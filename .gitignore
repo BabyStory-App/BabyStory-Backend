@@ -153,3 +153,4 @@ logs/
 services/cry_predict.py
 assets/assets/crnn.h5
 assets/crnn.h5
+dataset_backup.zip

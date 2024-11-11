@@ -31,8 +31,8 @@ class SearchService:
 
         return photoId, descr
 
-
     # 검색어 입력시 검색 결과 반환
+
     def createSearch(self, createSearchInput: CreateSearchInput) -> CreateSearchOutputListOutput:
         """
         검색어 입력시 검색 결과 반환하는 함수
@@ -95,9 +95,5 @@ class SearchService:
                 'comment': i.pComment,
                 'desc': descr
             })
-
-        # 임시코드: 3번씩 반복해서 랜덤하게 섞는다.
-        banners = [item for item in banners for _ in range(3)]
-        random.shuffle(banners)
 
         return banners
